@@ -52,20 +52,33 @@ class sFlowSample:
         dataPosition = 12
         for i in range(self.recordCount):
             RecordSize = struct.unpack('i', (dataGram[(dataPosition + 4):(dataPosition + 8)])[::-1])[0]
-            self.record.append(sFlowRecord(dataGram[(dataPosition):(dataPosition + 4)], RecordSize, dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]))
+            self.record.append(sFlowRecord(dataGram[(dataPosition):(dataPosition + 4)], RecordSize, self.sampleType, dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]))
             dataPosition = dataPosition + 8 + RecordSize
             
 
 class sFlowRecord:
-    def __init__(self, header, length, dataGram):
+    def __init__(self, header, length, sampleType, dataGram):
         RecordHeader = struct.unpack('i', header[::-1])[0]
         self.header = header
         self.enterprise = (RecordHeader & 4294901760)/65536
         self.format = (RecordHeader & 65535)
         self.length = length
+        self.sampleType = sampleType
         self.data = dataGram
 
-UDP_IP = "192.168.0.70"
+class sFlowHostDisc:
+    def __init__(self, length, dataGram):
+        self.length = length
+        self.data = dataGram
+        dataPosition = 4
+        nameLength = struct.unpack('i', (dataGram[0:4])[::-1])[0]
+        if nameLength % 4 <> 0:
+            nameLength = (((nameLength // 4)+1)*4)
+        self.hostName = dataGram[(dataPosition):(dataPosition + nameLength)].decode("utf-8")
+        dataPosition = dataPosition + nameLength
+        
+
+UDP_IP = ''
 UDP_PORT = 6343
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -73,9 +86,10 @@ sock.bind((UDP_IP, UDP_PORT))
 
 while True:
                                                  
-    data, addr = sock.recvfrom(4096)
+    data, addr = sock.recvfrom(2000)
     sFlowData = sFlow(data)
 
+    print ""
     print "Source:", addr[0]
     #print "length:", sFlowData.len
     #print "DG Version:", sFlowData.dgVersion
@@ -85,15 +99,23 @@ while True:
     #print "Sequence Number:", sFlowData.sequenceNumber
     #print "System UpTime:", sFlowData.sysUpTime
     #print "Number of Samples:", sFlowData.NumberSample
-    print ""
+    #print ""
     for i in range(sFlowData.NumberSample):
-        #print "Sample Number:", i + 1
+        print "Sample Number:", i + 1
         #print "Sample Enterprise:", sFlowData.sample[i].enterprise
-        #print "Sample Type:", sFlowData.sample[i].sampleType
+        print "Sample Type:", sFlowData.sample[i].sampleType
         #print "Sample Sequence:", sFlowData.sample[i].sequence
-        #print "Sample Record Count:", sFlowData.sample[i].recordCount
+        print "Sample Record Count:", sFlowData.sample[i].recordCount
         #print ""
         for j in range(sFlowData.sample[i].recordCount):
             #print "Record Enterprise:", sFlowData.sample[i].record[j].enterprise
             print "Record Format:", sFlowData.sample[i].record[j].format
-            print ""
+            if sFlowData.sample[i].sampleType == 2:
+                if sFlowData.sample[i].record[j].format == 2000:
+                    element = sFlowHostDisc(sFlowData.sample[i].record[j].length, sFlowData.sample[i].record[j].data)
+                    print "Host Name:", element.hostName
+
+
+
+
+                
