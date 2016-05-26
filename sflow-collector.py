@@ -86,7 +86,33 @@ class sFlowHostDisc: #2-2000
         dataPosition = dataPosition + 4
         self.osRelease = dataGram[dataPosition:(dataPosition + osReleaseLength)].decode("utf-8")
 
+class sFlowHostCPU: #2-2003
+    def __init__(self, length, dataGram):
+        self.length = length
+        self.data = dataGram
+        self.avgLoad1 = struct.unpack('>f', dataGram[0:4])[0]
+        self.avgLoad5 = struct.unpack('>f', dataGram[4:8])[0]
+        self.avgLoad15 = struct.unpack('>f', dataGram[8:12])[0]
+        self.runProcess = struct.unpack('>i', dataGram[12:16])[0]
+        self.totalProcess = struct.unpack('>i', dataGram[16:20])[0]
+        self.numCPU = struct.unpack('>i', dataGram[20:24])[0]
+        self.mhz = struct.unpack('>i', dataGram[24:28])[0]
+        self.uptime = struct.unpack('>i', dataGram[28:32])[0]
+        self.timeUser = struct.unpack('>i', dataGram[32:36])[0]
+        self.timeNices = struct.unpack('>i', dataGram[36:40])[0]
+        self.timeKennal = struct.unpack('>i', dataGram[40:44])[0]
+        self.timeIdle = struct.unpack('>i', dataGram[44:48])[0]
+        self.timeIO = struct.unpack('>i', dataGram[48:52])[0]
+        self.timeInterrupt = struct.unpack('>i', dataGram[52:56])[0]
+        self.timeSoftInterrupt = struct.unpack('>i', dataGram[56:60])[0]
+        self.interrupt = struct.unpack('>i', dataGram[60:64])[0]
+        self.contextSwitch = struct.unpack('>i', dataGram[64:68])[0]
+        self.virtualInstance = struct.unpack('>i', dataGram[68:72])[0]
+        self.guestOS = struct.unpack('>i', dataGram[72:76])[0]
+        self.guestNice = struct.unpack('>i', dataGram[76:80])[0]
         
+        
+     
 
 UDP_IP = ''
 UDP_PORT = 6343
@@ -128,6 +154,11 @@ while True:
                     print "Machine Type:", element.machineType
                     print "OS Name:", element.osName
                     print "OS Release:", element.osRelease
+                elif sFlowData.sample[i].record[j].format == 2003:
+                    element = sFlowHostCPU(sFlowData.sample[i].record[j].length, sFlowData.sample[i].record[j].data)
+                    print "Processes:", element.totalProcess
+                    print "Uptime:", element.uptime
+                    
 
 
 
