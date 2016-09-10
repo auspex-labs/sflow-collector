@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import socket
 import struct
 
@@ -65,7 +66,7 @@ class sFlowRecord:
         self.length = length
         self.data = dataGram
 
-UDP_IP = "192.168.0.70"
+UDP_IP = "0.0.0.0"
 UDP_PORT = 6343
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
