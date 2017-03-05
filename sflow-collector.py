@@ -4,6 +4,8 @@ import struct
 import uuid
 import binascii
 
+#The sFlow Collector is a set of classes for presenting sFlow data.
+
 class sFlow:
     def __init__(self, dataGram):
         dataPosition = 0
@@ -38,6 +40,9 @@ class sFlow:
                 self.sample.append(sFlowSample(dataGram[(dataPosition):(dataPosition + 4)], SampleSize, dataGram[(dataPosition + 8):(dataPosition + SampleSize + 8)]))
                 dataPosition = dataPosition + 8 + SampleSize
              
+
+
+
 class sFlowSample:
     def __init__(self, header, sampleSize, dataGram):
         self.record = []
@@ -45,24 +50,41 @@ class sFlowSample:
         SampleHeader = struct.unpack('>i', header)[0]
         SampleSource = struct.unpack('>i', dataGram[4:8])[0]
         self.enterprise = (SampleHeader & 4294963200)/4096
-        self.sampleType = (SampleHeader & 4095)
+        self.sampleType = (SampleHeader & 4095) # 0 sample_data / 1 flow_data (single) / 2 counter_data (single) / 3 flow_data (expanded) / 4 counter_data (expanded
         self.length = sampleSize
         self.sequence = struct.unpack('>i', dataGram[0:4])[0]
-        self.sourceType = (SampleSource & 4278190080)/16777216
-        self.sourceIndex = (SampleSource & 16777215)
-        self.recordCount = struct.unpack('>i', dataGram[8:12])[0]
-        dataPosition = 12
-        for i in range(self.recordCount):
-            RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-            self.record.append(sFlowRecord(dataGram[(dataPosition):(dataPosition + 4)], RecordSize, self.sampleType, dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]))
-            dataPosition = dataPosition + 8 + RecordSize
+        if self.sampleType == 0:
+
+        elif self.sampleType == 1:
+
+        elif self.sampleType == 2:
+                self.sourceType = (SampleSource & 4278190080)/16777216
+                self.sourceIndex = (SampleSource & 16777215)
+                self.recordCount = struct.unpack('>i', dataGram[8:12])[0]
+                dataPosition = 12
+                    for i in range(self.recordCount):
+                        RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
+                        self.record.append(sFlowCounterRecord(dataGram[(dataPosition):(dataPosition + 4)], RecordSize, self.sampleType, dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]))
+                        dataPosition = dataPosition + 8 + RecordSize
+        elif self.sampleType == 3:
+
+        elif self.sampleType == 4:
+                self.sourceType = (SampleSource & 4278190080)/16777216
+                self.sourceIndex = (SampleSource & 16777215)
+                self.recordCount = struct.unpack('>i', dataGram[8:12])[0]
+                dataPosition = 12
+                    for i in range(self.recordCount):
+                        RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
+                        self.record.append(sFlowCounterRecord(dataGram[(dataPosition):(dataPosition + 4)], RecordSize, self.sampleType, dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]))
+                        dataPosition = dataPosition + 8 + RecordSize
+        else:
             
-class sFlowRecord:
+class sFlowCounterRecord:
     def __init__(self, header, length, sampleType, dataGram):
         RecordHeader = struct.unpack('>i', header)[0]
         self.header = header
         self.enterprise = (RecordHeader & 4294901760)/65536
-        self.format = (RecordHeader & 65535)
+        self.format = (RecordHeader & 65535) 
         self.length = length
         self.sampleType = sampleType
         self.data = dataGram
@@ -123,7 +145,7 @@ sock.bind((UDP_IP, UDP_PORT))
 
 while True:
                                                  
-    data, addr = sock.recvfrom(1300) #1300 bytes is the largest possible sFlow packet
+    data, addr = sock.recvfrom(1386) # 1386 bytes is the largest possible sFlow packet
     sFlowData = sFlow(data)
 
     print ""
@@ -133,32 +155,32 @@ while True:
     print "Address Type:", sFlowData.addressType
     print "Agent Address:", sFlowData.agentAddress
     #print "Sub Agent:", sFlowData.subAgent
-    #print "Sequence Number:", sFlowData.sequenceNumber
+    print "Sequence Number:", sFlowData.sequenceNumber
     #print "System UpTime:", sFlowData.sysUpTime
-    #print "Number of Samples:", sFlowData.NumberSample
+    print "Number of Samples:", sFlowData.NumberSample
     #print ""
     for i in range(sFlowData.NumberSample):
         print "Sample Number:", i + 1
         #print "Sample Enterprise:", sFlowData.sample[i].enterprise
         print "Sample Type:", sFlowData.sample[i].sampleType
-        #print "Sample Sequence:", sFlowData.sample[i].sequence
+        print "Sample Sequence:", sFlowData.sample[i].sequence
         print "Sample Record Count:", sFlowData.sample[i].recordCount
         #print ""
-        for j in range(sFlowData.sample[i].recordCount):
+        #for j in range(sFlowData.sample[i].recordCount):
             #print "Record Enterprise:", sFlowData.sample[i].record[j].enterprise
-            print "Record Format:", sFlowData.sample[i].record[j].format
-            if sFlowData.sample[i].sampleType == 2:
-                if sFlowData.sample[i].record[j].format == 2000:
-                    element = sFlowHostDisc(sFlowData.sample[i].record[j].length, sFlowData.sample[i].record[j].data)
-                    print "Host Name:", element.hostName
-                    print "UUID:", element.uuid
-                    print "Machine Type:", element.machineType
-                    print "OS Name:", element.osName
-                    print "OS Release:", element.osRelease
-                elif sFlowData.sample[i].record[j].format == 2003:
-                    element = sFlowHostCPU(sFlowData.sample[i].record[j].length, sFlowData.sample[i].record[j].data)
-                    print "Processes:", element.totalProcess
-                    print "Uptime:", element.uptime
+            #print "Record Format:", sFlowData.sample[i].record[j].format
+            #if sFlowData.sample[i].sampleType == 2:
+                #if sFlowData.sample[i].record[j].format == 2000:
+                    #element = sFlowHostDisc(sFlowData.sample[i].record[j].length, sFlowData.sample[i].record[j].data)
+                    #print "Host Name:", element.hostName
+                    #print "UUID:", element.uuid
+                    #print "Machine Type:", element.machineType
+                    #print "OS Name:", element.osName
+                    #print "OS Release:", element.osRelease
+                #elif sFlowData.sample[i].record[j].format == 2003:
+                    #element = sFlowHostCPU(sFlowData.sample[i].record[j].length, sFlowData.sample[i].record[j].data)
+                    #print "Processes:", element.totalProcess
+                    #print "Uptime:", element.uptime
                     
 
 
