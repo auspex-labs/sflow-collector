@@ -11,3 +11,5 @@ This is a work in progess.
 https://en.wikipedia.org/wiki/SFlow
 
 http://www.sflow.org/developers/specifications.php
+
+http://www.sflow.org/developers/diagrams/sFlowV5FlowData.pdf
