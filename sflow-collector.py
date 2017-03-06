@@ -36,58 +36,82 @@ class sFlow:
             self.NumberSample = 0
         if self.NumberSample > 0:
             for i in range(self.NumberSample):
+                SampleHeader = dataGram[(dataPosition):(dataPosition + 4)]
                 SampleSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-                self.sample.append(sFlowSample(dataGram[(dataPosition):(dataPosition + 4)], SampleSize, dataGram[(dataPosition + 8):(dataPosition + SampleSize + 8)]))
+                SampleDataGram = dataGram[(dataPosition + 8):(dataPosition + SampleSize + 8)]
+                
+                self.sample.append(sFlowSample(SampleHeader, SampleSize, SampleDataGram))
                 dataPosition = dataPosition + 8 + SampleSize
-             
-
-
 
 class sFlowSample:
     def __init__(self, header, sampleSize, dataGram):
         self.record = []
         self.data = dataGram
         SampleHeader = struct.unpack('>i', header)[0]
-        SampleSource = struct.unpack('>i', dataGram[4:8])[0]
-        self.enterprise = (SampleHeader & 4294963200)/4096
-        self.sampleType = (SampleHeader & 4095) # 0 sample_data / 1 flow_data (single) / 2 counter_data (single) / 3 flow_data (expanded) / 4 counter_data (expanded
-        self.length = sampleSize
+        
         self.sequence = struct.unpack('>i', dataGram[0:4])[0]
-        if self.sampleType == 0:
-
-        elif self.sampleType == 1:
-
-        elif self.sampleType == 2:
-                self.sourceType = (SampleSource & 4278190080)/16777216
-                self.sourceIndex = (SampleSource & 16777215)
-                self.recordCount = struct.unpack('>i', dataGram[8:12])[0]
+        SampleSource = struct.unpack('>i', dataGram[4:8])[0]
+        
+        self.enterprise = (SampleHeader & 4294963200)/4096
+        self.sampleType = (SampleHeader & 4095) # 0 sample_data / 1 flow_data (single) / 2 counter_data (single) / 3 flow_data (expanded) / 4 counter_data (expanded)
+        self.len = sampleSize
+        
+        self.sourceType = (SampleSource & 4278190080)/16777216
+        self.sourceIndex = (SampleSource & 16777215)
+        
+        dataPosition = 8
+        if self.sampleType == 1: #Flow
+                self.sampleRate = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
+                self.samplePool = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
+                self.droppedPackets = struct.unpack('>i', dataGram[(dataPosition + 8):(dataPosition + 12)])[0]
+                self.inputInterface = struct.unpack('>i', dataGram[(dataPosition + 12):(dataPosition + 16)])[0]
+                self.outputInterface = struct.unpack('>i', dataGram[(dataPosition + 16):(dataPosition + 20)])[0]
+                self.recordCount = struct.unpack('>i', dataGram[(dataPosition + 20):(dataPosition + 24)])[0]
+                dataPosition = 24
+                
+                for i in range(self.recordCount):
+                    RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
+                    RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
+                    RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]
+                    self.record.append(sFlowRecord(RecordHeader, RecordSize, self.sampleType, RecordData))
+                    dataPosition = dataPosition + 8 + RecordSize
+                
+        elif self.sampleType == 2: #Counters
+                self.recordCount = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
+                self.sampleRate = 0
+                self.samplePool = 0
+                self.droppedPackets = 0
+                self.inputInterface = 0
+                self.outputInterface = 0
                 dataPosition = 12
-                    for i in range(self.recordCount):
-                        RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-                        self.record.append(sFlowCounterRecord(dataGram[(dataPosition):(dataPosition + 4)], RecordSize, self.sampleType, dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]))
-                        dataPosition = dataPosition + 8 + RecordSize
-        elif self.sampleType == 3:
 
-        elif self.sampleType == 4:
-                self.sourceType = (SampleSource & 4278190080)/16777216
-                self.sourceIndex = (SampleSource & 16777215)
-                self.recordCount = struct.unpack('>i', dataGram[8:12])[0]
-                dataPosition = 12
-                    for i in range(self.recordCount):
-                        RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-                        self.record.append(sFlowCounterRecord(dataGram[(dataPosition):(dataPosition + 4)], RecordSize, self.sampleType, dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]))
-                        dataPosition = dataPosition + 8 + RecordSize
+                for i in range(self.recordCount):
+                    RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
+                    RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
+                    RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize + 8)]
+                    self.record.append(sFlowRecord(RecordHeader, RecordSize, self.sampleType, RecordData))
+                    dataPosition = dataPosition + 8 + RecordSize
         else:
+                self.recordCount = 0
+                self.sampleRate = 0
+                self.samplePool = 0
+                self.droppedPackets = 0
+                self.inputInterface = 0
+                self.outputInterface = 0
+                
+
             
-class sFlowCounterRecord:
+class sFlowRecord:
     def __init__(self, header, length, sampleType, dataGram):
-        RecordHeader = struct.unpack('>i', header)[0]
         self.header = header
-        self.enterprise = (RecordHeader & 4294901760)/65536
-        self.format = (RecordHeader & 65535) 
-        self.length = length
+        self.enterprise = (self.header & 4294901760)/4096
+        self.format = (self.header & 4095) 
+        self.len = length
         self.sampleType = sampleType
         self.data = dataGram
+
+
+        
 
 class sFlowHostDisc: #2-2000
     def __init__(self, length, dataGram):
@@ -151,24 +175,35 @@ while True:
     print ""
     print "Source:", addr[0]
     #print "length:", sFlowData.len
-    print "DG Version:", sFlowData.dgVersion
-    print "Address Type:", sFlowData.addressType
+    #print "DG Version:", sFlowData.dgVersion
+    #print "Address Type:", sFlowData.addressType
     print "Agent Address:", sFlowData.agentAddress
     #print "Sub Agent:", sFlowData.subAgent
     print "Sequence Number:", sFlowData.sequenceNumber
     #print "System UpTime:", sFlowData.sysUpTime
     print "Number of Samples:", sFlowData.NumberSample
-    #print ""
+    print ""
     for i in range(sFlowData.NumberSample):
         print "Sample Number:", i + 1
-        #print "Sample Enterprise:", sFlowData.sample[i].enterprise
-        print "Sample Type:", sFlowData.sample[i].sampleType
         print "Sample Sequence:", sFlowData.sample[i].sequence
+        print "Sample Enterprise:", sFlowData.sample[i].enterprise
+        print "Sample Type:", sFlowData.sample[i].sampleType
+        print "Sample Length:", sFlowData.sample[i].len
+        print "Sample Source Type:", sFlowData.sample[i].sourceType
+        print "Sample Source Index:", sFlowData.sample[i].sourceIndex
+        print "Sample Rate:", sFlowData.sample[i].sampleRate
+        print "Sample Pool:", sFlowData.sample[i].samplePool
+        print "Sample Dropped Packets:", sFlowData.sample[i].droppedPackets
+        print "Sample Input Interface:", sFlowData.sample[i].inputInterface
+        print "Sample Output Interface:", sFlowData.sample[i].outputInterface
         print "Sample Record Count:", sFlowData.sample[i].recordCount
-        #print ""
+        print ""
         #for j in range(sFlowData.sample[i].recordCount):
+            #print "Record Header:", sFlowData.sample[i].record[j].header
             #print "Record Enterprise:", sFlowData.sample[i].record[j].enterprise
             #print "Record Format:", sFlowData.sample[i].record[j].format
+            #print "Record Length:", sFlowData.sample[i].record[j].len
+            #print "Record Sample Type:", sFlowData.sample[i].record[j].sampleType
             #if sFlowData.sample[i].sampleType == 2:
                 #if sFlowData.sample[i].record[j].format == 2000:
                     #element = sFlowHostDisc(sFlowData.sample[i].record[j].length, sFlowData.sample[i].record[j].data)
@@ -181,6 +216,7 @@ while True:
                     #element = sFlowHostCPU(sFlowData.sample[i].record[j].length, sFlowData.sample[i].record[j].data)
                     #print "Processes:", element.totalProcess
                     #print "Uptime:", element.uptime
+            #print ""
                     
 
 
