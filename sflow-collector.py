@@ -67,7 +67,7 @@ class sFlowSample:
                 self.inputInterface = struct.unpack('>i', dataGram[(dataPosition + 12):(dataPosition + 16)])[0]
                 self.outputInterface = struct.unpack('>i', dataGram[(dataPosition + 16):(dataPosition + 20)])[0]
                 self.recordCount = struct.unpack('>i', dataGram[(dataPosition + 20):(dataPosition + 24)])[0]
-                dataPosition = 24
+                dataPosition = 32
                 
                 for i in range(self.recordCount):
                     RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
@@ -198,25 +198,13 @@ while True:
         print "Sample Output Interface:", sFlowData.sample[i].outputInterface
         print "Sample Record Count:", sFlowData.sample[i].recordCount
         print ""
-        #for j in range(sFlowData.sample[i].recordCount):
-            #print "Record Header:", sFlowData.sample[i].record[j].header
-            #print "Record Enterprise:", sFlowData.sample[i].record[j].enterprise
-            #print "Record Format:", sFlowData.sample[i].record[j].format
-            #print "Record Length:", sFlowData.sample[i].record[j].len
-            #print "Record Sample Type:", sFlowData.sample[i].record[j].sampleType
-            #if sFlowData.sample[i].sampleType == 2:
-                #if sFlowData.sample[i].record[j].format == 2000:
-                    #element = sFlowHostDisc(sFlowData.sample[i].record[j].length, sFlowData.sample[i].record[j].data)
-                    #print "Host Name:", element.hostName
-                    #print "UUID:", element.uuid
-                    #print "Machine Type:", element.machineType
-                    #print "OS Name:", element.osName
-                    #print "OS Release:", element.osRelease
-                #elif sFlowData.sample[i].record[j].format == 2003:
-                    #element = sFlowHostCPU(sFlowData.sample[i].record[j].length, sFlowData.sample[i].record[j].data)
-                    #print "Processes:", element.totalProcess
-                    #print "Uptime:", element.uptime
-            #print ""
+        for j in range(sFlowData.sample[i].recordCount):
+            print "Record Header:", sFlowData.sample[i].record[j].header
+            print "Record Enterprise:", sFlowData.sample[i].record[j].enterprise
+            print "Record Format:", sFlowData.sample[i].record[j].format
+            print "Record Length:", sFlowData.sample[i].record[j].len
+            print "Record Sample Type:", sFlowData.sample[i].record[j].sampleType
+            print ""
                     
 
 
