@@ -115,7 +115,7 @@ class sFlowRecord:
 
 class sFlowHostDisc: #2-2000
     def __init__(self, length, dataGram):
-        self.length = length
+        self.len = length
         self.data = dataGram
         dataPosition = 4
         nameLength = struct.unpack('>i', dataGram[0:4])[0]
@@ -135,7 +135,7 @@ class sFlowHostDisc: #2-2000
 
 class sFlowHostCPU: #2-2003
     def __init__(self, length, dataGram):
-        self.length = length
+        self.len = length
         self.data = dataGram
         self.avgLoad1 = struct.unpack('>f', dataGram[0:4])[0]
         self.avgLoad5 = struct.unpack('>f', dataGram[4:8])[0]
