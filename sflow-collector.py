@@ -110,7 +110,31 @@ class sFlowRecord:
         self.sampleType = sampleType
         self.data = dataGram
 
+#IDEA: Sanity check for the fixed length records could be implimented with a simple value check. 17-03-07
 
+class sFlowIfCounter: #2-1
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        self.index = struct.unpack('>i', dataGram[0:4])[0]
+        self.type = struct.unpack('>i', dataGram[4:8])[0]
+        self.speed = struct.unpack('>q', dataGram[8:16])[0] #64-bit
+        self.direction = struct.unpack('>i', dataGram[16:20])[0]
+        self.status = struct.unpack('>i', dataGram[20:24])[0] #This is really a 2-bit value
+        self.inputOctets = struct.unpack('>q', dataGram[24:32])[0] #64-bit
+        self.inputPackets = struct.unpack('>i', dataGram[32:36])[0]
+        self.inputMulticast = struct.unpack('>i', dataGram[36:40])[0]
+        self.inputBroadcast = struct.unpack('>i', dataGram[40:44])[0]
+        self.inputDiscarded = struct.unpack('>i', dataGram[44:48])[0]
+        self.inputErrors = struct.unpack('>i', dataGram[48:52])[0]
+        self.inputUnknown = struct.unpack('>i', dataGram[52:56])[0]
+        self.outputOctets = struct.unpack('>q', dataGram[56:64])[0] #64-bit
+        self.outputPackets = struct.unpack('>i', dataGram[64:68])[0]
+        self.outputMulticast = struct.unpack('>i', dataGram[68:72])[0]
+        self.outputBroadcast = struct.unpack('>i', dataGram[72:76])[0]
+        self.outputDiscarded = struct.unpack('>i', dataGram[76:80])[0]
+        self.outputErrors = struct.unpack('>i', dataGram[80:84])[0]
+        self.promiscuous = struct.unpack('>i', dataGram[84:88])[0]
         
 
 class sFlowHostDisc: #2-2000
@@ -204,7 +228,28 @@ while True:
             print "Record Sample Type:", sFlowData.sample[i].record[j].sampleType
             print "Record Format:", sFlowData.sample[i].record[j].format
             #print "Record Length:", sFlowData.sample[i].record[j].len
-            print ""
+            if sFlowData.sample[i].record[j].sampleType == 2:
+                if sFlowData.sample[i].record[j].format == 1:
+                    record = sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "If Counter 01:", record.index
+                    print "If Counter 02:", record.type
+                    print "If Counter 03:", record.speed
+                    print "If Counter 04:", record.direction
+                    print "If Counter 05:", record.status
+                    print "If Counter 06:", record.inputOctets
+                    print "If Counter 07:", record.inputPackets
+                    print "If Counter 08:", record.inputMulticast
+                    print "If Counter 09:", record.inputBroadcast
+                    print "If Counter 10:", record.inputDiscarded
+                    print "If Counter 11:", record.inputErrors
+                    print "If Counter 12:", record.inputUnknown 
+                    print "If Counter 13:", record.outputOctets
+                    print "If Counter 14:", record.outputPackets
+                    print "If Counter 15:", record.outputMulticast
+                    print "If Counter 16:", record.outputBroadcast
+                    print "If Counter 17:", record.outputDiscarded
+                    print "If Counter 18:", record.outputErrors
+                    print "If Counter 19:", record.promiscuous
                     
 
 
