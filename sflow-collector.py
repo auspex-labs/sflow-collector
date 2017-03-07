@@ -179,31 +179,31 @@ while True:
     #print "Address Type:", sFlowData.addressType
     print "Agent Address:", sFlowData.agentAddress
     #print "Sub Agent:", sFlowData.subAgent
-    print "Sequence Number:", sFlowData.sequenceNumber
+    #print "Sequence Number:", sFlowData.sequenceNumber
     #print "System UpTime:", sFlowData.sysUpTime
-    print "Number of Samples:", sFlowData.NumberSample
+    #print "Number of Samples:", sFlowData.NumberSample
     print ""
     for i in range(sFlowData.NumberSample):
-        print "Sample Number:", i + 1
-        print "Sample Sequence:", sFlowData.sample[i].sequence
-        print "Sample Enterprise:", sFlowData.sample[i].enterprise
-        print "Sample Type:", sFlowData.sample[i].sampleType
-        print "Sample Length:", sFlowData.sample[i].len
-        print "Sample Source Type:", sFlowData.sample[i].sourceType
-        print "Sample Source Index:", sFlowData.sample[i].sourceIndex
-        print "Sample Rate:", sFlowData.sample[i].sampleRate
-        print "Sample Pool:", sFlowData.sample[i].samplePool
-        print "Sample Dropped Packets:", sFlowData.sample[i].droppedPackets
-        print "Sample Input Interface:", sFlowData.sample[i].inputInterface
-        print "Sample Output Interface:", sFlowData.sample[i].outputInterface
-        print "Sample Record Count:", sFlowData.sample[i].recordCount
-        print ""
+        #print "Sample Number:", i + 1
+        #print "Sample Sequence:", sFlowData.sample[i].sequence
+        #print "Sample Enterprise:", sFlowData.sample[i].enterprise
+        #print "Sample Type:", sFlowData.sample[i].sampleType
+        #print "Sample Length:", sFlowData.sample[i].len
+        #print "Sample Source Type:", sFlowData.sample[i].sourceType
+        #print "Sample Source Index:", sFlowData.sample[i].sourceIndex
+        #print "Sample Rate:", sFlowData.sample[i].sampleRate
+        #print "Sample Pool:", sFlowData.sample[i].samplePool
+        #print "Sample Dropped Packets:", sFlowData.sample[i].droppedPackets
+        #print "Sample Input Interface:", sFlowData.sample[i].inputInterface
+        #print "Sample Output Interface:", sFlowData.sample[i].outputInterface
+        #print "Sample Record Count:", sFlowData.sample[i].recordCount
+        #print ""
         for j in range(sFlowData.sample[i].recordCount):
-            print "Record Header:", sFlowData.sample[i].record[j].header
-            print "Record Enterprise:", sFlowData.sample[i].record[j].enterprise
-            print "Record Format:", sFlowData.sample[i].record[j].format
-            print "Record Length:", sFlowData.sample[i].record[j].len
+            #print "Record Header:", sFlowData.sample[i].record[j].header
+            #print "Record Enterprise:", sFlowData.sample[i].record[j].enterprise
             print "Record Sample Type:", sFlowData.sample[i].record[j].sampleType
+            print "Record Format:", sFlowData.sample[i].record[j].format
+            #print "Record Length:", sFlowData.sample[i].record[j].len
             print ""
                     
 
