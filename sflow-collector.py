@@ -231,25 +231,25 @@ while True:
             if sFlowData.sample[i].record[j].sampleType == 2:
                 if sFlowData.sample[i].record[j].format == 1:
                     record = sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "If Counter 01:", record.index
-                    print "If Counter 02:", record.type
-                    print "If Counter 03:", record.speed
-                    print "If Counter 04:", record.direction
-                    print "If Counter 05:", record.status
-                    print "If Counter 06:", record.inputOctets
-                    print "If Counter 07:", record.inputPackets
-                    print "If Counter 08:", record.inputMulticast
-                    print "If Counter 09:", record.inputBroadcast
-                    print "If Counter 10:", record.inputDiscarded
-                    print "If Counter 11:", record.inputErrors
-                    print "If Counter 12:", record.inputUnknown 
-                    print "If Counter 13:", record.outputOctets
-                    print "If Counter 14:", record.outputPackets
-                    print "If Counter 15:", record.outputMulticast
-                    print "If Counter 16:", record.outputBroadcast
-                    print "If Counter 17:", record.outputDiscarded
-                    print "If Counter 18:", record.outputErrors
-                    print "If Counter 19:", record.promiscuous
+                    print "If Counter Index:", record.index
+                    print "If Counter Type:", record.type
+                    print "If Counter Speed:", record.speed
+                    print "If Counter Direction:", record.direction
+                    print "If Counter Status:", record.status
+                    print "If Counter I Octets:", record.inputOctets
+                    print "If Counter I Packets:", record.inputPackets
+                    print "If Counter I Multicast:", record.inputMulticast
+                    print "If Counter I Broadcast:", record.inputBroadcast
+                    print "If Counter I Discards:", record.inputDiscarded
+                    print "If Counter I Errors:", record.inputErrors
+                    print "If Counter I Unknown:", record.inputUnknown 
+                    print "If Counter O Octets:", record.outputOctets
+                    print "If Counter O Packets:", record.outputPackets
+                    print "If Counter O Multicast:", record.outputMulticast
+                    print "If Counter O Broadcast:", record.outputBroadcast
+                    print "If Counter O Discard:", record.outputDiscarded
+                    print "If Counter O Errors:", record.outputErrors
+                    print "If Counter Promiscuous:", record.promiscuous
                     
 
 
