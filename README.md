@@ -15,6 +15,7 @@ This is a work in progess.
 ```
 opaque		enterprise		format	struct
 
+counter_data		0		1		if_counters
 counter_data		0		2000		host_description
 counter_data		0		2003		host_cpu
 ```
@@ -27,7 +28,7 @@ opaque		enterprise		format	struct
 flow_data			0		1		sampled_header
 flow_data			0		2		sampled_ethernet
 flow_data			0		1001		extended_switch	
-counter_data		0		1		if_counters
+
 counter_data		0		2		ethernet_counters
 counter_data		0		2001		host_adapaters
 counter_data		0		2004		host_memory
