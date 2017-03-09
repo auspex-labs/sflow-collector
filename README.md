@@ -17,6 +17,7 @@ opaque		enterprise		format	struct
 
 counter_data		0		1		if_counters
 counter_data		0		2		ethernet_counters
+counter_data		0		2		VLAN_counters
 counter_data		0		2000		host_description
 counter_data		0		2003		host_cpu
 ```
