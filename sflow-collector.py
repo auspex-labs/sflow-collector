@@ -153,6 +153,17 @@ class sFlowEthernet: #2-2
         self.frameTooLong = struct.unpack('>i', dataGram[40:44])[0]
         self.internalReceiveError = struct.unpack('>i', dataGram[44:48])[0]
         self.symbolError = struct.unpack('>i', dataGram[48:52])[0]
+
+class sFlowVLAN: #2-5
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        self.vlanID = struct.unpack('>i', dataGram[0:4])[0]
+        self.octets = struct.unpack('>q', dataGram[4:12])[0] #64-bit
+        self.unicast = struct.unpack('>i', dataGram[12:16])[0]
+        self.multicast = struct.unpack('>i', dataGram[16:20])[0]
+        self.broadcast = struct.unpack('>i', dataGram[20:24])[0]
+        self.discard = struct.unpack('>i', dataGram[24:28])[0]
         
 
 class sFlowHostDisc: #2-2000
@@ -219,12 +230,12 @@ while True:
     #print "length:", sFlowData.len
     #print "DG Version:", sFlowData.dgVersion
     #print "Address Type:", sFlowData.addressType
-    print "Agent Address:", sFlowData.agentAddress
+    #print "Agent Address:", sFlowData.agentAddress
     #print "Sub Agent:", sFlowData.subAgent
     #print "Sequence Number:", sFlowData.sequenceNumber
     #print "System UpTime:", sFlowData.sysUpTime
     #print "Number of Samples:", sFlowData.NumberSample
-    print ""
+    #print ""
     for i in range(sFlowData.NumberSample):
         #print "Sample Number:", i + 1
         #print "Sample Sequence:", sFlowData.sample[i].sequence
@@ -243,8 +254,8 @@ while True:
         for j in range(sFlowData.sample[i].recordCount):
             #print "Record Header:", sFlowData.sample[i].record[j].header
             #print "Record Enterprise:", sFlowData.sample[i].record[j].enterprise
-            print "Record Sample Type:", sFlowData.sample[i].record[j].sampleType
-            print "Record Format:", sFlowData.sample[i].record[j].format
+            #print "Record Sample Type:", sFlowData.sample[i].record[j].sampleType
+            #print "Record Format:", sFlowData.sample[i].record[j].format
             #print "Record Length:", sFlowData.sample[i].record[j].len
             if sFlowData.sample[i].record[j].sampleType == 2:
                 #if sFlowData.sample[i].record[j].format == 1:
@@ -268,21 +279,30 @@ while True:
                     #print "If Counter O Discard:", record.outputDiscarded
                     #print "If Counter O Errors:", record.outputErrors
                     #print "If Counter Promiscuous:", record.promiscuous
-                if sFlowData.sample[i].record[j].format == 2:
-                    record = sFlowEthernet(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Ethernet Alignmet Error:", record.alignmentError
-                    print "Ethernet FCS Error:", record.fcsError
-                    print "Ethernet Single Collision Frames:", record.singleCollision
-                    print "Ethernet Multiple Collision Frames:", record.multipleCollision
-                    print "Ethernet SQE Test Error:", record.sqeTest
-                    print "Ethernet Deferred Transmissions:", record.deferred
-                    print "Ethernet Late Collisions:", record.lateCollision
-                    print "Ethernet Excessiove Collisions:", record.excessiveCollision
-                    print "Ethernet Internal Transmit Error:", record.internalTransmitError
-                    print "Ethernet Carrier Sense Error:", record.carrierSenseError
-                    print "Ethernet Frame Too Long:", record.frameTooLong
-                    print "Ethernet Internal Receive Error:", record.internalReceiveError
-                    print "Ethernet Symbol Error:", record.symbolError
+                #if sFlowData.sample[i].record[j].format == 2:
+                    #record = sFlowEthernet(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    #print "Ethernet Alignmet Error:", record.alignmentError
+                    #print "Ethernet FCS Error:", record.fcsError
+                    #print "Ethernet Single Collision Frames:", record.singleCollision
+                    #print "Ethernet Multiple Collision Frames:", record.multipleCollision
+                    #print "Ethernet SQE Test Error:", record.sqeTest
+                    #print "Ethernet Deferred Transmissions:", record.deferred
+                    #print "Ethernet Late Collisions:", record.lateCollision
+                    #print "Ethernet Excessiove Collisions:", record.excessiveCollision
+                    #print "Ethernet Internal Transmit Error:", record.internalTransmitError
+                    #print "Ethernet Carrier Sense Error:", record.carrierSenseError
+                    #print "Ethernet Frame Too Long:", record.frameTooLong
+                    #print "Ethernet Internal Receive Error:", record.internalReceiveError
+                    #print "Ethernet Symbol Error:", record.symbolError
+                if sFlowData.sample[i].record[j].format == 5:
+                    record = sFlowVLAN(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "VLAN :", record.vlanID
+                    print "VLAN :", record.octets
+                    print "VLAN :", record.unicast
+                    print "VLAN :", record.multicast
+                    print "VLAN :", record.broadcast
+                    print "VLAN :", record.discard
+                    print ""
                     
 
 
