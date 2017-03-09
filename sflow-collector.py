@@ -135,6 +135,24 @@ class sFlowIfCounter: #2-1
         self.outputDiscarded = struct.unpack('>i', dataGram[76:80])[0]
         self.outputErrors = struct.unpack('>i', dataGram[80:84])[0]
         self.promiscuous = struct.unpack('>i', dataGram[84:88])[0]
+
+class sFlowEthernet: #2-2
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        self.alignmentError = struct.unpack('>i', dataGram[0:4])[0]
+        self.fcsError = struct.unpack('>i', dataGram[4:8])[0]
+        self.singleCollision = struct.unpack('>i', dataGram[8:12])[0]
+        self.multipleCollision = struct.unpack('>i', dataGram[12:16])[0]
+        self.sqeTest = struct.unpack('>i', dataGram[16:20])[0]
+        self.deferred = struct.unpack('>i', dataGram[20:24])[0]
+        self.lateCollision = struct.unpack('>i', dataGram[24:28])[0]
+        self.excessiveCollision = struct.unpack('>i', dataGram[28:32])[0]
+        self.internalTransmitError = struct.unpack('>i', dataGram[32:36])[0]
+        self.carrierSenseError = struct.unpack('>i', dataGram[36:40])[0]
+        self.frameTooLong = struct.unpack('>i', dataGram[40:44])[0]
+        self.internalReceiveError = struct.unpack('>i', dataGram[44:48])[0]
+        self.symbolError = struct.unpack('>i', dataGram[48:52])[0]
         
 
 class sFlowHostDisc: #2-2000
@@ -229,27 +247,42 @@ while True:
             print "Record Format:", sFlowData.sample[i].record[j].format
             #print "Record Length:", sFlowData.sample[i].record[j].len
             if sFlowData.sample[i].record[j].sampleType == 2:
-                if sFlowData.sample[i].record[j].format == 1:
-                    record = sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "If Counter Index:", record.index
-                    print "If Counter Type:", record.type
-                    print "If Counter Speed:", record.speed
-                    print "If Counter Direction:", record.direction
-                    print "If Counter Status:", record.status
-                    print "If Counter I Octets:", record.inputOctets
-                    print "If Counter I Packets:", record.inputPackets
-                    print "If Counter I Multicast:", record.inputMulticast
-                    print "If Counter I Broadcast:", record.inputBroadcast
-                    print "If Counter I Discards:", record.inputDiscarded
-                    print "If Counter I Errors:", record.inputErrors
-                    print "If Counter I Unknown:", record.inputUnknown 
-                    print "If Counter O Octets:", record.outputOctets
-                    print "If Counter O Packets:", record.outputPackets
-                    print "If Counter O Multicast:", record.outputMulticast
-                    print "If Counter O Broadcast:", record.outputBroadcast
-                    print "If Counter O Discard:", record.outputDiscarded
-                    print "If Counter O Errors:", record.outputErrors
-                    print "If Counter Promiscuous:", record.promiscuous
+                #if sFlowData.sample[i].record[j].format == 1:
+                    #record = sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    #print "If Counter Index:", record.index
+                    #print "If Counter Type:", record.type
+                    #print "If Counter Speed:", record.speed
+                    #print "If Counter Direction:", record.direction
+                    #print "If Counter Status:", record.status
+                    #print "If Counter I Octets:", record.inputOctets
+                    #print "If Counter I Packets:", record.inputPackets
+                    #print "If Counter I Multicast:", record.inputMulticast
+                    #print "If Counter I Broadcast:", record.inputBroadcast
+                    #print "If Counter I Discards:", record.inputDiscarded
+                    #print "If Counter I Errors:", record.inputErrors
+                    #print "If Counter I Unknown:", record.inputUnknown 
+                    #print "If Counter O Octets:", record.outputOctets
+                    #print "If Counter O Packets:", record.outputPackets
+                    #print "If Counter O Multicast:", record.outputMulticast
+                    #print "If Counter O Broadcast:", record.outputBroadcast
+                    #print "If Counter O Discard:", record.outputDiscarded
+                    #print "If Counter O Errors:", record.outputErrors
+                    #print "If Counter Promiscuous:", record.promiscuous
+                if sFlowData.sample[i].record[j].format == 2:
+                    record = sFlowEthernet(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "Ethernet Alignmet Error:", record.alignmentError
+                    print "Ethernet FCS Error:", record.fcsError
+                    print "Ethernet Single Collision Frames:", record.singleCollision
+                    print "Ethernet Multiple Collision Frames:", record.multipleCollision
+                    print "Ethernet SQE Test Error:", record.sqeTest
+                    print "Ethernet Deferred Transmissions:", record.deferred
+                    print "Ethernet Late Collisions:", record.lateCollision
+                    print "Ethernet Excessiove Collisions:", record.excessiveCollision
+                    print "Ethernet Internal Transmit Error:", record.internalTransmitError
+                    print "Ethernet Carrier Sense Error:", record.carrierSenseError
+                    print "Ethernet Frame Too Long:", record.frameTooLong
+                    print "Ethernet Internal Receive Error:", record.internalReceiveError
+                    print "Ethernet Symbol Error:", record.symbolError
                     
 
 
