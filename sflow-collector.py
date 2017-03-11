@@ -164,6 +164,18 @@ class sFlowVLAN: #2-5
         self.multicast = struct.unpack('>i', dataGram[16:20])[0]
         self.broadcast = struct.unpack('>i', dataGram[20:24])[0]
         self.discard = struct.unpack('>i', dataGram[24:28])[0]
+
+class sFlowProcessor: #2-1001
+        def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        self.cpu5s = struct.unpack('>i', dataGram[0:4])[0]
+        self.cpu1m = struct.unpack('>i', dataGram[4:8])[0] 
+        self.cpu5m = struct.unpack('>i', dataGram[8:12])[0]
+        self.totalMemory = struct.unpack('>q', dataGram[12:20])[0] #64-bit
+        self.freeMemory = struct.unpack('>q', dataGram[20:28])[0] #64-bit
+        
+    
         
 
 class sFlowHostDisc: #2-2000
@@ -307,6 +319,13 @@ while True:
                     #print "VLAN :", record.broadcast
                     #print "VLAN :", record.discard
                     print "Counter 5"
+                elif sFlowData.sample[i].record[j].format == 1001:
+                    print "Processor :", record.cpu5s 
+                    print "Processor :", record.cpu1m  
+                    print "Processor :", record.cpu5m
+                    print "Processor :", record.totalMemory 
+                    print "Processor :", record.freeMemory
+                    print "Counter 1001"
                 elif sFlowData.sample[i].record[j].format == 2000:
                     print "Counter 2000"
                 elif sFlowData.sample[i].record[j].format == 2003:
