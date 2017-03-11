@@ -257,8 +257,10 @@ while True:
             #print "Record Sample Type:", sFlowData.sample[i].record[j].sampleType
             #print "Record Format:", sFlowData.sample[i].record[j].format
             #print "Record Length:", sFlowData.sample[i].record[j].len
-            if sFlowData.sample[i].record[j].sampleType == 2:
-                #if sFlowData.sample[i].record[j].format == 1:
+            if sFlowData.sample[i].record[j].sampleType == 1:
+                print "Flow Record Type:", sFlowData.sample[i].record[j].format  
+            elif sFlowData.sample[i].record[j].sampleType == 2:
+                if sFlowData.sample[i].record[j].format == 1:
                     #record = sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "If Counter Index:", record.index
                     #print "If Counter Type:", record.type
@@ -279,7 +281,8 @@ while True:
                     #print "If Counter O Discard:", record.outputDiscarded
                     #print "If Counter O Errors:", record.outputErrors
                     #print "If Counter Promiscuous:", record.promiscuous
-                #if sFlowData.sample[i].record[j].format == 2:
+                    print "Counter 1"
+                elif sFlowData.sample[i].record[j].format == 2:
                     #record = sFlowEthernet(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Ethernet Alignmet Error:", record.alignmentError
                     #print "Ethernet FCS Error:", record.fcsError
@@ -294,15 +297,22 @@ while True:
                     #print "Ethernet Frame Too Long:", record.frameTooLong
                     #print "Ethernet Internal Receive Error:", record.internalReceiveError
                     #print "Ethernet Symbol Error:", record.symbolError
-                if sFlowData.sample[i].record[j].format == 5:
-                    record = sFlowVLAN(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "VLAN :", record.vlanID
-                    print "VLAN :", record.octets
-                    print "VLAN :", record.unicast
-                    print "VLAN :", record.multicast
-                    print "VLAN :", record.broadcast
-                    print "VLAN :", record.discard
-                    print ""
+                    print "Counter 2"
+                elif sFlowData.sample[i].record[j].format == 5:
+                    #record = sFlowVLAN(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    #print "VLAN :", record.vlanID
+                    #print "VLAN :", record.octets
+                    #print "VLAN :", record.unicast
+                    #print "VLAN :", record.multicast
+                    #print "VLAN :", record.broadcast
+                    #print "VLAN :", record.discard
+                    print "Counter 5"
+                elif sFlowData.sample[i].record[j].format == 2000:
+                    print "Counter 2000"
+                elif sFlowData.sample[i].record[j].format == 2003:
+                    print "Counter 2003"
+                else:
+                    print "Counter Record Type:", sFlowData.sample[i].record[j].format
                     
 
 
