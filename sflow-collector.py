@@ -112,6 +112,16 @@ class sFlowRecord:
 
 #IDEA: Sanity check for the fixed length records could be implimented with a simple value check. 17-03-07
 
+class sFlowExtendedSwitch: #1-1001
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        self.srcVLAN = struct.unpack('>i', dataGram[0:4])[0]
+        self.srcPriority = struct.unpack('>i', dataGram[4:8])[0]
+        self.dstVLAN = struct.unpack('>i', dataGram[8:12])[0]
+        self.dstPriority = struct.unpack('>i', dataGram[12:16])[0]
+        
+
 class sFlowIfCounter: #2-1
     def __init__(self, length, dataGram):
         self.len = length
@@ -166,7 +176,7 @@ class sFlowVLAN: #2-5
         self.discard = struct.unpack('>i', dataGram[24:28])[0]
 
 class sFlowProcessor: #2-1001
-        def __init__(self, length, dataGram):
+    def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
         self.cpu5s = struct.unpack('>i', dataGram[0:4])[0]
@@ -270,7 +280,15 @@ while True:
             #print "Record Format:", sFlowData.sample[i].record[j].format
             #print "Record Length:", sFlowData.sample[i].record[j].len
             if sFlowData.sample[i].record[j].sampleType == 1:
-                print "Flow Record Type:", sFlowData.sample[i].record[j].format  
+                if sFlowData.sample[i].record[j].format == 1001:
+                    record = sFlowExtendedSwitch(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    #print "Extended Switch:", record.srcVLAN
+                    #print "Extended Switch:", record.srcPriority
+                    #print "Extended Switch:", record.dstVLAN
+                    #print "Extended Switch:", record.dstPriority
+                    print "Flow 1001"
+                else:
+                    print "Flow Record Type:", sFlowData.sample[i].record[j].format  
             elif sFlowData.sample[i].record[j].sampleType == 2:
                 if sFlowData.sample[i].record[j].format == 1:
                     #record = sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
@@ -320,11 +338,12 @@ while True:
                     #print "VLAN :", record.discard
                     print "Counter 5"
                 elif sFlowData.sample[i].record[j].format == 1001:
-                    print "Processor :", record.cpu5s 
-                    print "Processor :", record.cpu1m  
-                    print "Processor :", record.cpu5m
-                    print "Processor :", record.totalMemory 
-                    print "Processor :", record.freeMemory
+                    #record = sFlowProcessor(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    #print "Processor :", record.cpu5s 
+                    #print "Processor :", record.cpu1m  
+                    #print "Processor :", record.cpu5m
+                    #print "Processor :", record.totalMemory 
+                    #print "Processor :", record.freeMemory
                     print "Counter 1001"
                 elif sFlowData.sample[i].record[j].format == 2000:
                     print "Counter 2000"
