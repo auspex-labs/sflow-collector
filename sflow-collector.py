@@ -112,6 +112,15 @@ class sFlowRecord:
 
 #IDEA: Sanity check for the fixed length records could be implimented with a simple value check. 17-03-07
 
+class sFlowEthernetFrame: #1-2
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        self.frameLength = struct.unpack('>i', dataGram[0:4])[0]
+        self.srcMAC = binascii.hexlify(dataGram[4:10])
+        self.dstMAC = binascii.hexlify(dataGram[12:18])
+        self.type = struct.unpack('>i', dataGram[20:24])[0]
+
 class sFlowExtendedSwitch: #1-1001
     def __init__(self, length, dataGram):
         self.len = length
@@ -146,7 +155,7 @@ class sFlowIfCounter: #2-1
         self.outputErrors = struct.unpack('>i', dataGram[80:84])[0]
         self.promiscuous = struct.unpack('>i', dataGram[84:88])[0]
 
-class sFlowEthernet: #2-2
+class sFlowEthernetInterface: #2-2
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -280,7 +289,14 @@ while True:
             #print "Record Format:", sFlowData.sample[i].record[j].format
             #print "Record Length:", sFlowData.sample[i].record[j].len
             if sFlowData.sample[i].record[j].sampleType == 1:
-                if sFlowData.sample[i].record[j].format == 1001:
+                if sFlowData.sample[i].record[j].format == 2:
+                    record = sFlowEthernetFrame(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "Ethernet Frame:", record.frameLength
+                    print "Ethernet Frame:", record.srcMAC
+                    print "Ethernet Frame:", record.dstMAC
+                    print "Ethernet Frame:", record.type
+                    print "Flow 2"
+                elif sFlowData.sample[i].record[j].format == 1001:
                     record = sFlowExtendedSwitch(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Extended Switch:", record.srcVLAN
                     #print "Extended Switch:", record.srcPriority
@@ -313,7 +329,7 @@ while True:
                     #print "If Counter Promiscuous:", record.promiscuous
                     print "Counter 1"
                 elif sFlowData.sample[i].record[j].format == 2:
-                    #record = sFlowEthernet(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    #record = sFlowEthernetInterface(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Ethernet Alignmet Error:", record.alignmentError
                     #print "Ethernet FCS Error:", record.fcsError
                     #print "Ethernet Single Collision Frames:", record.singleCollision
