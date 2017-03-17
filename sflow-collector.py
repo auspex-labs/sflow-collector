@@ -112,6 +112,8 @@ class sFlowRecord:
 
 #IDEA: Sanity check for the fixed length records could be implimented with a simple value check. 17-03-07
 
+#Flow
+
 class sFlowEthernetFrame: #1-2
     def __init__(self, length, dataGram):
         self.len = length
@@ -129,7 +131,7 @@ class sFlowExtendedSwitch: #1-1001
         self.srcPriority = struct.unpack('>i', dataGram[4:8])[0]
         self.dstVLAN = struct.unpack('>i', dataGram[8:12])[0]
         self.dstPriority = struct.unpack('>i', dataGram[12:16])[0]
-        
+#Counters        
 
 class sFlowIfCounter: #2-1
     def __init__(self, length, dataGram):
@@ -192,10 +194,7 @@ class sFlowProcessor: #2-1001
         self.cpu1m = struct.unpack('>i', dataGram[4:8])[0] 
         self.cpu5m = struct.unpack('>i', dataGram[8:12])[0]
         self.totalMemory = struct.unpack('>q', dataGram[12:20])[0] #64-bit
-        self.freeMemory = struct.unpack('>q', dataGram[20:28])[0] #64-bit
-        
-    
-        
+        self.freeMemory = struct.unpack('>q', dataGram[20:28])[0] #64-bit       
 
 class sFlowHostDisc: #2-2000
     def __init__(self, length, dataGram):
@@ -216,6 +215,13 @@ class sFlowHostDisc: #2-2000
         osReleaseLength = struct.unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
         dataPosition = dataPosition + 4
         self.osRelease = dataGram[dataPosition:(dataPosition + osReleaseLength)].decode("utf-8")
+
+class sFlowHostAdapters: #2-2001
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        self.adapaters = struct.unpack('>i', dataGram[0:4])[0]
+    
 
 class sFlowHostCPU: #2-2003
     def __init__(self, length, dataGram):
@@ -363,8 +369,14 @@ while True:
                     #print "Processor :", record.freeMemory
                     print "Counter 1001"
                 elif sFlowData.sample[i].record[j].format == 2000:
+                    record = sFlowHostDisc(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     print "Counter 2000"
+                elif sFlowData.sample[i].record[j].format == 2001:
+                    record = sFlowHostAdapters(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "Host Adpaters:", record.adapaters
+                    print "Counter 2001"
                 elif sFlowData.sample[i].record[j].format == 2003:
+                    record = sFlowHostCPU(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     print "Counter 2003"
                 else:
                     print "Counter Record Type:", sFlowData.sample[i].record[j].format
