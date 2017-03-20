@@ -249,6 +249,7 @@ class sFlowHostCPU: #2-2003
         self.guestNice = struct.unpack('>i', dataGram[76:80])[0]
 
 class sFlowHostMemory: #2-2004
+    def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
         self.memTotal = struct.unpack('>q', dataGram[0:8])[0]
