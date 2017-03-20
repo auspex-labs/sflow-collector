@@ -247,6 +247,21 @@ class sFlowHostCPU: #2-2003
         self.virtualInstance = struct.unpack('>i', dataGram[68:72])[0]
         self.guestOS = struct.unpack('>i', dataGram[72:76])[0]
         self.guestNice = struct.unpack('>i', dataGram[76:80])[0]
+
+class sFlowHostMemory: #2-2004
+        self.len = length
+        self.data = dataGram
+        self.memTotal = struct.unpack('>q', dataGram[0:8])[0]
+        self.memFree = struct.unpack('>q', dataGram[8:16])[0]
+        self.memShared = struct.unpack('>q', dataGram[16:24])[0]
+        self.memBuffers = struct.unpack('>q', dataGram[24:32])[0]
+        self.memCache = struct.unpack('>q', dataGram[32:40])[0]
+        self.swapTotal = struct.unpack('>q', dataGram[40:48])[0]
+        self.swapFree = struct.unpack('>q', dataGram[48:56])[0]
+        self.pageIn = struct.unpack('>i', dataGram[56:60])[0]
+        self.pageOut = struct.unpack('>i', dataGram[60:64])[0]
+        self.swapIn = struct.unpack('>i', dataGram[64:68])[0]
+        self.swapOut = struct.unpack('>i', dataGram[68:72])[0]
         
         
      
