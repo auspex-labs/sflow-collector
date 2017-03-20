@@ -227,9 +227,9 @@ class sFlowHostCPU: #2-2003
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.avgLoad1 = struct.unpack('>f', dataGram[0:4])[0]
-        self.avgLoad5 = struct.unpack('>f', dataGram[4:8])[0]
-        self.avgLoad15 = struct.unpack('>f', dataGram[8:12])[0]
+        self.avgLoad1 = struct.unpack('>f', dataGram[0:4])[0] #Floating Point
+        self.avgLoad5 = struct.unpack('>f', dataGram[4:8])[0] #Floating Point
+        self.avgLoad15 = struct.unpack('>f', dataGram[8:12])[0] #Floating Point
         self.runProcess = struct.unpack('>i', dataGram[12:16])[0]
         self.totalProcess = struct.unpack('>i', dataGram[16:20])[0]
         self.numCPU = struct.unpack('>i', dataGram[20:24])[0]
