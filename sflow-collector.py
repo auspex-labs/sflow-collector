@@ -396,17 +396,17 @@ while True:
                     print "Counter 2003"
                 elif sFlowData.sample[i].record[j].format == 2004:
                     record = sFlowHostMemory(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Host Memory Total:", record.memTotal
+                    #print "Host Memory Total:", record.memTotal
                     print "Host Memory Free:", record.memFree
-                    print "Host Memory Shared:", record.memShared
-                    print "Host Memory Buffers:", record.memBuffers
-                    print "Host Memory Cache:", record.memCache
-                    print "Host Swap Memory Total:", record.swapTotal
-                    print "Host Swap Memory Free:", record.swapFree
-                    print "Host Page In:", record.pageIn
-                    print "Host Page Out:", record.pageOut
-                    print "Host Swap Page In:", record.swapIn
-                    print "Host Swap Page Out:", record.swapOut
+                    #print "Host Memory Shared:", record.memShared
+                    #print "Host Memory Buffers:", record.memBuffers
+                    #print "Host Memory Cache:", record.memCache
+                    #print "Host Swap Memory Total:", record.swapTotal
+                    #print "Host Swap Memory Free:", record.swapFree
+                    #print "Host Page In:", record.pageIn
+                    #print "Host Page Out:", record.pageOut
+                    #print "Host Swap Page In:", record.swapIn
+                    #print "Host Swap Page Out:", record.swapOut
                     print "Counter 2004"
                 else:
                     print "Counter Record Type:", sFlowData.sample[i].record[j].format
