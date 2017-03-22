@@ -119,8 +119,8 @@ class sFlowEthernetFrame: #1-2
         self.len = length
         self.data = dataGram
         self.frameLength = struct.unpack('>i', dataGram[0:4])[0]
-        self.srcMAC = binascii.hexlify(dataGram[4:10])
-        self.dstMAC = binascii.hexlify(dataGram[12:18])
+        self.srcMAC = binascii.hexlify(dataGram[4:12])
+        self.dstMAC = binascii.hexlify(dataGram[12:20])
         self.type = struct.unpack('>i', dataGram[20:24])[0]
 
 class sFlowExtendedSwitch: #1-1001
@@ -325,27 +325,26 @@ while True:
             #print "Record Format:", sFlowData.sample[i].record[j].format
             #print "Record Length:", sFlowData.sample[i].record[j].len
             if sFlowData.sample[i].record[j].sampleType == 1:
-                if sFlowData.sample[i].record[j].format == 2:
-                    print "Sequence Number:", sFlowData.sequenceNumber
-                    print "*** *** Flow 2 *** ***"
+                if sFlowData.sample[i].record[j].format == 2 and sFlowData.sample[i].record[j].enterprise == 0:
                     record = sFlowEthernetFrame(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    #print "Ethernet Frame:", record.frameLength
-                    #print "Ethernet Frame:", record.srcMAC
-                    #print "Ethernet Frame:", record.dstMAC
-                    #print "Ethernet Frame:", record.type
+                    #print "Ethernet Frame Length:", record.frameLength
+                    #print "Ethernet Frame src MAC:", record.srcMAC
+                    #print "Ethernet Frame dst MAC:", record.dstMAC
+                    #print "Ethernet Frame Record Type:", record.type
                 elif sFlowData.sample[i].record[j].format == 1001:
                     record = sFlowExtendedSwitch(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Extended Switch:", record.srcVLAN
+                    #print "Extended Switch:", record.srcVLAN
                     #print "Extended Switch:", record.srcPriority
                     #print "Extended Switch:", record.dstVLAN
                     #print "Extended Switch:", record.dstPriority
-                    print "Flow 1001"
+                    #print "Flow 1001"
                 else:
-                    print "Flow Record Type:", sFlowData.sample[i].record[j].format  
+                    print "Flow Record Enterprise:", sFlowData.sample[i].record[j].enterprise
+                    print "Flow Record Type:", sFlowData.sample[i].record[j].format
             elif sFlowData.sample[i].record[j].sampleType == 2:
                 if sFlowData.sample[i].record[j].format == 1:
                     record = sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "If Counter Index:", record.index
+                    #print "If Counter Index:", record.index
                     #print "If Counter Type:", record.type
                     #print "If Counter Speed:", record.speed
                     #print "If Counter Direction:", record.direction
@@ -364,12 +363,12 @@ while True:
                     #print "If Counter O Discard:", record.outputDiscarded
                     #print "If Counter O Errors:", record.outputErrors
                     #print "If Counter Promiscuous:", record.promiscuous
-                    print "Counter 1"
+                    #print "Counter 1"
                 elif sFlowData.sample[i].record[j].format == 2:
                     record = sFlowEthernetInterface(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Ethernet Alignmet Error:", record.alignmentError
                     #print "Ethernet FCS Error:", record.fcsError
-                    print "Ethernet Single Collision Frames:", record.singleCollision
+                    #print "Ethernet Single Collision Frames:", record.singleCollision
                     #print "Ethernet Multiple Collision Frames:", record.multipleCollision
                     #print "Ethernet SQE Test Error:", record.sqeTest
                     #print "Ethernet Deferred Transmissions:", record.deferred
@@ -380,38 +379,38 @@ while True:
                     #print "Ethernet Frame Too Long:", record.frameTooLong
                     #print "Ethernet Internal Receive Error:", record.internalReceiveError
                     #print "Ethernet Symbol Error:", record.symbolError
-                    print "Counter 2"
+                    #print "Counter 2"
                 elif sFlowData.sample[i].record[j].format == 5:
                     record = sFlowVLAN(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "VLAN :", record.vlanID
+                    #print "VLAN :", record.vlanID
                     #print "VLAN :", record.octets
                     #print "VLAN :", record.unicast
                     #print "VLAN :", record.multicast
                     #print "VLAN :", record.broadcast
                     #print "VLAN :", record.discard
-                    print "Counter 5"
+                    #print "Counter 5"
                 elif sFlowData.sample[i].record[j].format == 1001:
                     record = sFlowProcessor(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Processor :", record.cpu5s 
+                    #print "Processor :", record.cpu5s 
                     #print "Processor :", record.cpu1m  
                     #print "Processor :", record.cpu5m
                     #print "Processor :", record.totalMemory 
                     #print "Processor :", record.freeMemory
-                    print "Counter 1001"
+                    #print "Counter 1001"
                 elif sFlowData.sample[i].record[j].format == 2000:
                     record = sFlowHostDisc(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Counter 2000"
+                    #print "Counter 2000"
                 elif sFlowData.sample[i].record[j].format == 2001:
                     record = sFlowHostAdapters(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Host Adpaters:", record.adapaters
-                    print "Counter 2001"
+                    #print "Host Adpaters:", record.adapaters
+                    #print "Counter 2001"
                 elif sFlowData.sample[i].record[j].format == 2003:
                     record = sFlowHostCPU(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Counter 2003"
+                    #print "Counter 2003"
                 elif sFlowData.sample[i].record[j].format == 2004:
                     record = sFlowHostMemory(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Memory Total:", record.memTotal
-                    print "Host Memory Free:", record.memFree
+                    #print "Host Memory Free:", record.memFree
                     #print "Host Memory Shared:", record.memShared
                     #print "Host Memory Buffers:", record.memBuffers
                     #print "Host Memory Cache:", record.memCache
@@ -421,20 +420,21 @@ while True:
                     #print "Host Page Out:", record.pageOut
                     #print "Host Swap Page In:", record.swapIn
                     #print "Host Swap Page Out:", record.swapOut
-                    print "Counter 2004"
+                    #print "Counter 2004"
                 elif sFlowData.sample[i].record[j].format == 2005:
                     record = sFlowHostDiskIO(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Host disk:", record.diskTotal
-                    print "Host disk:", record.diskFree
-                    print "Host disk:", record.partMaxused
-                    print "Host disk:", record.read
-                    print "Host disk:", record.readByte
-                    print "Host disk:", record.readTime
-                    print "Host disk:", record.write
-                    print "Host disk:", record.writeByte
-                    print "Host disk:", record.writeTime
-                    print "Counter 2005"
+                    #print "Host disk:", record.diskTotal
+                    #print "Host disk:", record.diskFree
+                    #print "Host disk:", record.partMaxused
+                    #print "Host disk:", record.read
+                    #print "Host disk:", record.readByte
+                    #print "Host disk:", record.readTime
+                    #print "Host disk:", record.write
+                    #print "Host disk:", record.writeByte
+                    #print "Host disk:", record.writeTime
+                    #print "Counter 2005"
                 else:
+                    print "Counter Record Enterprise:", sFlowData.sample[i].record[j].enterprise
                     print "Counter Record Type:", sFlowData.sample[i].record[j].format
                     
 
