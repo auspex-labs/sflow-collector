@@ -252,17 +252,31 @@ class sFlowHostMemory: #2-2004
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.memTotal = struct.unpack('>q', dataGram[0:8])[0]
-        self.memFree = struct.unpack('>q', dataGram[8:16])[0]
-        self.memShared = struct.unpack('>q', dataGram[16:24])[0]
-        self.memBuffers = struct.unpack('>q', dataGram[24:32])[0]
-        self.memCache = struct.unpack('>q', dataGram[32:40])[0]
-        self.swapTotal = struct.unpack('>q', dataGram[40:48])[0]
-        self.swapFree = struct.unpack('>q', dataGram[48:56])[0]
+        self.memTotal = struct.unpack('>q', dataGram[0:8])[0] #64-bit
+        self.memFree = struct.unpack('>q', dataGram[8:16])[0] #64-bit
+        self.memShared = struct.unpack('>q', dataGram[16:24])[0] #64-bit
+        self.memBuffers = struct.unpack('>q', dataGram[24:32])[0] #64-bit
+        self.memCache = struct.unpack('>q', dataGram[32:40])[0] #64-bit
+        self.swapTotal = struct.unpack('>q', dataGram[40:48])[0] #64-bit
+        self.swapFree = struct.unpack('>q', dataGram[48:56])[0] #64-bit
         self.pageIn = struct.unpack('>i', dataGram[56:60])[0]
         self.pageOut = struct.unpack('>i', dataGram[60:64])[0]
         self.swapIn = struct.unpack('>i', dataGram[64:68])[0]
         self.swapOut = struct.unpack('>i', dataGram[68:72])[0]
+
+class sFlowHostDiskIO: #2-2005
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        self.diskTotal = struct.unpack('>q', dataGram[0:8])[0] #64-bit
+        self.diskFree = struct.unpack('>q', dataGram[8:16])[0] #64-bit
+        self.partMaxused = (struct.unpack('>i', dataGram[16:20])[0])/ float(100)
+        self.read = struct.unpack('>i', dataGram[20:24])[0]
+        self.readByte = struct.unpack('>q', dataGram[24:32])[0] #64-bit
+        self.readTime = struct.unpack('>i', dataGram[32:36])[0]
+        self.write = struct.unpack('>i', dataGram[36:40])[0]
+        self.writeByte = struct.unpack('>q', dataGram[40:48])[0] #64-bit
+        self.writeTime = struct.unpack('>i', dataGram[48:52])[0]
         
         
      
@@ -408,6 +422,18 @@ while True:
                     #print "Host Swap Page In:", record.swapIn
                     #print "Host Swap Page Out:", record.swapOut
                     print "Counter 2004"
+                elif sFlowData.sample[i].record[j].format == 2005:
+                    record = sFlowHostDiskIO(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "Host disk:", record.diskTotal
+                    print "Host disk:", record.diskFree
+                    print "Host disk:", record.partMaxused
+                    print "Host disk:", record.read
+                    print "Host disk:", record.readByte
+                    print "Host disk:", record.readTime
+                    print "Host disk:", record.write
+                    print "Host disk:", record.writeByte
+                    print "Host disk:", record.writeTime
+                    print "Counter 2005"
                 else:
                     print "Counter Record Type:", sFlowData.sample[i].record[j].format
                     
