@@ -35,6 +35,7 @@ counter_data		0		2005		host_disk_io
 opaque		enterprise		format	struct
 
 flow_data			0		1		sampled_header
+flow_data			8800		2		PMACCT
 
 
 counter_data		0		2007		mib2_ip_group
