@@ -277,6 +277,26 @@ class sFlowHostDiskIO: #2-2005
         self.write = struct.unpack('>i', dataGram[36:40])[0]
         self.writeByte = struct.unpack('>q', dataGram[40:48])[0] #64-bit
         self.writeTime = struct.unpack('>i', dataGram[48:52])[0]
+
+class sFlowMib2IP: #2-2007
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+
+class sFlowMib2ICMP: #2-2008
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+
+class sFlowMib2TCP: #2-2009
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+
+class sFlowMib2UDP: #2-2010
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
         
         
      
