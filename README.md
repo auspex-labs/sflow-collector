@@ -27,6 +27,7 @@ counter_data		0		2000		host_description
 counter_data		0		2003		host_cpu
 counter_data		0		2004		host_memory
 counter_data		0		2005		host_disk_io
+counter_data		0		2007		mib2_ip_group
 ```
 
 ### Planned
@@ -37,8 +38,7 @@ opaque		enterprise		format	struct
 flow_data			0		1		sampled_header
 flow_data			8800		2		PMACCT
 
-
-counter_data		0		2007		mib2_ip_group
+counter_data		0		2006		host_net_io
 counter_data		0		2008		mib2_icmp_group
 counter_data		0		2009		mib2_tcp_group
 counter_data		0		2010		mib2_udp_group
