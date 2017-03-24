@@ -282,7 +282,26 @@ class sFlowMib2IP: #2-2007
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-
+        self.forwarding = struct.unpack('>i', dataGram[0:4])[0]
+        self.defaultTTL = struct.unpack('>i', dataGram[4:8])[0]
+        self.inReceives = struct.unpack('>i', dataGram[8:12])[0]
+        self.inHeaderErrors = struct.unpack('>i', dataGram[12:16])[0]
+        self.inAddressErrors = struct.unpack('>i', dataGram[16:20])[0]
+        self.inForwardDatagrams = struct.unpack('>i', dataGram[20:24])[0]
+        self.inUnknownProtocols = struct.unpack('>i', dataGram[24:28])[0]
+        self.inDiscards = struct.unpack('>i', dataGram[28:32])[0]
+        self.inDelivers = struct.unpack('>i', dataGram[32:36])[0]
+        self.outRequests = struct.unpack('>i', dataGram[36:40])[0]
+        self.outDiscards = struct.unpack('>i', dataGram[40:44])[0]
+        self.outNoRoutes = struct.unpack('>i', dataGram[44:48])[0]
+        self.reassemblyTimeout = struct.unpack('>i', dataGram[48:52])[0]
+        self.reassemblyRequired = struct.unpack('>i', dataGram[52:56])[0]
+        self.reassemblyOkay = struct.unpack('>i', dataGram[56:60])[0]
+        self.reassemblyFail = struct.unpack('>i', dataGram[60:64])[0]
+        self.fragmentOkay = struct.unpack('>i', dataGram[64:68])[0]
+        self.fragmentFail = struct.unpack('>i', dataGram[68:72])[0]
+        self.fragmentCreate = struct.unpack('>i', dataGram[72:76])[0]
+        
 class sFlowMib2ICMP: #2-2008
     def __init__(self, length, dataGram):
         self.len = length
@@ -453,6 +472,18 @@ while True:
                     #print "Host disk:", record.writeByte
                     #print "Host disk:", record.writeTime
                     #print "Counter 2005"
+                elif sFlowData.sample[i].record[j].format == 2007:
+                    record = sFlowMib2IP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "Counter 2007"
+                elif sFlowData.sample[i].record[j].format == 2008:
+                    record = sFlowMib2ICMP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "Counter 2008"
+                elif sFlowData.sample[i].record[j].format == 2009:
+                    record = sFlowMib2TCP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "Counter 2009"
+                elif sFlowData.sample[i].record[j].format == 2010:
+                    record = sFlowMib2UDP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "Counter 2010"
                 else:
                     print "Counter Record Enterprise:", sFlowData.sample[i].record[j].enterprise
                     print "Counter Record Type:", sFlowData.sample[i].record[j].format
