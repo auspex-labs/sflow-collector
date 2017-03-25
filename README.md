@@ -46,15 +46,23 @@ counter_data		0		2010		mib2_udp_group
 
 ## References
 
+### sFlow Overview
+
 https://en.wikipedia.org/wiki/SFlow
 
 http://www.sflow.org/developers/specifications.php
 
 http://www.sflow.org/developers/structures.php
 
+### Structure Diagrams
+
 http://www.sflow.org/developers/diagrams/sFlowV5FlowData.pdf
 
 http://www.sflow.org/developers/diagrams/sFlowV5CounterData.pdf
+
+### MIB-2 Structures (Counter_Data 0 2007-2010)
+
+http://www.sflow.org/sflow_host_ip.txt
 
 https://www.ietf.org/rfc/rfc1213.txt
 
