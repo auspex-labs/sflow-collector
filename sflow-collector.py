@@ -304,9 +304,34 @@ class sFlowMib2IP: #2-2007
         
 class sFlowMib2ICMP: #2-2008
     def __init__(self, length, dataGram):
-        self.len = length
+        self.len = length 
         self.data = dataGram
-
+        self.inMessage = struct.unpack('>i', dataGram[0:4])[0]
+        self.inError = struct.unpack('>i', dataGram[4:8])[0]
+        self.inDestinationUnreachable = struct.unpack('>i', dataGram[8:12])[0]
+        self.inTimeExceeded = struct.unpack('>i', dataGram[12:16])[0]
+        self.inParameterProblem = struct.unpack('>i', dataGram[16:20])[0]
+        self.inSourceQuence = struct.unpack('>i', dataGram[20:24])[0]
+        self.inRedirect = struct.unpack('>i', dataGram[24:28])[0]
+        self.inEcho = struct.unpack('>i', dataGram[28:32])[0]
+        self.inEchoReply = struct.unpack('>i', dataGram[32:36])[0]
+        self.inTimestamp = struct.unpack('>i', dataGram[36:40])[0]
+        self.inAddressMask = struct.unpack('>i', dataGram[40:44])[0]
+        self.inAddressMaskReply = struct.unpack('>i', dataGram[44:48])[0]
+        self.outMessage = struct.unpack('>i', dataGram[48:52])[0]
+        self.outError = struct.unpack('>i', dataGram[52:56])[0]
+        self.outDestinationUnreachable = struct.unpack('>i', dataGram[56:60])[0]
+        self.outTimeExceeded = struct.unpack('>i', dataGram[60:64])[0]
+        self.outParameterProblem = struct.unpack('>i', dataGram[64:68])[0]
+        self.outSourceQuence = struct.unpack('>i', dataGram[68:72])[0]
+        self.outRedirect = struct.unpack('>i', dataGram[72:76])[0]
+        self.outEcho = struct.unpack('>i', dataGram[76:80])[0]
+        self.outEchoReply = struct.unpack('>i', dataGram[80:84])[0]
+        self.outTimestamp = struct.unpack('>i', dataGram[84:88])[0]
+        self.outTimestampReply = struct.unpack('>i', dataGram[88:92])[0]
+        self.outAddressMask = struct.unpack('>i', dataGram[92:96])[0]
+        self.outAddressMaskReplay = struct.unpack('>i', dataGram[96:100])[0]
+        
 class sFlowMib2TCP: #2-2009
     def __init__(self, length, dataGram):
         self.len = length
