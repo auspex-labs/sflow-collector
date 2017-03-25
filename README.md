@@ -15,8 +15,8 @@ This is a work in progess.
 ```
 opaque		enterprise		format	struct
 
-flow_data		0		2		sampled_ethernet
-flow_data		0		1001		extended_switch	
+flow_data			0		2		sampled_ethernet
+flow_data			0		1001		extended_switch	
 
 counter_data		0		1		if_counters
 counter_data		0		2		ethernet_counters
@@ -28,6 +28,7 @@ counter_data		0		2003		host_cpu
 counter_data		0		2004		host_memory
 counter_data		0		2005		host_disk_io
 counter_data		0		2007		mib2_ip_group
+counter_data		0		2008		mib2_icmp_group
 ```
 
 ### Planned
@@ -35,11 +36,10 @@ counter_data		0		2007		mib2_ip_group
 ```
 opaque		enterprise		format	struct
 
-flow_data		0		1		sampled_header
-flow_data		8800		2		PMACCT
+flow_data			0		1		sampled_header
+flow_data			8800		2		PMACCT
 
 counter_data		0		2006		host_net_io
-counter_data		0		2008		mib2_icmp_group
 counter_data		0		2009		mib2_tcp_group
 counter_data		0		2010		mib2_udp_group
 ```
