@@ -336,7 +336,22 @@ class sFlowMib2TCP: #2-2009
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-
+        self.algorithm = struct.unpack('>i', dataGram[0:4])[0]
+        self.rtoMin = struct.unpack('>i', dataGram[4:8])[0]
+        self.rtoMax = struct.unpack('>i', dataGram[8:12])[0]
+        self.maxConnection = struct.unpack('>i', dataGram[12:16])[0]
+        self.activeOpen = struct.unpack('>i', dataGram[16:20])[0]
+        self.passiveOpen = struct.unpack('>i', dataGram[20:24])[0]
+        self.attemptFail = struct.unpack('>i', dataGram[24:28])[0]
+        self.establishedReset = struct.unpack('>i', dataGram[28:32])[0]
+        self.currentEstablished = struct.unpack('>i', dataGram[32:36])[0]
+        self.inSegment = struct.unpack('>i', dataGram[36:40])[0]
+        self.outSegment = struct.unpack('>i', dataGram[40:44])[0]
+        self.retransmitSegment = struct.unpack('>i', dataGram[44:48])[0]
+        self.inError = struct.unpack('>i', dataGram[48:52])[0]
+        self.outReset = struct.unpack('>i', dataGram[52:56])[0]
+        self.inCsumError = struct.unpack('>i', dataGram[56:60])[0]
+        
 class sFlowMib2UDP: #2-2010
     def __init__(self, length, dataGram):
         self.len = length
@@ -499,13 +514,26 @@ while True:
                     #print "Counter 2005"
                 elif sFlowData.sample[i].record[j].format == 2007:
                     record = sFlowMib2IP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Counter 2007"
                 elif sFlowData.sample[i].record[j].format == 2008:
                     record = sFlowMib2ICMP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Counter 2008"
                 elif sFlowData.sample[i].record[j].format == 2009:
                     record = sFlowMib2TCP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     print "Counter 2009"
+                    print "TCP Algorithm:", record.algorithm
+                    print "TCP RTO Min:", record.rtoMin
+                    print "TCP RTO Max:", record.rtoMax
+                    print "TCP Max Connections:", record.maxConnection
+                    print "TCP Active Open:", record.activeOpen
+                    print "TCP Passive Open:", record.passiveOpen
+                    print "TCP Attempt Fail:", record.attemptFail
+                    print "TCP Established Reset:", record.establishedReset
+                    print "TCP Current Established:", record.currentEstablished
+                    print "TCP In Segments:", record.inSegment
+                    print "TCP Out Segments:", record.outSegment
+                    print "TCP Retransmit Segemnt:", record.retransmitSegment
+                    print "TCP In Error:", record.inError
+                    print "TCP Out Reset:", record.outReset
+                    print "TCP In C sum Error:", record.inCsumError
                 elif sFlowData.sample[i].record[j].format == 2010:
                     record = sFlowMib2UDP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     print "Counter 2010"
