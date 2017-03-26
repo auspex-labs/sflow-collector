@@ -368,12 +368,12 @@ sock.bind((UDP_IP, UDP_PORT))
 
 while True:
                                                  
-    data, addr = sock.recvfrom(1386) # 1386 bytes is the largest possible sFlow packet
+    data, addr = sock.recvfrom(3000) # 1386 bytes is the largest possible sFlow packet
     sFlowData = sFlow(data)
 
     print ""
     print "Source:", addr[0]
-    #print "length:", sFlowData.len
+    print "length:", sFlowData.len
     #print "DG Version:", sFlowData.dgVersion
     #print "Address Type:", sFlowData.addressType
     #print "Agent Address:", sFlowData.agentAddress
