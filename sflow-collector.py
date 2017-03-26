@@ -518,22 +518,22 @@ while True:
                     record = sFlowMib2ICMP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                 elif sFlowData.sample[i].record[j].format == 2009:
                     record = sFlowMib2TCP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Counter 2009"
-                    print "TCP Algorithm:", record.algorithm
-                    print "TCP RTO Min:", record.rtoMin
-                    print "TCP RTO Max:", record.rtoMax
-                    print "TCP Max Connections:", record.maxConnection
-                    print "TCP Active Open:", record.activeOpen
-                    print "TCP Passive Open:", record.passiveOpen
-                    print "TCP Attempt Fail:", record.attemptFail
-                    print "TCP Established Reset:", record.establishedReset
-                    print "TCP Current Established:", record.currentEstablished
-                    print "TCP In Segments:", record.inSegment
-                    print "TCP Out Segments:", record.outSegment
-                    print "TCP Retransmit Segemnt:", record.retransmitSegment
-                    print "TCP In Error:", record.inError
-                    print "TCP Out Reset:", record.outReset
-                    print "TCP In C sum Error:", record.inCsumError
+                    #print "Counter 2009"
+                    #print "TCP Algorithm:", record.algorithm
+                    #print "TCP RTO Min:", record.rtoMin
+                    #print "TCP RTO Max:", record.rtoMax
+                    #print "TCP Max Connections:", record.maxConnection
+                    #print "TCP Active Open:", record.activeOpen
+                    #print "TCP Passive Open:", record.passiveOpen
+                    #print "TCP Attempt Fail:", record.attemptFail
+                    #print "TCP Established Reset:", record.establishedReset
+                    #print "TCP Current Established:", record.currentEstablished
+                    #print "TCP In Segments:", record.inSegment
+                    #print "TCP Out Segments:", record.outSegment
+                    #print "TCP Retransmit Segemnt:", record.retransmitSegment
+                    #print "TCP In Error:", record.inError
+                    #print "TCP Out Reset:", record.outReset
+                    #print "TCP In C sum Error:", record.inCsumError
                 elif sFlowData.sample[i].record[j].format == 2010:
                     record = sFlowMib2UDP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     print "Counter 2010"
