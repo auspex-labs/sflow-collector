@@ -525,6 +525,8 @@ while True:
                     #print "Host disk:", record.writeByte
                     #print "Host disk:", record.writeTime
                     #print "Counter 2005"
+                elif sFlowData.sample[i].record[j].format == 2006:
+                    record = sFlowHostNetIO(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                 elif sFlowData.sample[i].record[j].format == 2007:
                     record = sFlowMib2IP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                 elif sFlowData.sample[i].record[j].format == 2008:

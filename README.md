@@ -27,6 +27,7 @@ counter_data		0		2001		host_adapaters
 counter_data		0		2003		host_cpu
 counter_data		0		2004		host_memory
 counter_data		0		2005		host_disk_io
+counter_data		0		2006		host_net_io
 counter_data		0		2007		mib2_ip_group
 counter_data		0		2008		mib2_icmp_group
 counter_data		0		2009		mib2_tcp_group
@@ -42,7 +43,6 @@ flow_data			0		1		sampled_header
 flow_data			8800		2		PMACCT
 
 counter_data		0		2002		host_parent
-counter_data		0		2006		host_net_io
 counter_data		0		2010		mib2_udp_group
 counter_data		0		2100		virt_node
 counter_data		0		2101		virt_cpu
