@@ -11,6 +11,16 @@ class sFlow:
 
         class Sample:
             def __init__(self, header, sampleSize, dataGram):
+
+                class Record:
+                    def __init__(self, header, length, sampleType, dataGram):
+                        self.header = header
+                        self.enterprise = (self.header & 4294901760)/4096
+                        self.format = (self.header & 4095) 
+                        self.len = length
+                        self.sampleType = sampleType
+                        self.data = dataGram
+                
                 self.record = []
                 self.data = dataGram
                 SampleHeader = struct.unpack('>i', header)[0]
@@ -40,7 +50,7 @@ class sFlow:
                             RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
                             RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
                             RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]
-                            self.record.append(sFlowRecord(RecordHeader, RecordSize, self.sampleType, RecordData))
+                            self.record.append(Record(RecordHeader, RecordSize, self.sampleType, RecordData))
                             dataPosition = dataPosition + 8 + RecordSize
                 
                 elif self.sampleType == 2: #Counters
@@ -56,7 +66,7 @@ class sFlow:
                             RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
                             RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
                             RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize + 8)]
-                            self.record.append(sFlowRecord(RecordHeader, RecordSize, self.sampleType, RecordData))
+                            self.record.append(Record(RecordHeader, RecordSize, self.sampleType, RecordData))
                             dataPosition = dataPosition + 8 + RecordSize
                 else:
                         self.recordCount = 0
@@ -66,8 +76,8 @@ class sFlow:
                         self.inputInterface = 0
                         self.outputInterface = 0
 
-# Sample End
 
+        # Begin sFlow
         
         dataPosition = 0
         self.sample = []
@@ -104,72 +114,6 @@ class sFlow:
                 self.sample.append(Sample(SampleHeader, SampleSize, SampleDataGram))
                 dataPosition = dataPosition + 8 + SampleSize
 
-class sFlowSample:
-    def __init__(self, header, sampleSize, dataGram):
-        self.record = []
-        self.data = dataGram
-        SampleHeader = struct.unpack('>i', header)[0]
-        
-        self.sequence = struct.unpack('>i', dataGram[0:4])[0]
-        SampleSource = struct.unpack('>i', dataGram[4:8])[0]
-        
-        self.enterprise = (SampleHeader & 4294963200)/4096
-        self.sampleType = (SampleHeader & 4095) # 0 sample_data / 1 flow_data (single) / 2 counter_data (single) / 3 flow_data (expanded) / 4 counter_data (expanded)
-        self.len = sampleSize
-        
-        self.sourceType = (SampleSource & 4278190080)/16777216
-        self.sourceIndex = (SampleSource & 16777215)
-        
-        dataPosition = 8
-        if self.sampleType == 1: #Flow
-                self.sampleRate = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
-                self.samplePool = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-                self.droppedPackets = struct.unpack('>i', dataGram[(dataPosition + 8):(dataPosition + 12)])[0]
-                self.inputInterface = struct.unpack('>i', dataGram[(dataPosition + 12):(dataPosition + 16)])[0]
-                self.outputInterface = struct.unpack('>i', dataGram[(dataPosition + 16):(dataPosition + 20)])[0]
-                self.recordCount = struct.unpack('>i', dataGram[(dataPosition + 20):(dataPosition + 24)])[0]
-                dataPosition = 32
-                
-                for i in range(self.recordCount):
-                    RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
-                    RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-                    RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]
-                    self.record.append(sFlowRecord(RecordHeader, RecordSize, self.sampleType, RecordData))
-                    dataPosition = dataPosition + 8 + RecordSize
-                
-        elif self.sampleType == 2: #Counters
-                self.recordCount = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
-                self.sampleRate = 0
-                self.samplePool = 0
-                self.droppedPackets = 0
-                self.inputInterface = 0
-                self.outputInterface = 0
-                dataPosition = 12
-
-                for i in range(self.recordCount):
-                    RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
-                    RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-                    RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize + 8)]
-                    self.record.append(sFlowRecord(RecordHeader, RecordSize, self.sampleType, RecordData))
-                    dataPosition = dataPosition + 8 + RecordSize
-        else:
-                self.recordCount = 0
-                self.sampleRate = 0
-                self.samplePool = 0
-                self.droppedPackets = 0
-                self.inputInterface = 0
-                self.outputInterface = 0
-                
-
-            
-class sFlowRecord:
-    def __init__(self, header, length, sampleType, dataGram):
-        self.header = header
-        self.enterprise = (self.header & 4294901760)/4096
-        self.format = (self.header & 4095) 
-        self.len = length
-        self.sampleType = sampleType
-        self.data = dataGram
 
 #IDEA: Sanity check for the fixed length records could be implimented with a simple value check. 17-03-07
 
