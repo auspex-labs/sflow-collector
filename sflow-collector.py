@@ -4,13 +4,23 @@ import struct
 import uuid
 import binascii
 
-#The sFlow Collector is a set of classes for presenting sFlow data.
+# The sFlow Collector is a class for parsing sFlow data.
+
+# sFlow datagrams contain a header, which may contain samples which will contain one or more records. 
+# The datagram may not contain a sample, but if it does there will be at least on record.
+# The records may have different formats.
+
+#IDEA: Is the raw data for each block actually needed? What is the cost for preserving them?
 
 class sFlow:
     def __init__(self, dataGram):
 
+        # sFlow Sample class.
+
         class Sample:
             def __init__(self, header, sampleSize, dataGram):
+
+            	#sFlow Record class.
 
                 class Record:
                     def __init__(self, header, length, sampleType, dataGram):
@@ -36,6 +46,8 @@ class sFlow:
                 self.sourceIndex = (SampleSource & 16777215)
         
                 dataPosition = 8
+
+                # 
                 
                 if self.sampleType == 1: #Flow
                         self.sampleRate = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
@@ -117,7 +129,7 @@ class sFlow:
 
 #IDEA: Sanity check for the fixed length records could be implimented with a simple value check. 17-03-07
 
-#Flow
+#Flow Record Types
 
 class sFlowEthernetFrame: #1-2
     def __init__(self, length, dataGram):
@@ -136,7 +148,8 @@ class sFlowExtendedSwitch: #1-1001
         self.srcPriority = struct.unpack('>i', dataGram[4:8])[0]
         self.dstVLAN = struct.unpack('>i', dataGram[8:12])[0]
         self.dstPriority = struct.unpack('>i', dataGram[12:16])[0]
-#Counters        
+
+#Counter Record Types
 
 class sFlowIfCounter: #2-1
     def __init__(self, length, dataGram):
