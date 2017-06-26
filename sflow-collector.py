@@ -6,8 +6,10 @@ import binascii
 
 # The sFlow Collector is a class for parsing sFlow data.
 
-# sFlow datagrams contain a header, which may contain samples which will contain one or more records. 
+# sFlow datagrams contain a header, which may contain samples which may contain one or more samples.
+#
 # The datagram may not contain a sample, but if it does there will be at least on record.
+#
 # The records may have different formats.
 
 #IDEA: Is the raw data for each block actually needed? What is the cost for preserving them?
@@ -399,8 +401,10 @@ sock.bind((UDP_IP, UDP_PORT))
 
 while True:
                                                  
-    data, addr = sock.recvfrom(3000) # 1386 bytes is the largest possible sFlow packet
+    data, addr = sock.recvfrom(3000) # 1386 bytes is the largest possible sFlow packet, by spec 3000 seems to be the number by practice
     sFlowData = sFlow(data)
+
+    #Below this point is test code.
 
     print ""
     print "Source:", addr[0]
