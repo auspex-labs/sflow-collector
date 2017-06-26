@@ -133,7 +133,7 @@ class sFlow:
 
 #Flow Record Types
 
-class sFlowEthernetFrame: #1-2
+class sFlowEthernetFrame: #1-2  (24 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -142,7 +142,7 @@ class sFlowEthernetFrame: #1-2
         self.dstMAC = binascii.hexlify(dataGram[12:20])
         self.type = struct.unpack('>i', dataGram[20:24])[0]
 
-class sFlowExtendedSwitch: #1-1001
+class sFlowExtendedSwitch: #1-1001 (16 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -153,7 +153,7 @@ class sFlowExtendedSwitch: #1-1001
 
 #Counter Record Types
 
-class sFlowIfCounter: #2-1
+class sFlowIfCounter: #2-1 (88 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -177,7 +177,7 @@ class sFlowIfCounter: #2-1
         self.outputErrors = struct.unpack('>i', dataGram[80:84])[0]
         self.promiscuous = struct.unpack('>i', dataGram[84:88])[0]
 
-class sFlowEthernetInterface: #2-2
+class sFlowEthernetInterface: #2-2 (52 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -195,7 +195,7 @@ class sFlowEthernetInterface: #2-2
         self.internalReceiveError = struct.unpack('>i', dataGram[44:48])[0]
         self.symbolError = struct.unpack('>i', dataGram[48:52])[0]
 
-class sFlowVLAN: #2-5
+class sFlowVLAN: #2-5 (28 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -206,7 +206,7 @@ class sFlowVLAN: #2-5
         self.broadcast = struct.unpack('>i', dataGram[20:24])[0]
         self.discard = struct.unpack('>i', dataGram[24:28])[0]
 
-class sFlowProcessor: #2-1001
+class sFlowProcessor: #2-1001 (28 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -216,7 +216,7 @@ class sFlowProcessor: #2-1001
         self.totalMemory = struct.unpack('>q', dataGram[12:20])[0] #64-bit
         self.freeMemory = struct.unpack('>q', dataGram[20:28])[0] #64-bit       
 
-class sFlowHostDisc: #2-2000
+class sFlowHostDisc: #2-2000 (variable length)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -236,14 +236,14 @@ class sFlowHostDisc: #2-2000
         dataPosition = dataPosition + 4
         self.osRelease = dataGram[dataPosition:(dataPosition + osReleaseLength)].decode("utf-8")
 
-class sFlowHostAdapters: #2-2001
+class sFlowHostAdapters: #2-2001 (4 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
         self.adapaters = struct.unpack('>i', dataGram[0:4])[0]
     
 
-class sFlowHostCPU: #2-2003
+class sFlowHostCPU: #2-2003 (80 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -268,7 +268,7 @@ class sFlowHostCPU: #2-2003
         self.guestOS = struct.unpack('>i', dataGram[72:76])[0]
         self.guestNice = struct.unpack('>i', dataGram[76:80])[0]
 
-class sFlowHostMemory: #2-2004
+class sFlowHostMemory: #2-2004 (72 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -284,7 +284,7 @@ class sFlowHostMemory: #2-2004
         self.swapIn = struct.unpack('>i', dataGram[64:68])[0]
         self.swapOut = struct.unpack('>i', dataGram[68:72])[0]
 
-class sFlowHostDiskIO: #2-2005
+class sFlowHostDiskIO: #2-2005 (52 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -298,7 +298,7 @@ class sFlowHostDiskIO: #2-2005
         self.writeByte = struct.unpack('>q', dataGram[40:48])[0] #64-bit
         self.writeTime = struct.unpack('>i', dataGram[48:52])[0]
 
-class sFlowHostNetIO: #2-2006
+class sFlowHostNetIO: #2-2006 (40 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -311,7 +311,7 @@ class sFlowHostNetIO: #2-2006
         self.outError = struct.unpack('>i', dataGram[32:36])[0]
         self.outDrop = struct.unpack('>i', dataGram[36:40])[0]
 
-class sFlowMib2IP: #2-2007
+class sFlowMib2IP: #2-2007 (76 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
@@ -335,7 +335,7 @@ class sFlowMib2IP: #2-2007
         self.fragmentFail = struct.unpack('>i', dataGram[68:72])[0]
         self.fragmentCreate = struct.unpack('>i', dataGram[72:76])[0]
         
-class sFlowMib2ICMP: #2-2008
+class sFlowMib2ICMP: #2-2008 (100 bytes)
     def __init__(self, length, dataGram):
         self.len = length 
         self.data = dataGram
@@ -365,7 +365,7 @@ class sFlowMib2ICMP: #2-2008
         self.outAddressMask = struct.unpack('>i', dataGram[92:96])[0]
         self.outAddressMaskReplay = struct.unpack('>i', dataGram[96:100])[0]
         
-class sFlowMib2TCP: #2-2009
+class sFlowMib2TCP: #2-2009 (60 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
