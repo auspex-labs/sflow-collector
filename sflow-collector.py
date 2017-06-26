@@ -385,10 +385,18 @@ class sFlowMib2TCP: #2-2009 (60 bytes)
         self.outReset = struct.unpack('>i', dataGram[52:56])[0]
         self.inCsumError = struct.unpack('>i', dataGram[56:60])[0]
         
-class sFlowMib2UDP: #2-2010
+class sFlowMib2UDP: #2-2010 (28 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
+        self.inDatagrams = struct.unpack('>i', dataGram[0:4])[0]
+        self.noPorts = struct.unpack('>i', dataGram[4:8])[0]
+        self.inErrors = struct.unpack('>i', dataGram[8:12])[0]
+        self.outDatagrams = struct.unpack('>i', dataGram[12:16])[0]
+        self.receiveBufferError = struct.unpack('>i', dataGram[16:20])[0]
+        self.sendBufferError = struct.unpack('>i', dataGram[20:24])[0]
+        self.inCheckSumError = struct.unpack('>i', dataGram[24:28])[0]
+        
         
         
      
@@ -408,17 +416,17 @@ while True:
 
     print ""
     print "Source:", addr[0]
-    print "length:", sFlowData.len
+    #print "length:", sFlowData.len
     #print "DG Version:", sFlowData.dgVersion
     #print "Address Type:", sFlowData.addressType
     #print "Agent Address:", sFlowData.agentAddress
     #print "Sub Agent:", sFlowData.subAgent
-    print "Sequence Number:", sFlowData.sequenceNumber
+    #print "Sequence Number:", sFlowData.sequenceNumber
     #print "System UpTime:", sFlowData.sysUpTime
     #print "Number of Samples:", sFlowData.NumberSample
     #print ""
     for i in range(sFlowData.NumberSample):
-        print "Sample Number:", i + 1
+        #print "Sample Number:", i + 1
         #print "Sample Sequence:", sFlowData.sample[i].sequence
         #print "Sample Enterprise:", sFlowData.sample[i].enterprise
         #print "Sample Type:", sFlowData.sample[i].sampleType
@@ -430,7 +438,7 @@ while True:
         #print "Sample Dropped Packets:", sFlowData.sample[i].droppedPackets
         #print "Sample Input Interface:", sFlowData.sample[i].inputInterface
         #print "Sample Output Interface:", sFlowData.sample[i].outputInterface
-        print "Sample Record Count:", sFlowData.sample[i].recordCount
+        #print "Sample Record Count:", sFlowData.sample[i].recordCount
         #print ""
         for j in range(sFlowData.sample[i].recordCount):
             #print "Record Header:", sFlowData.sample[i].record[j].header
@@ -574,6 +582,13 @@ while True:
                 elif sFlowData.sample[i].record[j].format == 2010:
                     record = sFlowMib2UDP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     print "Counter 2010"
+                    print "UDP In Datagrams:", record.inDatagrams
+                    print "UDP No Ports:", record.noPorts
+                    print "UDP In Errors:", record.inErrors
+                    print "UDP Out Datagrams:", record.outDatagrams
+                    print "UDP Receive Buffer Error:", record.receiveBufferError
+                    print "UDP Send Buffer Error:", record.sendBufferError 
+                    print "UDP In Check Sum Error:", record.inCheckSumError 
                 else:
                     print "Counter Record Enterprise:", sFlowData.sample[i].record[j].enterprise
                     print "Counter Record Type:", sFlowData.sample[i].record[j].format
