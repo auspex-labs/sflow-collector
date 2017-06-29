@@ -15,6 +15,7 @@ This is a work in progess.
 ```
 opaque		enterprise		format	struct
 
+flow_data		0		1		sampled_header
 flow_data		0		2		sampled_ethernet
 flow_data		0		1001		extended_switch	
 
@@ -40,7 +41,6 @@ counter_data		0		2010		mib2_udp_group
 ```
 opaque		enterprise		format	struct
 
-flow_data		0		1		sampled_header
 flow_data		8800		2		PMACCT
 
 counter_data		0		2002		host_parent
