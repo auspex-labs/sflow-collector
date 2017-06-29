@@ -133,6 +133,17 @@ class sFlow:
 
 #Flow Record Types
 
+class sFlowRawPacketHeader: #1-1  (Variable)
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        self.headerProtocol = struct.unpack('>i', dataGram[0:4])[0]
+        self.frameLength = struct.unpack('>i', dataGram[4:8])[0]
+        self.payloadRemoved = struct.unpack('>i', dataGram[8:12])[0]
+        headerSize = struct.unpack('>i', dataGram[12:16])[0]
+        self.headerSize = headerSize
+        self.header = dataGram[16:(headerSize + 16)] #Need a class for parsing the header information.
+        
 class sFlowEthernetFrame: #1-2  (24 bytes)
     def __init__(self, length, dataGram):
         self.len = length
@@ -421,7 +432,7 @@ while True:
     #print "Address Type:", sFlowData.addressType
     #print "Agent Address:", sFlowData.agentAddress
     #print "Sub Agent:", sFlowData.subAgent
-    #print "Sequence Number:", sFlowData.sequenceNumber
+    print "Sequence Number:", sFlowData.sequenceNumber
     #print "System UpTime:", sFlowData.sysUpTime
     #print "Number of Samples:", sFlowData.NumberSample
     #print ""
@@ -447,7 +458,14 @@ while True:
             #print "Record Format:", sFlowData.sample[i].record[j].format
             #print "Record Length:", sFlowData.sample[i].record[j].len
             if sFlowData.sample[i].record[j].sampleType == 1:
-                if sFlowData.sample[i].record[j].format == 2 and sFlowData.sample[i].record[j].enterprise == 0:
+                if sFlowData.sample[i].record[j].format == 1 and sFlowData.sample[i].record[j].enterprise == 0:
+                    record = sFlowRawPacketHeader(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    #print "Raw Packet Header Protocol:", record.headerProtocol
+                    #print "Frame Length:", record.frameLength
+                    #print "Payload Removed:", record.payloadRemoved
+                    #print "Header Size:", record.headerSize
+
+                elif sFlowData.sample[i].record[j].format == 2 and sFlowData.sample[i].record[j].enterprise == 0:
                     record = sFlowEthernetFrame(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Ethernet Frame Length:", record.frameLength
                     #print "Ethernet Frame src MAC:", record.srcMAC
@@ -581,14 +599,14 @@ while True:
                     #print "TCP In C sum Error:", record.inCsumError
                 elif sFlowData.sample[i].record[j].format == 2010:
                     record = sFlowMib2UDP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print "Counter 2010"
-                    print "UDP In Datagrams:", record.inDatagrams
-                    print "UDP No Ports:", record.noPorts
-                    print "UDP In Errors:", record.inErrors
-                    print "UDP Out Datagrams:", record.outDatagrams
-                    print "UDP Receive Buffer Error:", record.receiveBufferError
-                    print "UDP Send Buffer Error:", record.sendBufferError 
-                    print "UDP In Check Sum Error:", record.inCheckSumError 
+                    #print "Counter 2010"
+                    #print "UDP In Datagrams:", record.inDatagrams
+                    #print "UDP No Ports:", record.noPorts
+                    #print "UDP In Errors:", record.inErrors
+                    #print "UDP Out Datagrams:", record.outDatagrams
+                    #print "UDP Receive Buffer Error:", record.receiveBufferError
+                    #print "UDP Send Buffer Error:", record.sendBufferError 
+                    #print "UDP In Check Sum Error:", record.inCheckSumError 
                 else:
                     print "Counter Record Enterprise:", sFlowData.sample[i].record[j].enterprise
                     print "Counter Record Type:", sFlowData.sample[i].record[j].format
