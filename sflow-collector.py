@@ -145,6 +145,7 @@ class sFlow:
 #   Processor               2-0-1001
 #   Host Description        2-0-2000
 #   Host Adapaters          2-0-2001
+#   Host Parent             2-0-2002
 #   Host CPU                2-0-2003
 #   Host Memory             2-0-2004
 #   Host Disk IO            2-0-2005
@@ -279,6 +280,13 @@ class sFlowHostAdapters: #2-2001 (4 bytes)
         self.len = length
         self.data = dataGram
         self.adapaters = struct.unpack('>i', dataGram[0:4])[0]
+
+class sFlowHostParent: #2-2002 (8 bytes)
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        self.containerType = struct.unpack('>i', dataGram[0:4])[0]
+        self.containerIndex = struct.unpack('>i', dataGram[4:8])[0]
     
 
 class sFlowHostCPU: #2-2003 (80 bytes)
@@ -505,9 +513,9 @@ while True:
                     #print "Extended Switch:", record.dstVLAN
                     #print "Extended Switch:", record.dstPriority
                     #print "Flow 1001"
-                else:
-                    print "Flow Record Enterprise:", sFlowData.sample[i].record[j].enterprise
-                    print "Flow Record Type:", sFlowData.sample[i].record[j].format
+                #else:
+                    #print "Flow Record Enterprise:", sFlowData.sample[i].record[j].enterprise
+                    #print "Flow Record Type:", sFlowData.sample[i].record[j].format
             elif sFlowData.sample[i].record[j].sampleType == 2:
                 if sFlowData.sample[i].record[j].format == 1:
                     record = sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
@@ -571,6 +579,10 @@ while True:
                     record = sFlowHostAdapters(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Adpaters:", record.adapaters
                     #print "Counter 2001"
+                elif sFlowData.sample[i].record[j].format == 2002:
+                    record = sFlowHostParent(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print "Host Parent Container Type:", record.containerType
+                    print "Host Parent Container Index:", record.containerIndex
                 elif sFlowData.sample[i].record[j].format == 2003:
                     record = sFlowHostCPU(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Counter 2003"
@@ -634,9 +646,9 @@ while True:
                     #print "UDP Receive Buffer Error:", record.receiveBufferError
                     #print "UDP Send Buffer Error:", record.sendBufferError 
                     #print "UDP In Check Sum Error:", record.inCheckSumError 
-                else:
-                    print "Counter Record Enterprise:", sFlowData.sample[i].record[j].enterprise
-                    print "Counter Record Type:", sFlowData.sample[i].record[j].format
+                #else:
+                    #print "Counter Record Enterprise:", sFlowData.sample[i].record[j].enterprise
+                    #print "Counter Record Type:", sFlowData.sample[i].record[j].format
                     
 
 

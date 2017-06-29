@@ -25,6 +25,7 @@ counter_data		0		5		VLAN_counters
 counter_data		0		1001		Processor
 counter_data		0		2000		host_description
 counter_data		0		2001		host_adapaters
+counter_data		0		2002		host_parent
 counter_data		0		2003		host_cpu
 counter_data		0		2004		host_memory
 counter_data		0		2005		host_disk_io
@@ -43,7 +44,6 @@ opaque		enterprise		format	struct
 
 flow_data		8800		2		PMACCT
 
-counter_data		0		2002		host_parent
 counter_data		0		2100		virt_node
 counter_data		0		2101		virt_cpu
 counter_data		0		2102		virt_memory
