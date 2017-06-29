@@ -6,13 +6,18 @@ import binascii
 
 # The sFlow Collector is a class for parsing sFlow data.
 
-# sFlow datagrams contain a header, which may contain samples which may contain one or more samples.
+# sFlow datagrams contain a header, which may contain samples which may contain records.
 #
 # The datagram may not contain a sample, but if it does there will be at least on record.
 #
 # The records may have different formats.
 
-#IDEA: Is the raw data for each block actually needed? What is the cost for preserving them?
+#IDEA (17-06-29) Is the raw data for each block actually needed? What is the cost for preserving them?
+
+
+# sFlow
+#   sample
+#       record
 
 class sFlow:
     def __init__(self, dataGram):
@@ -128,8 +133,30 @@ class sFlow:
                 self.sample.append(Sample(SampleHeader, SampleSize, SampleDataGram))
                 dataPosition = dataPosition + 8 + SampleSize
 
+# Flow
+#   Raw Packet Header       1-0-1
+#   Ethernet Frame          1-0-2
+#   Extended Switch         1-0-1001
 
-#IDEA: Sanity check for the fixed length records could be implimented with a simple value check. 17-03-07
+# Counter
+#   Interface Counter       2-0-1
+#   Ethernet Interface      2-0-2
+#   VLAN                    2-0-5
+#   Processor               2-0-1001
+#   Host Description        2-0-2000
+#   Host Adapaters          2-0-2001
+#   Host CPU                2-0-2003
+#   Host Memory             2-0-2004
+#   Host Disk IO            2-0-2005
+#   Host Network IO         2-0-2006
+#   MIB2 IP Group           2-0-2007
+#   MIB2 ICMP Group         2-0-2008
+#   MIB2 TCP Group          2-0-2009
+#   MIB2 UDP Group          2-0-2010
+
+
+
+#IDEA (17-03-07) Sanity check for the fixed length records could be implimented with a simple value check.
 
 #Flow Record Types
 
@@ -410,7 +437,7 @@ class sFlowMib2UDP: #2-2010 (28 bytes)
         
         
         
-     
+#Basic Listener     
 
 UDP_IP = "0.0.0.0"
 UDP_PORT = 6343
