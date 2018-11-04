@@ -4,6 +4,7 @@ import struct
 import uuid
 import binascii
 
+
 # The sFlow Collector is a class for parsing sFlow data.
 
 # sFlow datagrams contain a header, which may contain samples which may contain records.
@@ -12,7 +13,7 @@ import binascii
 #
 # The records may have different formats.
 
-#IDEA (17-06-29) Is the raw data for each block actually needed? What is the cost for preserving them?
+#QUESTION (17-06-29) Is the raw data for each block actually needed? What is the cost for preserving them?
 
 
 # sFlow
@@ -65,7 +66,7 @@ class sFlow:
                     self.recordCount = struct.unpack('>i', dataGram[(dataPosition + 20):(dataPosition + 24)])[0]
                     dataPosition = 32
 
-                    for i in range(self.recordCount):
+                    for _ in range(self.recordCount):
                         RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
                         RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
                         RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]
@@ -81,7 +82,7 @@ class sFlow:
                     self.outputInterface = 0
                     dataPosition = 12
 
-                    for i in range(self.recordCount):
+                    for _ in range(self.recordCount):
                         RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
                         RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
                         RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize + 8)]
@@ -125,7 +126,7 @@ class sFlow:
             self.sysUpTime = 0
             self.NumberSample = 0
         if self.NumberSample > 0:
-            for i in range(self.NumberSample):
+            for _ in range(self.NumberSample):
                 SampleHeader = dataGram[(dataPosition):(dataPosition + 4)]
                 SampleSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
                 SampleDataGram = dataGram[(dataPosition + 8):(dataPosition + SampleSize + 8)]
@@ -262,10 +263,11 @@ class sFlowHostDisc: #2-2000 (variable length)
         dataPosition = 4
         nameLength = struct.unpack('>i', dataGram[0:4])[0]
         self.hostName = dataGram[dataPosition:(dataPosition + nameLength)].decode("utf-8")
-        if nameLength % 4 <> 0:
+        if nameLength % 4 != 0:
             nameLength = (((nameLength // 4)+1)*4)
         dataPosition = dataPosition + nameLength
-        self.uuid = uuid.UUID(binascii.hexlify(dataGram[dataPosition:(dataPosition + 16)]))
+        #self.uuid = uuid.UUID(binascii.hexlify(dataGram[dataPosition:(dataPosition + 16)])) - Python 2 Artifact
+        self.uuid = uuid.UUID(bytes=dataGram[dataPosition:(dataPosition + 16)])
         dataPosition = dataPosition + 16
         self.machineType = struct.unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
         dataPosition = dataPosition + 4
@@ -460,14 +462,14 @@ while True:
 
     #Below this point is test code.
 
-    print ""
-    print "Source:", addr[0]
+    print("")
+    print("Source:", addr[0])
     #print "length:", sFlowData.len
     #print "DG Version:", sFlowData.dgVersion
     #print "Address Type:", sFlowData.addressType
     #print "Agent Address:", sFlowData.agentAddress
     #print "Sub Agent:", sFlowData.subAgent
-    print "Sequence Number:", sFlowData.sequenceNumber
+    print("Sequence Number:", sFlowData.sequenceNumber)
     #print "System UpTime:", sFlowData.sysUpTime
     #print "Number of Samples:", sFlowData.NumberSample
     #print ""
@@ -514,8 +516,8 @@ while True:
                     #print "Extended Switch:", record.dstPriority
                     #print "Flow 1001"
                 else:
-                    print "Flow Record Enterprise:", sFlowData.sample[i].record[j].enterprise
-                    print "Flow Record Type:", sFlowData.sample[i].record[j].format
+                    print("Flow Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
+                    print("Flow Record Type:", sFlowData.sample[i].record[j].format)
             elif sFlowData.sample[i].record[j].sampleType == 2:
                 if sFlowData.sample[i].record[j].format == 1:
                     record = sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
@@ -574,7 +576,7 @@ while True:
                     #print "Counter 1001"
                 elif sFlowData.sample[i].record[j].format == 2000:
                     record = sFlowHostDisc(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    #print "Counter 2000"
+                    print("Counter 2000")
                 elif sFlowData.sample[i].record[j].format == 2001:
                     record = sFlowHostAdapters(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Adpaters:", record.adapaters
@@ -647,8 +649,8 @@ while True:
                     #print "UDP Send Buffer Error:", record.sendBufferError 
                     #print "UDP In Check Sum Error:", record.inCheckSumError 
                 else:
-                    print "Counter Record Enterprise:", sFlowData.sample[i].record[j].enterprise
-                    print "Counter Record Type:", sFlowData.sample[i].record[j].format
+                    print("Counter Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
+                    print("Counter Record Type:", sFlowData.sample[i].record[j].format)
                     
 
 
