@@ -1,8 +1,5 @@
 #!/usr/bin/python
 import socket
-import struct
-import uuid
-import binascii
 import sflow
 
 #Basic Listener     
@@ -72,7 +69,7 @@ while True:
                     #print "Extended Switch:", record.srcPriority
                     #print "Extended Switch:", record.dstVLAN
                     #print "Extended Switch:", record.dstPriority
-                    #print "Flow 1001"
+                    print("Flow 1001")
                 else:
                     print("Flow Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
                     print("Flow Record Type:", sFlowData.sample[i].record[j].format)
@@ -98,7 +95,7 @@ while True:
                     #print "If Counter O Discard:", record.outputDiscarded
                     #print "If Counter O Errors:", record.outputErrors
                     #print "If Counter Promiscuous:", record.promiscuous
-                    #print "Counter 1"
+                    print("Counter 1")
                 elif sFlowData.sample[i].record[j].format == 2:
                     record = sflow.sFlowEthernetInterface(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Ethernet Alignmet Error:", record.alignmentError
@@ -123,7 +120,7 @@ while True:
                     #print "VLAN :", record.multicast
                     #print "VLAN :", record.broadcast
                     #print "VLAN :", record.discard
-                    #print "Counter 5"
+                    print("Counter 5")
                 elif sFlowData.sample[i].record[j].format == 1001:
                     record = sflow.sFlowProcessor(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Processor :", record.cpu5s 
@@ -131,21 +128,22 @@ while True:
                     #print "Processor :", record.cpu5m
                     #print "Processor :", record.totalMemory 
                     #print "Processor :", record.freeMemory
-                    #print "Counter 1001"
+                    print("Counter 1001")
                 elif sFlowData.sample[i].record[j].format == 2000:
                     record = sflow.sFlowHostDisc(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     print("Counter 2000")
                 elif sFlowData.sample[i].record[j].format == 2001:
                     record = sflow.sFlowHostAdapters(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Adpaters:", record.adapaters
-                    #print "Counter 2001"
+                    print("Counter 2001")
                 elif sFlowData.sample[i].record[j].format == 2002:
                     record = sflow.sFlowHostParent(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Parent Container Type:", record.containerType
                     #print "Host Parent Container Index:", record.containerIndex
+                    print("Counter 2002")
                 elif sFlowData.sample[i].record[j].format == 2003:
                     record = sflow.sFlowHostCPU(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    #print "Counter 2003"
+                    print("Counter 2003")
                 elif sFlowData.sample[i].record[j].format == 2004:
                     record = sflow.sFlowHostMemory(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Memory Total:", record.memTotal
@@ -159,7 +157,7 @@ while True:
                     #print "Host Page Out:", record.pageOut
                     #print "Host Swap Page In:", record.swapIn
                     #print "Host Swap Page Out:", record.swapOut
-                    #print "Counter 2004"
+                    print("Counter 2004")
                 elif sFlowData.sample[i].record[j].format == 2005:
                     record = sflow.sFlowHostDiskIO(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host disk:", record.diskTotal
@@ -171,16 +169,18 @@ while True:
                     #print "Host disk:", record.write
                     #print "Host disk:", record.writeByte
                     #print "Host disk:", record.writeTime
-                    #print "Counter 2005"
+                    print("Counter 2005")
                 elif sFlowData.sample[i].record[j].format == 2006:
                     record = sflow.sFlowHostNetIO(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print("Counter 2006")
                 elif sFlowData.sample[i].record[j].format == 2007:
                     record = sflow.sFlowMib2IP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print("Counter 2007")
                 elif sFlowData.sample[i].record[j].format == 2008:
                     record = sflow.sFlowMib2ICMP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print("Counter 2008")
                 elif sFlowData.sample[i].record[j].format == 2009:
                     record = sflow.sFlowMib2TCP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    #print "Counter 2009"
                     #print "TCP Algorithm:", record.algorithm
                     #print "TCP RTO Min:", record.rtoMin
                     #print "TCP RTO Max:", record.rtoMax
@@ -196,6 +196,7 @@ while True:
                     #print "TCP In Error:", record.inError
                     #print "TCP Out Reset:", record.outReset
                     #print "TCP In C sum Error:", record.inCsumError
+                    print("Counter 2009")
                 elif sFlowData.sample[i].record[j].format == 2010:
                     record = sflow.sFlowMib2UDP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Counter 2010"
