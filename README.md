@@ -8,6 +8,8 @@ The sflow-collector provides a simple sample collector and a class which will pa
 
 This is a work in progess.
 
+The code is being refactored from Python 2.7 to Python 3.6
+
 ## Structures
 
 ### Completed
