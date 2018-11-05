@@ -1,14 +1,14 @@
 # sflow-collector
 
-sFlow is layer 2 packet summerization protocol intended for developing matrics on network behavior and performance. sFlow transmitters can be found on network devices and can be run as services on Window sand Linux. 
+sFlow is layer 2 packet summerization protocol intended for developing metrics for system behavior and performance. sFlow transmitters are common on Network Appliances and can be run as services on Linux and Windows hosts.
 
 ## Overview
 
 The sflow-collector provides a simple sample collector and a class which will parse the sFlow data and return it to the collector for presentation. 
 
-This is a work in progess.
+The code has been refactored from Python 2.7 to Python 3.6
 
-The code is being refactored from Python 2.7 to Python 3.6
+This is a work in progess.
 
 ## Structures
 
