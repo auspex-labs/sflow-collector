@@ -198,10 +198,10 @@ class sFlowIfCounter: #2-1 (88 bytes)
         self.len = length
         self.data = dataGram
         self.index = struct.unpack('>i', dataGram[0:4])[0]
-        self.type = struct.unpack('>i', dataGram[4:8])[0]
+        self.type = struct.unpack('>i', dataGram[4:8])[0] #6 = 1Gbe Ethernet
         self.speed = struct.unpack('>q', dataGram[8:16])[0] #64-bit
-        self.direction = struct.unpack('>i', dataGram[16:20])[0]
-        self.status = struct.unpack('>i', dataGram[20:24])[0] #This is really a 2-bit value
+        self.direction = struct.unpack('>i', dataGram[16:20])[0] # 1 = full, 2 = half
+        self.status = struct.unpack('>i', dataGram[20:24])[0] #This is really a 2-bit value - 0 d/d 3 u/u
         self.inputOctets = struct.unpack('>q', dataGram[24:32])[0] #64-bit
         self.inputPackets = struct.unpack('>i', dataGram[32:36])[0]
         self.inputMulticast = struct.unpack('>i', dataGram[36:40])[0]
