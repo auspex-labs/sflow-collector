@@ -76,26 +76,26 @@ while True:
             elif sFlowData.sample[i].record[j].sampleType == 2:
                 if sFlowData.sample[i].record[j].format == 1:
                     record = sflow.sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    #print "If Counter Index:", record.index
-                    #print "If Counter Type:", record.type
-                    #print "If Counter Speed:", record.speed
-                    #print "If Counter Direction:", record.direction
-                    #print "If Counter Status:", record.status
-                    #print "If Counter I Octets:", record.inputOctets
-                    #print "If Counter I Packets:", record.inputPackets
-                    #print "If Counter I Multicast:", record.inputMulticast
-                    #print "If Counter I Broadcast:", record.inputBroadcast
-                    #print "If Counter I Discards:", record.inputDiscarded
-                    #print "If Counter I Errors:", record.inputErrors
-                    #print "If Counter I Unknown:", record.inputUnknown 
-                    #print "If Counter O Octets:", record.outputOctets
-                    #print "If Counter O Packets:", record.outputPackets
-                    #print "If Counter O Multicast:", record.outputMulticast
-                    #print "If Counter O Broadcast:", record.outputBroadcast
-                    #print "If Counter O Discard:", record.outputDiscarded
-                    #print "If Counter O Errors:", record.outputErrors
-                    #print "If Counter Promiscuous:", record.promiscuous
-                    print("Counter 1")
+                    print ("If Counter Index:", record.index)
+                    print ("If Counter Type:", record.type)
+                    print ("If Counter Speed:", record.speed)
+                    print ("If Counter Direction:", record.direction)
+                    print ("If Counter Status:", record.status)
+                    print ("If Counter I Octets:", record.inputOctets)
+                    print ("If Counter I Packets:", record.inputPackets)
+                    print ("If Counter I Multicast:", record.inputMulticast)
+                    print ("If Counter I Broadcast:", record.inputBroadcast)
+                    print ("If Counter I Discards:", record.inputDiscarded)
+                    print ("If Counter I Errors:", record.inputErrors)
+                    print ("If Counter I Unknown:", record.inputUnknown) 
+                    print ("If Counter O Octets:", record.outputOctets)
+                    print ("If Counter O Packets:", record.outputPackets)
+                    print ("If Counter O Multicast:", record.outputMulticast)
+                    print ("If Counter O Broadcast:", record.outputBroadcast)
+                    print ("If Counter O Discard:", record.outputDiscarded)
+                    print ("If Counter O Errors:", record.outputErrors)
+                    print ("If Counter Promiscuous:", record.promiscuous)
+                    #print("Counter 1")
                 elif sFlowData.sample[i].record[j].format == 2:
                     record = sflow.sFlowEthernetInterface(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Ethernet Alignmet Error:", record.alignmentError
