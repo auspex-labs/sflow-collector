@@ -1,8 +1,9 @@
 #!/usr/bin/python
+import binascii
 import socket
 import struct
 import uuid
-import binascii
+
 
 
 # The sFlow Collector is a class for parsing sFlow data.
@@ -102,14 +103,14 @@ class sFlow:
         self.addressType = struct.unpack('>i', dataGram[4:8])[0]
         self.len = len(dataGram)
         if self.addressType == 1:
-            self.agentAddress = socket.inet_ntoa(dataGram[8:12])
+            self.agentAddress = socket.inet_ntop(socket.AF_INET, dataGram[8:12])
             self.subAgent = struct.unpack('>i', dataGram[12:16])[0]
             self.sequenceNumber = struct.unpack('>i', dataGram[16:20])[0]
             self.sysUpTime = struct.unpack('>i', dataGram[20:24])[0]
             self.NumberSample = struct.unpack('>i', dataGram[24:28])[0]
             dataPosition = 28
         elif self.addressType == 2:
-            self.agentAddress = binascii.hexlify(dataGram[8:24]) #Temporary fix due to lack of IPv6 support on WIN32
+            self.agentAddress = socket.inet_ntop(socket.AF_INET6, dataGram[8:24]) #Temporary fix due to lack of IPv6 support on WIN32
             self.subAgent = struct.unpack('>i', dataGram[24:28])[0]
             self.sequenceNumber = struct.unpack('>i', dataGram[28:32])[0]
             self.sysUpTime = struct.unpack('>i', dataGram[32:36])[0]
