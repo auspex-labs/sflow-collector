@@ -25,7 +25,7 @@ counter_data		0		1		if_counters
 counter_data		0		2		ethernet_counters
 counter_data		0		5		VLAN_counters
 counter_data		0		1001		Processor
-counter_data        0       1005        port_name
+counter_data        	0       	1005        	port_name
 counter_data		0		2000		host_description
 counter_data		0		2001		host_adapaters
 counter_data		0		2002		host_parent
