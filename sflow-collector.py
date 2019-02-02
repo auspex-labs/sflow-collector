@@ -24,7 +24,7 @@ while True:
     #print "Address Type:", sFlowData.addressType
     #print "Agent Address:", sFlowData.agentAddress
     #print "Sub Agent:", sFlowData.subAgent
-    print("Sequence Number:", sFlowData.sequenceNumber)
+    #print("Sequence Number:", sFlowData.sequenceNumber)
     #print "System UpTime:", sFlowData.sysUpTime
     #print "Number of Samples:", sFlowData.NumberSample
     #print ""
@@ -56,21 +56,25 @@ while True:
                     #print "Frame Length:", record.frameLength
                     #print "Payload Removed:", record.payloadRemoved
                     #print "Header Size:", record.headerSize
-                    print("Flow 1")
+                    #print("Flow 1")
                 elif sFlowData.sample[i].record[j].format == 2 and sFlowData.sample[i].record[j].enterprise == 0:
                     record = sflow.sFlowEthernetFrame(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Ethernet Frame Length:", record.frameLength
                     #print "Ethernet Frame src MAC:", record.srcMAC
                     #print "Ethernet Frame dst MAC:", record.dstMAC
                     #print "Ethernet Frame Record Type:", record.type
-                    print("Flow 2")
+                    #print("Flow 2")
                 elif sFlowData.sample[i].record[j].format == 1001:
                     record = sflow.sFlowExtendedSwitch(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Extended Switch:", record.srcVLAN
                     #print "Extended Switch:", record.srcPriority
                     #print "Extended Switch:", record.dstVLAN
                     #print "Extended Switch:", record.dstPriority
-                    print("Flow 1001")
+                    #print("Flow 1001")
+                elif sFlowData.sample[i].record[j].enterprise == 8800:
+                    # Obsolete Enterprise - https://github.com/pmacct/pmacct/issues/71
+                    print("Flow Record Enterprise 8800 - Obsolete")
+                    #print("Flow Record Type:", sFlowData.sample[i].record[j].format)
                 else:
                     print("Flow Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
                     print("Flow Record Type:", sFlowData.sample[i].record[j].format)
@@ -96,7 +100,7 @@ while True:
                     #print ("If Counter O Discard:", record.outputDiscarded)
                     #print ("If Counter O Errors:", record.outputErrors)
                     #print ("If Counter Promiscuous:", record.promiscuous)
-                    print("Counter 1")
+                    #print("Counter 1")
                 elif sFlowData.sample[i].record[j].format == 2:
                     record = sflow.sFlowEthernetInterface(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Ethernet Alignmet Error:", record.alignmentError
@@ -112,7 +116,7 @@ while True:
                     #print "Ethernet Frame Too Long:", record.frameTooLong
                     #print "Ethernet Internal Receive Error:", record.internalReceiveError
                     #print "Ethernet Symbol Error:", record.symbolError
-                    print("Counter 2")
+                    #print("Counter 2")
                 elif sFlowData.sample[i].record[j].format == 5:
                     record = sflow.sFlowVLAN(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "VLAN :", record.vlanID
@@ -129,22 +133,26 @@ while True:
                     #print "Processor :", record.cpu5m
                     #print "Processor :", record.totalMemory 
                     #print "Processor :", record.freeMemory
-                    print("Counter 1001")
+                    #print("Counter 1001")
+                elif sFlowData.sample[i].record[j].format == 1005:
+                    record = sflow.sFlowPortName(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    print("Port Name", record.PortName)
+                    print("Counter 1005")
                 elif sFlowData.sample[i].record[j].format == 2000:
                     record = sflow.sFlowHostDisc(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Counter 2000 - Incomplete")
+                    #print("Counter 2000")
                 elif sFlowData.sample[i].record[j].format == 2001:
                     record = sflow.sFlowHostAdapters(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Adpaters:", record.adapaters
-                    print("Counter 2001 - Incomplete")
+                    #print("Counter 2001")
                 elif sFlowData.sample[i].record[j].format == 2002:
                     record = sflow.sFlowHostParent(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Parent Container Type:", record.containerType
                     #print "Host Parent Container Index:", record.containerIndex
-                    print("Counter 2002 - Incomplete")
+                    #print("Counter 2002")
                 elif sFlowData.sample[i].record[j].format == 2003:
                     record = sflow.sFlowHostCPU(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Counter 2003 - Incomplete")
+                    #print("Counter 2003")
                 elif sFlowData.sample[i].record[j].format == 2004:
                     record = sflow.sFlowHostMemory(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Memory Total:", record.memTotal
@@ -158,7 +166,7 @@ while True:
                     #print "Host Page Out:", record.pageOut
                     #print "Host Swap Page In:", record.swapIn
                     #print "Host Swap Page Out:", record.swapOut
-                    print("Counter 2004")
+                    #print("Counter 2004")
                 elif sFlowData.sample[i].record[j].format == 2005:
                     record = sflow.sFlowHostDiskIO(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host disk:", record.diskTotal
@@ -170,16 +178,16 @@ while True:
                     #print "Host disk:", record.write
                     #print "Host disk:", record.writeByte
                     #print "Host disk:", record.writeTime
-                    print("Counter 2005")
+                    #print("Counter 2005")
                 elif sFlowData.sample[i].record[j].format == 2006:
                     record = sflow.sFlowHostNetIO(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Counter 2006 - Incomplete")
+                    #print("Counter 2006")
                 elif sFlowData.sample[i].record[j].format == 2007:
                     record = sflow.sFlowMib2IP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Counter 2007 - Incomplete")
+                    #print("Counter 2007")
                 elif sFlowData.sample[i].record[j].format == 2008:
                     record = sflow.sFlowMib2ICMP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Counter 2008 - Incomplete")
+                    #print("Counter 2008")
                 elif sFlowData.sample[i].record[j].format == 2009:
                     record = sflow.sFlowMib2TCP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "TCP Algorithm:", record.algorithm
@@ -197,7 +205,7 @@ while True:
                     #print "TCP In Error:", record.inError
                     #print "TCP Out Reset:", record.outReset
                     #print "TCP In C sum Error:", record.inCsumError
-                    print("Counter 2009")
+                    #print("Counter 2009")
                 elif sFlowData.sample[i].record[j].format == 2010:
                     record = sflow.sFlowMib2UDP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Counter 2010"
@@ -207,7 +215,12 @@ while True:
                     #print "UDP Out Datagrams:", record.outDatagrams
                     #print "UDP Receive Buffer Error:", record.receiveBufferError
                     #print "UDP Send Buffer Error:", record.sendBufferError 
-                    #print "UDP In Check Sum Error:", record.inCheckSumError 
+                    #print "UDP In Check Sum Error:", record.inCheckSumError
+                    #print("Counter 2010") 
                 else:
                     print("Counter Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
                     print("Counter Record Type:", sFlowData.sample[i].record[j].format)
+            else:
+                print("Sample Type", sFlowData.sample[i].record[j].sampleType)
+                print("Sample Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
+                print("Sample Record Type:", sFlowData.sample[i].record[j].format)

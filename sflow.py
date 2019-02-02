@@ -251,7 +251,15 @@ class sFlowProcessor: #2-1001 (28 bytes)
         self.cpu1m = struct.unpack('>i', dataGram[4:8])[0] 
         self.cpu5m = struct.unpack('>i', dataGram[8:12])[0]
         self.totalMemory = struct.unpack('>q', dataGram[12:20])[0] #64-bit
-        self.freeMemory = struct.unpack('>q', dataGram[20:28])[0] #64-bit       
+        self.freeMemory = struct.unpack('>q', dataGram[20:28])[0] #64-bit
+
+class sFlowPortName: #2-1005 (Variable)
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        dataPosition = 4
+        nameLength = struct.unpack('>i', dataGram[0:4])[0]
+        self.PortName = dataGram[dataPosition:(dataPosition + nameLength)].decode("utf-8")
 
 class sFlowHostDisc: #2-2000 (variable length)
     def __init__(self, length, dataGram):
