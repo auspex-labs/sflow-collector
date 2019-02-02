@@ -17,7 +17,7 @@ while True:
 
     #Below this point is test code.
 
-    print("")
+    print()
     print("Source:", addr[0])
     #print "length:", sFlowData.len
     #print "DG Version:", sFlowData.dgVersion
@@ -56,13 +56,14 @@ while True:
                     #print "Frame Length:", record.frameLength
                     #print "Payload Removed:", record.payloadRemoved
                     #print "Header Size:", record.headerSize
-
+                    print("Flow 1")
                 elif sFlowData.sample[i].record[j].format == 2 and sFlowData.sample[i].record[j].enterprise == 0:
                     record = sflow.sFlowEthernetFrame(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Ethernet Frame Length:", record.frameLength
                     #print "Ethernet Frame src MAC:", record.srcMAC
                     #print "Ethernet Frame dst MAC:", record.dstMAC
                     #print "Ethernet Frame Record Type:", record.type
+                    print("Flow 2")
                 elif sFlowData.sample[i].record[j].format == 1001:
                     record = sflow.sFlowExtendedSwitch(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Extended Switch:", record.srcVLAN
@@ -76,26 +77,26 @@ while True:
             elif sFlowData.sample[i].record[j].sampleType == 2:
                 if sFlowData.sample[i].record[j].format == 1:
                     record = sflow.sFlowIfCounter(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print ("If Counter Index:", record.index)
-                    print ("If Counter Type:", record.type)
-                    print ("If Counter Speed:", record.speed)
-                    print ("If Counter Direction:", record.direction)
-                    print ("If Counter Status:", record.status)
-                    print ("If Counter I Octets:", record.inputOctets)
-                    print ("If Counter I Packets:", record.inputPackets)
-                    print ("If Counter I Multicast:", record.inputMulticast)
-                    print ("If Counter I Broadcast:", record.inputBroadcast)
-                    print ("If Counter I Discards:", record.inputDiscarded)
-                    print ("If Counter I Errors:", record.inputErrors)
-                    print ("If Counter I Unknown:", record.inputUnknown) 
-                    print ("If Counter O Octets:", record.outputOctets)
-                    print ("If Counter O Packets:", record.outputPackets)
-                    print ("If Counter O Multicast:", record.outputMulticast)
-                    print ("If Counter O Broadcast:", record.outputBroadcast)
-                    print ("If Counter O Discard:", record.outputDiscarded)
-                    print ("If Counter O Errors:", record.outputErrors)
-                    print ("If Counter Promiscuous:", record.promiscuous)
-                    #print("Counter 1")
+                    #print ("If Counter Index:", record.index)
+                    #print ("If Counter Type:", record.type)
+                    #print ("If Counter Speed:", record.speed)
+                    #print ("If Counter Direction:", record.direction)
+                    #print ("If Counter Status:", record.status)
+                    #print ("If Counter I Octets:", record.inputOctets)
+                    #print ("If Counter I Packets:", record.inputPackets)
+                    #print ("If Counter I Multicast:", record.inputMulticast)
+                    #print ("If Counter I Broadcast:", record.inputBroadcast)
+                    #print ("If Counter I Discards:", record.inputDiscarded)
+                    #print ("If Counter I Errors:", record.inputErrors)
+                    #print ("If Counter I Unknown:", record.inputUnknown) 
+                    #print ("If Counter O Octets:", record.outputOctets)
+                    #print ("If Counter O Packets:", record.outputPackets)
+                    #print ("If Counter O Multicast:", record.outputMulticast)
+                    #print ("If Counter O Broadcast:", record.outputBroadcast)
+                    #print ("If Counter O Discard:", record.outputDiscarded)
+                    #print ("If Counter O Errors:", record.outputErrors)
+                    #print ("If Counter Promiscuous:", record.promiscuous)
+                    print("Counter 1")
                 elif sFlowData.sample[i].record[j].format == 2:
                     record = sflow.sFlowEthernetInterface(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Ethernet Alignmet Error:", record.alignmentError
@@ -111,7 +112,7 @@ while True:
                     #print "Ethernet Frame Too Long:", record.frameTooLong
                     #print "Ethernet Internal Receive Error:", record.internalReceiveError
                     #print "Ethernet Symbol Error:", record.symbolError
-                    #print "Counter 2"
+                    print("Counter 2")
                 elif sFlowData.sample[i].record[j].format == 5:
                     record = sflow.sFlowVLAN(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "VLAN :", record.vlanID
@@ -131,19 +132,19 @@ while True:
                     print("Counter 1001")
                 elif sFlowData.sample[i].record[j].format == 2000:
                     record = sflow.sFlowHostDisc(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Counter 2000")
+                    print("Counter 2000 - Incomplete")
                 elif sFlowData.sample[i].record[j].format == 2001:
                     record = sflow.sFlowHostAdapters(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Adpaters:", record.adapaters
-                    print("Counter 2001")
+                    print("Counter 2001 - Incomplete")
                 elif sFlowData.sample[i].record[j].format == 2002:
                     record = sflow.sFlowHostParent(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Parent Container Type:", record.containerType
                     #print "Host Parent Container Index:", record.containerIndex
-                    print("Counter 2002")
+                    print("Counter 2002 - Incomplete")
                 elif sFlowData.sample[i].record[j].format == 2003:
                     record = sflow.sFlowHostCPU(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Counter 2003")
+                    print("Counter 2003 - Incomplete")
                 elif sFlowData.sample[i].record[j].format == 2004:
                     record = sflow.sFlowHostMemory(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Host Memory Total:", record.memTotal
@@ -172,13 +173,13 @@ while True:
                     print("Counter 2005")
                 elif sFlowData.sample[i].record[j].format == 2006:
                     record = sflow.sFlowHostNetIO(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Counter 2006")
+                    print("Counter 2006 - Incomplete")
                 elif sFlowData.sample[i].record[j].format == 2007:
                     record = sflow.sFlowMib2IP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Counter 2007")
+                    print("Counter 2007 - Incomplete")
                 elif sFlowData.sample[i].record[j].format == 2008:
                     record = sflow.sFlowMib2ICMP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Counter 2008")
+                    print("Counter 2008 - Incomplete")
                 elif sFlowData.sample[i].record[j].format == 2009:
                     record = sflow.sFlowMib2TCP(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "TCP Algorithm:", record.algorithm
