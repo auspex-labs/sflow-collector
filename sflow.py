@@ -141,6 +141,7 @@ class sFlow:
 #   Ethernet Interface      2-0-2
 #   VLAN                    2-0-5
 #   Processor               2-0-1001
+#   Port Name               2-0-1005
 #   Host Description        2-0-2000
 #   Host Adapaters          2-0-2001
 #   Host Parent             2-0-2002

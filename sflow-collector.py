@@ -18,44 +18,44 @@ while True:
     #Below this point is test code.
 
     print()
-    print("Source:", addr[0])
+    #print("Source:", addr[0])
     #print "length:", sFlowData.len
-    #print "DG Version:", sFlowData.dgVersion
+    #print("DG Version:", sFlowData.dgVersion)
     #print "Address Type:", sFlowData.addressType
-    #print "Agent Address:", sFlowData.agentAddress
-    #print "Sub Agent:", sFlowData.subAgent
+    #print("Agent Address:", sFlowData.agentAddress)
+    #print("Sub Agent:", sFlowData.subAgent)
     #print("Sequence Number:", sFlowData.sequenceNumber)
-    #print "System UpTime:", sFlowData.sysUpTime
+    #print("System UpTime:", sFlowData.sysUpTime)
     #print "Number of Samples:", sFlowData.NumberSample
     #print ""
     for i in range(sFlowData.NumberSample):
         #print "Sample Number:", i + 1
-        #print "Sample Sequence:", sFlowData.sample[i].sequence
-        #print "Sample Enterprise:", sFlowData.sample[i].enterprise
-        #print "Sample Type:", sFlowData.sample[i].sampleType
-        #print "Sample Length:", sFlowData.sample[i].len
-        #print "Sample Source Type:", sFlowData.sample[i].sourceType
-        #print "Sample Source Index:", sFlowData.sample[i].sourceIndex
-        #print "Sample Rate:", sFlowData.sample[i].sampleRate
-        #print "Sample Pool:", sFlowData.sample[i].samplePool
-        #print "Sample Dropped Packets:", sFlowData.sample[i].droppedPackets
-        #print "Sample Input Interface:", sFlowData.sample[i].inputInterface
-        #print "Sample Output Interface:", sFlowData.sample[i].outputInterface
+        #print("Sample Sequence:", sFlowData.sample[i].sequence)
+        #print("Sample Enterprise:", sFlowData.sample[i].enterprise)
+        #print("Sample Type:", sFlowData.sample[i].sampleType)
+        # print("Sample Length:", sFlowData.sample[i].len)
+        #print("Sample Source Type:", sFlowData.sample[i].sourceType)
+        #print("Sample Source Index:", sFlowData.sample[i].sourceIndex)
+        #print("Sample Rate:", sFlowData.sample[i].sampleRate)
+        #print("Sample Pool:", sFlowData.sample[i].samplePool)
+        #print("Sample Dropped Packets:", sFlowData.sample[i].droppedPackets)
+        #print("Sample Input Interface:", sFlowData.sample[i].inputInterface)
+        #print("Sample Output Interface:", sFlowData.sample[i].outputInterface)
         #print "Sample Record Count:", sFlowData.sample[i].recordCount
-        #print ""
+        print()
         for j in range(sFlowData.sample[i].recordCount):
             #print "Record Header:", sFlowData.sample[i].record[j].header
-            #print "Record Enterprise:", sFlowData.sample[i].record[j].enterprise
-            #print "Record Sample Type:", sFlowData.sample[i].record[j].sampleType
-            #print "Record Format:", sFlowData.sample[i].record[j].format
-            #print "Record Length:", sFlowData.sample[i].record[j].len
+            #print("Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
+            #print("Record Sample Type:", sFlowData.sample[i].record[j].sampleType)
+            #print("Record Format:", sFlowData.sample[i].record[j].format)
+            #print("Record Length:", sFlowData.sample[i].record[j].len)
             if sFlowData.sample[i].record[j].sampleType == 1:
                 if sFlowData.sample[i].record[j].format == 1 and sFlowData.sample[i].record[j].enterprise == 0:
                     record = sflow.sFlowRawPacketHeader(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    #print "Raw Packet Header Protocol:", record.headerProtocol
-                    #print "Frame Length:", record.frameLength
-                    #print "Payload Removed:", record.payloadRemoved
-                    #print "Header Size:", record.headerSize
+                    #print("Raw Packet Header Protocol:", record.headerProtocol)
+                    #print("Frame Length:", record.frameLength)
+                    #print("Payload Removed:", record.payloadRemoved)
+                    #print("Header Size:", record.headerSize)
                     #print("Flow 1")
                 elif sFlowData.sample[i].record[j].format == 2 and sFlowData.sample[i].record[j].enterprise == 0:
                     record = sflow.sFlowEthernetFrame(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
@@ -136,8 +136,8 @@ while True:
                     #print("Counter 1001")
                 elif sFlowData.sample[i].record[j].format == 1005:
                     record = sflow.sFlowPortName(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
-                    print("Port Name", record.PortName)
-                    print("Counter 1005")
+                    #print("Port Name", record.PortName)
+                    #print("Counter 1005")
                 elif sFlowData.sample[i].record[j].format == 2000:
                     record = sflow.sFlowHostDisc(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print("Counter 2000")
