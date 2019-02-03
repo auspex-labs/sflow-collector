@@ -109,7 +109,7 @@ class sFlow:
             self.NumberSample = struct.unpack('>i', dataGram[24:28])[0]
             dataPosition = 28
         elif self.addressType == 2:
-            self.agentAddress = socket.inet_ntop(socket.AF_INET6, dataGram[8:24]) #Temporary fix due to lack of IPv6 support on WIN32
+            self.agentAddress = socket.inet_ntop(socket.AF_INET6, dataGram[8:24])
             self.subAgent = struct.unpack('>i', dataGram[24:28])[0]
             self.sequenceNumber = struct.unpack('>i', dataGram[28:32])[0]
             self.sysUpTime = struct.unpack('>i', dataGram[32:36])[0]
