@@ -58,12 +58,6 @@ counterData | 0 | 2101 | virt_cpu
 counterData | 0 | 2102 | virt_memory
 counterData | 0 | 2103 | virt_disk_io
 counterData | 0 | 2104 | virt_net_io
-### Planned
-
-opaque | enterprise | format | struct
---- | --- | --- | ---
-flow_data | 8800 | 2 | PMACCT
-	
 
 ## References
 
