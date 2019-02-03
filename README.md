@@ -63,12 +63,6 @@ counterData | 0 | 2104 | virt_net_io
 opaque | enterprise | format | struct
 --- | --- | --- | ---
 flow_data | 8800 | 2 | PMACCT
-
-counter_data | 0 | 2100 | virt_node
-counter_data | 0 | 2101 | virt_cpu
-counter_data | 0 | 2102 | virt_memory
-counter_data | 0 | 2103 | virt_disk_io
-counter_data | 0 | 2104 | virt_net_io
 	
 
 ## References
