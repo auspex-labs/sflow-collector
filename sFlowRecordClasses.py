@@ -1,4 +1,7 @@
 from struct import unpack
+from ipaddress import IPv4Address, IPv6Address
+from binascii import hexlify
+from uuid import UUID
 
 #Flow Record Types
 
@@ -12,7 +15,8 @@ class sFlowRawPacketHeader():
         self.frameLength = unpack('>i', dataGram[4:8])[0]
         self.payloadRemoved = unpack('>i', dataGram[8:12])[0]
         self.headerSize = unpack('>i', dataGram[12:16])[0]
-        self.header = dataGram[(16):(16 + self.headerSize)] #Need a class for parsing the header information.
+        self.header = dataGram[(16):(16 + self.headerSize)] 
+        #Need a class for parsing the header information.
 
 
 class sFlowEthernetFrame():
@@ -22,8 +26,8 @@ class sFlowEthernetFrame():
         self.len = length
         self.data = dataGram
         self.frameLength = unpack('>i', dataGram[0:4])[0]
-        self.srcMAC = binascii.hexlify(dataGram[4:10])
-        self.dstMAC = binascii.hexlify(dataGram[12:18])
+        self.srcMAC = hexlify(dataGram[4:10])
+        self.dstMAC = hexlify(dataGram[12:18])
         self.type = unpack('>i', dataGram[20:24])[0]
 
 
@@ -130,11 +134,15 @@ class sFlowExtendedGateway():
         dataPosition += 4
         self.asPathCount = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
         dataPosition += 4
-        self.dstAsPath = unpack(f'>{"i" * self.asPathCount}', dataGram[dataPosition:(dataPosition + self.asPathCount * 4)])
+        self.dstAsPath = unpack(
+            f'>{"i" * self.asPathCount}', 
+            dataGram[dataPosition:(dataPosition + self.asPathCount * 4)])
         dataPosition += self.asPathCount * 4
         self.communitiesCount = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
         dataPosition += 4
-        self.communities = unpack(f'>{"i" * communitiesCount}', dataGram[dataPosition:(dataPosition + communitiesCount * 4)])
+        self.communities = unpack(
+            f'>{"i" * communitiesCount}', 
+            dataGram[dataPosition:(dataPosition + communitiesCount * 4)])
         dataPosition += communitiesCount * 4
         self.localpref = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
 
@@ -146,12 +154,12 @@ class sFlowExtendedUser():
         self.len = length
         self.data = dataGram
         self.srcCharset = unpack('>i', dataGram[0:4])
-        nameLength = struct.unpack('>i', dataGram[4:8])[0]
+        nameLength = unpack('>i', dataGram[4:8])[0]
         self.srcUser = dataGram[8:(8 + nameLength)].decode("utf-8")
-        dataPostion = nameLength + (4 - nameLength) % 4
+        dataPosition = nameLength + (4 - nameLength) % 4
         self.dstCharset = dataGram[dataPosition:(dataPosition + nameLength)].decode('utf-8')
-        dataPostion += 4
-        nameLength = struct.unpack('>i', dataGram[4:8])[0]
+        dataPosition += 4
+        nameLength = unpack('>i', dataGram[4:8])[0]
         self.dstUser = dataGram[dataPosition:(dataPosition + nameLength)].decode("utf-8")
 
 
@@ -162,15 +170,14 @@ class sFlowExtendedUrl():
         self.len = length
         self.data = dataGram
         self.direction = unpack('>i', dataGram[0:4])[0]
-        dataPosition = 4
-        nameLength = min(unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0], 255)
-        dataPostion += 4
+        nameLength = min(unpack('>i', dataGram[4:8])[0], 255)
+        dataPosition = 8
         self.url = dataGram[dataPosition:(dataPosition + nameLength)].decode('utf-8')
-        dataPostion += nameLength + (4 - nameLength) % 4
+        dataPosition += nameLength + (4 - nameLength) % 4
         nameLength = min(unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0], 255)
-        dataPostion += 4
+        dataPosition += 4
         self.host = dataGram[dataPosition:(dataPosition + nameLength)].decode('utf-8')
-        nameLength = struct.unpack('>i', dataGram[0:4])[0]
+        nameLength = unpack('>i', dataGram[0:4])[0]
         self.PortName = dataGram[dataPosition:(dataPosition + nameLength)].decode("utf-8")
 
 
@@ -190,18 +197,22 @@ class sFlowExtendedMpls():
             dataPosition += 16
         else:
             self.nextHop = 0
-            self.inLabelStackCount
+            self.inLabelStackCount = 0
             self.inLabelStack = []
             self.outLabelStackCount = 0
             self.outLabelStack = []
             return
         self.inLabelStackCount = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
         dataPosition += 4
-        self.inLabelStack = unpack(f'>{"i" * self.inLabelStackCount}', dataGram[dataPosition:(dataPosition + self.inLabelStackCount * 4)])
+        self.inLabelStack = unpack(
+            f'>{"i" * self.inLabelStackCount}', 
+            dataGram[dataPosition:(dataPosition + self.inLabelStackCount * 4)])
         dataPosition += self.inLabelStackCount * 4
         self.outLabelStackCount = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
         dataPosition += 4
-        self.outLabelStack = unpack(f'>{"i" * self.outLabelStackCount}', dataGram[dataPosition:(dataPosition + self.outLabelStackCount * 4)])
+        self.outLabelStack = unpack(
+            f'>{"i" * self.outLabelStackCount}', 
+            dataGram[dataPosition:(dataPosition + self.outLabelStackCount * 4)])
 
 
 class sFlowExtendedNat():
@@ -243,9 +254,9 @@ class sFlowExtendedMplsTunnel():
         self.data = dataGram
         nameLength = min(unpack('>i', dataGram[0:4])[0], 255)
         self.host = dataGram[4:(4 + nameLength)].decode('utf-8')
-        dataPostion = 4 + nameLength + (4 - nameLength) % 4
+        dataPosition = 4 + nameLength + (4 - nameLength) % 4
         self.tunnelId = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
-        dataPostion += 4
+        dataPosition += 4
         self.tunnelCos = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
 
 
@@ -257,9 +268,9 @@ class sFlowExtendedMplsVc():
         self.data = dataGram
         nameLength = min(unpack('>i', dataGram[0:4])[0], 255)
         self.vcInstanceName = dataGram[4:(4 + nameLength)].decode('utf-8')
-        dataPostion += 4 + nameLength + (4 - nameLength) % 4
+        dataPosition = 4 + nameLength + (4 - nameLength) % 4
         self.vllVcId = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
-        dataPostion += 4
+        dataPosition += 4
         self.vcLabelCos = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
 
 
@@ -271,7 +282,7 @@ class sFlowExtendedMpls_FTN():
         self.data = dataGram
         nameLength = min(unpack('>i', dataGram[0:4])[0], 255)
         self.mplsFTNDescr = dataGram[4:(4 + nameLength)].decode('utf-8')
-        dataPostion += 4 + nameLength + (4 - nameLength) % 4
+        dataPosition = 4 + nameLength + (4 - nameLength) % 4
         self.mplsFTNMask = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
 
 
@@ -290,8 +301,8 @@ class sFlowExtendedVlantunnel():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.stackCount = unpack('>i', dataGram[0:4])[0]
-        self.stack = unpack(f'>{i * stackCount}', dataGram[4:(4 + stackCount * 4)])
+        stackCount = unpack('>i', dataGram[0:4])[0]
+        self.stack = unpack(f'>{"i" * stackCount}', dataGram[4:(4 + stackCount * 4)])
 
 
 class sFlowExtendedSocketIpv4():
@@ -328,25 +339,25 @@ class sFlowIfCounter:
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.index = struct.unpack('>i', dataGram[0:4])[0]
-        self.type = struct.unpack('>i', dataGram[4:8])[0]
-        self.speed = struct.unpack('>q', dataGram[8:16])[0] #64-bit
-        self.direction = struct.unpack('>i', dataGram[16:20])[0]
-        self.status = struct.unpack('>i', dataGram[20:24])[0] #This is really a 2-bit value
-        self.inputOctets = struct.unpack('>q', dataGram[24:32])[0] #64-bit
-        self.inputPackets = struct.unpack('>i', dataGram[32:36])[0]
-        self.inputMulticast = struct.unpack('>i', dataGram[36:40])[0]
-        self.inputBroadcast = struct.unpack('>i', dataGram[40:44])[0]
-        self.inputDiscarded = struct.unpack('>i', dataGram[44:48])[0]
-        self.inputErrors = struct.unpack('>i', dataGram[48:52])[0]
-        self.inputUnknown = struct.unpack('>i', dataGram[52:56])[0]
-        self.outputOctets = struct.unpack('>q', dataGram[56:64])[0] #64-bit
-        self.outputPackets = struct.unpack('>i', dataGram[64:68])[0]
-        self.outputMulticast = struct.unpack('>i', dataGram[68:72])[0]
-        self.outputBroadcast = struct.unpack('>i', dataGram[72:76])[0]
-        self.outputDiscarded = struct.unpack('>i', dataGram[76:80])[0]
-        self.outputErrors = struct.unpack('>i', dataGram[80:84])[0]
-        self.promiscuous = struct.unpack('>i', dataGram[84:88])[0]
+        self.index = unpack('>i', dataGram[0:4])[0]
+        self.type = unpack('>i', dataGram[4:8])[0]
+        self.speed = unpack('>q', dataGram[8:16])[0] #64-bit
+        self.direction = unpack('>i', dataGram[16:20])[0]
+        self.status = unpack('>i', dataGram[20:24])[0] #This is really a 2-bit value
+        self.inputOctets = unpack('>q', dataGram[24:32])[0] #64-bit
+        self.inputPackets = unpack('>i', dataGram[32:36])[0]
+        self.inputMulticast = unpack('>i', dataGram[36:40])[0]
+        self.inputBroadcast = unpack('>i', dataGram[40:44])[0]
+        self.inputDiscarded = unpack('>i', dataGram[44:48])[0]
+        self.inputErrors = unpack('>i', dataGram[48:52])[0]
+        self.inputUnknown = unpack('>i', dataGram[52:56])[0]
+        self.outputOctets = unpack('>q', dataGram[56:64])[0] #64-bit
+        self.outputPackets = unpack('>i', dataGram[64:68])[0]
+        self.outputMulticast = unpack('>i', dataGram[68:72])[0]
+        self.outputBroadcast = unpack('>i', dataGram[72:76])[0]
+        self.outputDiscarded = unpack('>i', dataGram[76:80])[0]
+        self.outputErrors = unpack('>i', dataGram[80:84])[0]
+        self.promiscuous = unpack('>i', dataGram[84:88])[0]
 
 
 class sFlowEthernetInterface: #2-2 (52 bytes)
@@ -355,19 +366,19 @@ class sFlowEthernetInterface: #2-2 (52 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.alignmentError = struct.unpack('>i', dataGram[0:4])[0]
-        self.fcsError = struct.unpack('>i', dataGram[4:8])[0]
-        self.singleCollision = struct.unpack('>i', dataGram[8:12])[0]
-        self.multipleCollision = struct.unpack('>i', dataGram[12:16])[0]
-        self.sqeTest = struct.unpack('>i', dataGram[16:20])[0]
-        self.deferred = struct.unpack('>i', dataGram[20:24])[0]
-        self.lateCollision = struct.unpack('>i', dataGram[24:28])[0]
-        self.excessiveCollision = struct.unpack('>i', dataGram[28:32])[0]
-        self.internalTransmitError = struct.unpack('>i', dataGram[32:36])[0]
-        self.carrierSenseError = struct.unpack('>i', dataGram[36:40])[0]
-        self.frameTooLong = struct.unpack('>i', dataGram[40:44])[0]
-        self.internalReceiveError = struct.unpack('>i', dataGram[44:48])[0]
-        self.symbolError = struct.unpack('>i', dataGram[48:52])[0]
+        self.alignmentError = unpack('>i', dataGram[0:4])[0]
+        self.fcsError = unpack('>i', dataGram[4:8])[0]
+        self.singleCollision = unpack('>i', dataGram[8:12])[0]
+        self.multipleCollision = unpack('>i', dataGram[12:16])[0]
+        self.sqeTest = unpack('>i', dataGram[16:20])[0]
+        self.deferred = unpack('>i', dataGram[20:24])[0]
+        self.lateCollision = unpack('>i', dataGram[24:28])[0]
+        self.excessiveCollision = unpack('>i', dataGram[28:32])[0]
+        self.internalTransmitError = unpack('>i', dataGram[32:36])[0]
+        self.carrierSenseError = unpack('>i', dataGram[36:40])[0]
+        self.frameTooLong = unpack('>i', dataGram[40:44])[0]
+        self.internalReceiveError = unpack('>i', dataGram[44:48])[0]
+        self.symbolError = unpack('>i', dataGram[48:52])[0]
 
 
 class sFlowTokenringCounters():
@@ -376,24 +387,24 @@ class sFlowTokenringCounters():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.dot5StatsLineErrors = struct.unpack('>i', dataGram[0:4])[0]
-        self.dot5StatsBurstErrors = struct.unpack('>i', dataGram[4:8])[0]
-        self.dot5StatsACErrors = struct.unpack('>i', dataGram[8:12])[0]
-        self.dot5StatsAbortTransErrors = struct.unpack('>i', dataGram[12:16])[0]
-        self.dot5StatsInternalErrors = struct.unpack('>i', dataGram[16:20])[0]
-        self.dot5StatsLostFrameErrors = struct.unpack('>i', dataGram[20:24])[0]
-        self.dot5StatsReceiveCongestions = struct.unpack('>i', dataGram[24:28])[0]
-        self.dot5StatsFrameCopiedErrors = struct.unpack('>i', dataGram[28:32])[0]
-        self.dot5StatsTokenErrors = struct.unpack('>i', dataGram[32:36])[0]
-        self.dot5StatsSoftErrors = struct.unpack('>i', dataGram[36:40])[0]
-        self.dot5StatsHardErrors = struct.unpack('>i', dataGram[40:44])[0]
-        self.dot5StatsSignalLoss = struct.unpack('>i', dataGram[44:48])[0]
-        self.dot5StatsTransmitBeacons = struct.unpack('>i', dataGram[48:52])[0]
-        self.dot5StatsRecoverys = struct.unpack('>i', dataGram[52:56])[0]
-        self.dot5StatsLobeWires = struct.unpack('>i', dataGram[56:60])[0]
-        self.dot5StatsRemoves = struct.unpack('>i', dataGram[60:64])[0]
-        self.dot5StatsSingles = struct.unpack('>i', dataGram[64:68])[0]
-        self.dot5StatsFreqErrors = struct.unpack('>i', dataGram[68:72])[0]
+        self.dot5StatsLineErrors = unpack('>i', dataGram[0:4])[0]
+        self.dot5StatsBurstErrors = unpack('>i', dataGram[4:8])[0]
+        self.dot5StatsACErrors = unpack('>i', dataGram[8:12])[0]
+        self.dot5StatsAbortTransErrors = unpack('>i', dataGram[12:16])[0]
+        self.dot5StatsInternalErrors = unpack('>i', dataGram[16:20])[0]
+        self.dot5StatsLostFrameErrors = unpack('>i', dataGram[20:24])[0]
+        self.dot5StatsReceiveCongestions = unpack('>i', dataGram[24:28])[0]
+        self.dot5StatsFrameCopiedErrors = unpack('>i', dataGram[28:32])[0]
+        self.dot5StatsTokenErrors = unpack('>i', dataGram[32:36])[0]
+        self.dot5StatsSoftErrors = unpack('>i', dataGram[36:40])[0]
+        self.dot5StatsHardErrors = unpack('>i', dataGram[40:44])[0]
+        self.dot5StatsSignalLoss = unpack('>i', dataGram[44:48])[0]
+        self.dot5StatsTransmitBeacons = unpack('>i', dataGram[48:52])[0]
+        self.dot5StatsRecoverys = unpack('>i', dataGram[52:56])[0]
+        self.dot5StatsLobeWires = unpack('>i', dataGram[56:60])[0]
+        self.dot5StatsRemoves = unpack('>i', dataGram[60:64])[0]
+        self.dot5StatsSingles = unpack('>i', dataGram[64:68])[0]
+        self.dot5StatsFreqErrors = unpack('>i', dataGram[68:72])[0]
 
 
 class sFlowVgCounters():
@@ -402,20 +413,20 @@ class sFlowVgCounters():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.dot12InHighPriorityFrames = struct.unpack('>i', dataGram[0:4])[0]
-        self.dot12InHighPriorityOctets = struct.unpack('>q', dataGram[4:12])[0]
-        self.dot12InNormPriorityFrames = struct.unpack('>i', dataGram[12:16])[0]
-        self.dot12InNormPriorityOctets = struct.unpack('>q', dataGram[16:24])[0]
-        self.dot12InIPMErrors = struct.unpack('>i', dataGram[24:28])[0]
-        self.dot12InOversizeFrameErrors = struct.unpack('>i', dataGram[28:32])[0]
-        self.dot12InDataErrors = struct.unpack('>i', dataGram[32:36])[0]
-        self.dot12InNullAddressedFrames = struct.unpack('>i', dataGram[36:40])[0]
-        self.dot12OutHighPriorityFrames = struct.unpack('>i', dataGram[40:44])[0]
-        self.dot12OutHighPriorityOctets = struct.unpack('>q', dataGram[44:52])[0]
-        self.dot12TransitionIntoTrainings = struct.unpack('>i', dataGram[52:56])[0]
-        self.dot12HCInHighPriorityOctets = struct.unpack('>q', dataGram[56:64])[0]
-        self.dot12HCInNormPriorityOctets = struct.unpack('>q', dataGram[64:72])[0]
-        self.dot12HCOutHighPriorityOctets = struct.unpack('>q', dataGram[72:80])[0]
+        self.dot12InHighPriorityFrames = unpack('>i', dataGram[0:4])[0]
+        self.dot12InHighPriorityOctets = unpack('>q', dataGram[4:12])[0]
+        self.dot12InNormPriorityFrames = unpack('>i', dataGram[12:16])[0]
+        self.dot12InNormPriorityOctets = unpack('>q', dataGram[16:24])[0]
+        self.dot12InIPMErrors = unpack('>i', dataGram[24:28])[0]
+        self.dot12InOversizeFrameErrors = unpack('>i', dataGram[28:32])[0]
+        self.dot12InDataErrors = unpack('>i', dataGram[32:36])[0]
+        self.dot12InNullAddressedFrames = unpack('>i', dataGram[36:40])[0]
+        self.dot12OutHighPriorityFrames = unpack('>i', dataGram[40:44])[0]
+        self.dot12OutHighPriorityOctets = unpack('>q', dataGram[44:52])[0]
+        self.dot12TransitionIntoTrainings = unpack('>i', dataGram[52:56])[0]
+        self.dot12HCInHighPriorityOctets = unpack('>q', dataGram[56:64])[0]
+        self.dot12HCInNormPriorityOctets = unpack('>q', dataGram[64:72])[0]
+        self.dot12HCOutHighPriorityOctets = unpack('>q', dataGram[72:80])[0]
 
 
 class sFlowVLAN: #2-5 (28 bytes)
@@ -424,12 +435,12 @@ class sFlowVLAN: #2-5 (28 bytes)
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.vlanID = struct.unpack('>i', dataGram[0:4])[0]
-        self.octets = struct.unpack('>q', dataGram[4:12])[0] #64-bit
-        self.unicast = struct.unpack('>i', dataGram[12:16])[0]
-        self.multicast = struct.unpack('>i', dataGram[16:20])[0]
-        self.broadcast = struct.unpack('>i', dataGram[20:24])[0]
-        self.discard = struct.unpack('>i', dataGram[24:28])[0]
+        self.vlanID = unpack('>i', dataGram[0:4])[0]
+        self.octets = unpack('>q', dataGram[4:12])[0] #64-bit
+        self.unicast = unpack('>i', dataGram[12:16])[0]
+        self.multicast = unpack('>i', dataGram[16:20])[0]
+        self.broadcast = unpack('>i', dataGram[20:24])[0]
+        self.discard = unpack('>i', dataGram[24:28])[0]
 
 
 class sFlowProcessor():
@@ -438,11 +449,11 @@ class sFlowProcessor():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.cpu5s = struct.unpack('>i', dataGram[0:4])[0]
-        self.cpu1m = struct.unpack('>i', dataGram[4:8])[0] 
-        self.cpu5m = struct.unpack('>i', dataGram[8:12])[0]
-        self.totalMemory = struct.unpack('>q', dataGram[12:20])[0] #64-bit
-        self.freeMemory = struct.unpack('>q', dataGram[20:28])[0] #64-bit       
+        self.cpu5s = unpack('>i', dataGram[0:4])[0]
+        self.cpu1m = unpack('>i', dataGram[4:8])[0] 
+        self.cpu5m = unpack('>i', dataGram[8:12])[0]
+        self.totalMemory = unpack('>q', dataGram[12:20])[0] #64-bit
+        self.freeMemory = unpack('>q', dataGram[20:28])[0] #64-bit       
 
 
 class sFlowOfPort():
@@ -451,8 +462,8 @@ class sFlowOfPort():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.datapathId = struct.unpack('>i', dataGram[0:8])[0]
-        self.portNo = struct.unpack('>i', dataGram[8:12])[0]
+        self.datapathId = unpack('>i', dataGram[0:8])[0]
+        self.portNo = unpack('>i', dataGram[8:12])[0]
 
 
 class sFlowPortName():
@@ -461,8 +472,8 @@ class sFlowPortName():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        nameLength = struct.unpack('>i', dataGram[0:4])[0]
-        self.PortName = dataGram[dataPosition:(dataPosition + nameLength)].decode('utf-8')
+        nameLength = unpack('>i', dataGram[0:4])[0]
+        self.PortName = dataGram[4:(4 + nameLength)].decode('utf-8')
 
 
 class sFlowHostDescr():
@@ -472,17 +483,17 @@ class sFlowHostDescr():
         self.len = length
         self.data = dataGram
         nameLength = min(unpack('>i', dataGram[0:4])[0], 64)
-        dataPostion = 4
+        dataPosition = 4
         self.hostname = dataGram[dataPosition:(dataPosition + nameLength)].decode('utf-8')
-        dataPostion += nameLength + (4 - nameLength) % 4
-        self.uuid = uuid.UUID(bytes=dataGram[dataPosition:(dataPosition + 16)])
+        dataPosition += nameLength + (4 - nameLength) % 4
+        self.uuid = UUID(bytes=dataGram[dataPosition:(dataPosition + 16)])
         dataPosition = dataPosition + 16
-        self.machineType = struct.unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
+        self.machineType = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
         dataPosition = dataPosition + 4
-        self.osName = struct.unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
+        self.osName = unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
         dataPosition = dataPosition + 4
         nameLength = min(unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0], 32)
-        dataPostion += 4
+        dataPosition += 4
         self.osRelease = dataGram[dataPosition:(dataPosition + nameLength)].decode('utf-8')
 
 
@@ -499,19 +510,23 @@ class sFlowHostAdapters():
         self.len = length
         self.data = dataGram
         self.adapters = []
-        count = struct.unpack('>i', dataGram[0:4])[0]
+        hostAdapterCount = unpack('>i', dataGram[0:4])[0]
         dataPosition = 4
-        for a in range(count):
-            hostadapter = HostAdapter()
-            hostadapter.ifIndex = struct.unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
+        for _ in range(hostAdapterCount):
+            hostadapter = self.hostAdapter()
+            hostadapter.ifIndex = unpack(
+                '>i', dataGram[dataPosition:(dataPosition + 4)])[0]
             dataPosition += 4
-            hostadapter.macAddressCount = struct.unpack('>i', dataGram[dataPosition:(dataPosition + 4)])[0]
+            hostadapter.macAddressCount = unpack(
+                '>i', dataGram[dataPosition:(dataPosition + 4)])[0]
             dataPosition += 4
             hostadapter.macAddresses = []
-            for macAddressNum in range(self.macAddressCount):
-                hostadapter.macAddresses.append(binascii.hexlify(dataGram[(dataPosition + macAddressNum * 8):(dataPosition + macAddressNum * 8 + 6)]) ])
+            for macNum in range(hostadapter.macAddressCount):
+                hostadapter.macAddresses.append(
+                    hexlify(
+                        dataGram[(dataPosition + macNum * 8):(dataPosition + macNum * 8 + 6)]))
             dataPosition += hostadapter.macAddressCount * 8
-            self.adapters.append(hostAdapter(stream))
+            self.adapters.append(hostadapter)
 
 
 class sFlowHostParent:
@@ -520,8 +535,8 @@ class sFlowHostParent:
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.containerType = struct.unpack('>i', dataGram[0:4])[0]
-        self.containerIndex = struct.unpack('>i', dataGram[4:8])[0]
+        self.containerType = unpack('>i', dataGram[0:4])[0]
+        self.containerIndex = unpack('>i', dataGram[4:8])[0]
 
 
 class sFlowHostCPU:
@@ -530,26 +545,26 @@ class sFlowHostCPU:
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.avgLoad1 = struct.unpack('>f', dataGram[0:4])[0] #Floating Point
-        self.avgLoad5 = struct.unpack('>f', dataGram[4:8])[0] #Floating Point
-        self.avgLoad15 = struct.unpack('>f', dataGram[8:12])[0] #Floating Point
-        self.runProcess = struct.unpack('>i', dataGram[12:16])[0]
-        self.totalProcess = struct.unpack('>i', dataGram[16:20])[0]
-        self.numCPU = struct.unpack('>i', dataGram[20:24])[0]
-        self.mhz = struct.unpack('>i', dataGram[24:28])[0]
-        self.uptime = struct.unpack('>i', dataGram[28:32])[0]
-        self.timeUser = struct.unpack('>i', dataGram[32:36])[0]
-        self.timeNices = struct.unpack('>i', dataGram[36:40])[0]
-        self.timeKennal = struct.unpack('>i', dataGram[40:44])[0]
-        self.timeIdle = struct.unpack('>i', dataGram[44:48])[0]
-        self.timeIO = struct.unpack('>i', dataGram[48:52])[0]
-        self.timeInterrupt = struct.unpack('>i', dataGram[52:56])[0]
-        self.timeSoftInterrupt = struct.unpack('>i', dataGram[56:60])[0]
-        self.interrupt = struct.unpack('>i', dataGram[60:64])[0]
-        self.contextSwitch = struct.unpack('>i', dataGram[64:68])[0]
-        self.virtualInstance = struct.unpack('>i', dataGram[68:72])[0]
-        self.guestOS = struct.unpack('>i', dataGram[72:76])[0]
-        self.guestNice = struct.unpack('>i', dataGram[76:80])[0]
+        self.avgLoad1 = unpack('>f', dataGram[0:4])[0] #Floating Point
+        self.avgLoad5 = unpack('>f', dataGram[4:8])[0] #Floating Point
+        self.avgLoad15 = unpack('>f', dataGram[8:12])[0] #Floating Point
+        self.runProcess = unpack('>i', dataGram[12:16])[0]
+        self.totalProcess = unpack('>i', dataGram[16:20])[0]
+        self.numCPU = unpack('>i', dataGram[20:24])[0]
+        self.mhz = unpack('>i', dataGram[24:28])[0]
+        self.uptime = unpack('>i', dataGram[28:32])[0]
+        self.timeUser = unpack('>i', dataGram[32:36])[0]
+        self.timeNices = unpack('>i', dataGram[36:40])[0]
+        self.timeKennal = unpack('>i', dataGram[40:44])[0]
+        self.timeIdle = unpack('>i', dataGram[44:48])[0]
+        self.timeIO = unpack('>i', dataGram[48:52])[0]
+        self.timeInterrupt = unpack('>i', dataGram[52:56])[0]
+        self.timeSoftInterrupt = unpack('>i', dataGram[56:60])[0]
+        self.interrupt = unpack('>i', dataGram[60:64])[0]
+        self.contextSwitch = unpack('>i', dataGram[64:68])[0]
+        self.virtualInstance = unpack('>i', dataGram[68:72])[0]
+        self.guestOS = unpack('>i', dataGram[72:76])[0]
+        self.guestNice = unpack('>i', dataGram[76:80])[0]
 
 class sFlowHostMemory:
     "counterData: enterprise = 0, format = 2004"
@@ -557,17 +572,17 @@ class sFlowHostMemory:
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.memTotal = struct.unpack('>q', dataGram[0:8])[0] #64-bit
-        self.memFree = struct.unpack('>q', dataGram[8:16])[0] #64-bit
-        self.memShared = struct.unpack('>q', dataGram[16:24])[0] #64-bit
-        self.memBuffers = struct.unpack('>q', dataGram[24:32])[0] #64-bit
-        self.memCache = struct.unpack('>q', dataGram[32:40])[0] #64-bit
-        self.swapTotal = struct.unpack('>q', dataGram[40:48])[0] #64-bit
-        self.swapFree = struct.unpack('>q', dataGram[48:56])[0] #64-bit
-        self.pageIn = struct.unpack('>i', dataGram[56:60])[0]
-        self.pageOut = struct.unpack('>i', dataGram[60:64])[0]
-        self.swapIn = struct.unpack('>i', dataGram[64:68])[0]
-        self.swapOut = struct.unpack('>i', dataGram[68:72])[0]
+        self.memTotal = unpack('>q', dataGram[0:8])[0] #64-bit
+        self.memFree = unpack('>q', dataGram[8:16])[0] #64-bit
+        self.memShared = unpack('>q', dataGram[16:24])[0] #64-bit
+        self.memBuffers = unpack('>q', dataGram[24:32])[0] #64-bit
+        self.memCache = unpack('>q', dataGram[32:40])[0] #64-bit
+        self.swapTotal = unpack('>q', dataGram[40:48])[0] #64-bit
+        self.swapFree = unpack('>q', dataGram[48:56])[0] #64-bit
+        self.pageIn = unpack('>i', dataGram[56:60])[0]
+        self.pageOut = unpack('>i', dataGram[60:64])[0]
+        self.swapIn = unpack('>i', dataGram[64:68])[0]
+        self.swapOut = unpack('>i', dataGram[68:72])[0]
 
 class sFlowHostDiskIO:
     "counterData: enterprise = 0, format = 2005"
@@ -575,15 +590,15 @@ class sFlowHostDiskIO:
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.diskTotal = struct.unpack('>q', dataGram[0:8])[0] #64-bit
-        self.diskFree = struct.unpack('>q', dataGram[8:16])[0] #64-bit
-        self.partMaxused = (struct.unpack('>i', dataGram[16:20])[0])/ float(100)
-        self.read = struct.unpack('>i', dataGram[20:24])[0]
-        self.readByte = struct.unpack('>q', dataGram[24:32])[0] #64-bit
-        self.readTime = struct.unpack('>i', dataGram[32:36])[0]
-        self.write = struct.unpack('>i', dataGram[36:40])[0]
-        self.writeByte = struct.unpack('>q', dataGram[40:48])[0] #64-bit
-        self.writeTime = struct.unpack('>i', dataGram[48:52])[0]
+        self.diskTotal = unpack('>q', dataGram[0:8])[0] #64-bit
+        self.diskFree = unpack('>q', dataGram[8:16])[0] #64-bit
+        self.partMaxused = (unpack('>i', dataGram[16:20])[0])/ float(100)
+        self.read = unpack('>i', dataGram[20:24])[0]
+        self.readByte = unpack('>q', dataGram[24:32])[0] #64-bit
+        self.readTime = unpack('>i', dataGram[32:36])[0]
+        self.write = unpack('>i', dataGram[36:40])[0]
+        self.writeByte = unpack('>q', dataGram[40:48])[0] #64-bit
+        self.writeTime = unpack('>i', dataGram[48:52])[0]
 
 class sFlowHostNetIO:
     "counterData: enterprise = 0, format = 2006"
@@ -591,14 +606,14 @@ class sFlowHostNetIO:
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.inByte = struct.unpack('>q', dataGram[0:8])[0] #64-bit
-        self.inPacket = struct.unpack('>i', dataGram[8:12])[0]
-        self.inError = struct.unpack('>i', dataGram[12:16])[0]
-        self.inDrop = struct.unpack('>i', dataGram[16:20])[0]
-        self.outByte = struct.unpack('>q', dataGram[20:28])[0] #64-bit
-        self.outPacket = struct.unpack('>i', dataGram[28:32])[0]
-        self.outError = struct.unpack('>i', dataGram[32:36])[0]
-        self.outDrop = struct.unpack('>i', dataGram[36:40])[0]
+        self.inByte = unpack('>q', dataGram[0:8])[0] #64-bit
+        self.inPacket = unpack('>i', dataGram[8:12])[0]
+        self.inError = unpack('>i', dataGram[12:16])[0]
+        self.inDrop = unpack('>i', dataGram[16:20])[0]
+        self.outByte = unpack('>q', dataGram[20:28])[0] #64-bit
+        self.outPacket = unpack('>i', dataGram[28:32])[0]
+        self.outError = unpack('>i', dataGram[32:36])[0]
+        self.outDrop = unpack('>i', dataGram[36:40])[0]
 
 class sFlowMib2IP:
     "counterData: enterprise = 0, format = 2007"
@@ -606,25 +621,25 @@ class sFlowMib2IP:
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.forwarding = struct.unpack('>i', dataGram[0:4])[0]
-        self.defaultTTL = struct.unpack('>i', dataGram[4:8])[0]
-        self.inReceives = struct.unpack('>i', dataGram[8:12])[0]
-        self.inHeaderErrors = struct.unpack('>i', dataGram[12:16])[0]
-        self.inAddressErrors = struct.unpack('>i', dataGram[16:20])[0]
-        self.inForwardDatagrams = struct.unpack('>i', dataGram[20:24])[0]
-        self.inUnknownProtocols = struct.unpack('>i', dataGram[24:28])[0]
-        self.inDiscards = struct.unpack('>i', dataGram[28:32])[0]
-        self.inDelivers = struct.unpack('>i', dataGram[32:36])[0]
-        self.outRequests = struct.unpack('>i', dataGram[36:40])[0]
-        self.outDiscards = struct.unpack('>i', dataGram[40:44])[0]
-        self.outNoRoutes = struct.unpack('>i', dataGram[44:48])[0]
-        self.reassemblyTimeout = struct.unpack('>i', dataGram[48:52])[0]
-        self.reassemblyRequired = struct.unpack('>i', dataGram[52:56])[0]
-        self.reassemblyOkay = struct.unpack('>i', dataGram[56:60])[0]
-        self.reassemblyFail = struct.unpack('>i', dataGram[60:64])[0]
-        self.fragmentOkay = struct.unpack('>i', dataGram[64:68])[0]
-        self.fragmentFail = struct.unpack('>i', dataGram[68:72])[0]
-        self.fragmentCreate = struct.unpack('>i', dataGram[72:76])[0]
+        self.forwarding = unpack('>i', dataGram[0:4])[0]
+        self.defaultTTL = unpack('>i', dataGram[4:8])[0]
+        self.inReceives = unpack('>i', dataGram[8:12])[0]
+        self.inHeaderErrors = unpack('>i', dataGram[12:16])[0]
+        self.inAddressErrors = unpack('>i', dataGram[16:20])[0]
+        self.inForwardDatagrams = unpack('>i', dataGram[20:24])[0]
+        self.inUnknownProtocols = unpack('>i', dataGram[24:28])[0]
+        self.inDiscards = unpack('>i', dataGram[28:32])[0]
+        self.inDelivers = unpack('>i', dataGram[32:36])[0]
+        self.outRequests = unpack('>i', dataGram[36:40])[0]
+        self.outDiscards = unpack('>i', dataGram[40:44])[0]
+        self.outNoRoutes = unpack('>i', dataGram[44:48])[0]
+        self.reassemblyTimeout = unpack('>i', dataGram[48:52])[0]
+        self.reassemblyRequired = unpack('>i', dataGram[52:56])[0]
+        self.reassemblyOkay = unpack('>i', dataGram[56:60])[0]
+        self.reassemblyFail = unpack('>i', dataGram[60:64])[0]
+        self.fragmentOkay = unpack('>i', dataGram[64:68])[0]
+        self.fragmentFail = unpack('>i', dataGram[68:72])[0]
+        self.fragmentCreate = unpack('>i', dataGram[72:76])[0]
 
 class sFlowMib2ICMP:
     "counterData: enterprise = 0, format = 2008"
@@ -632,31 +647,31 @@ class sFlowMib2ICMP:
     def __init__(self, length, dataGram):
         self.len = length 
         self.data = dataGram
-        self.inMessage = struct.unpack('>i', dataGram[0:4])[0]
-        self.inError = struct.unpack('>i', dataGram[4:8])[0]
-        self.inDestinationUnreachable = struct.unpack('>i', dataGram[8:12])[0]
-        self.inTimeExceeded = struct.unpack('>i', dataGram[12:16])[0]
-        self.inParameterProblem = struct.unpack('>i', dataGram[16:20])[0]
-        self.inSourceQuence = struct.unpack('>i', dataGram[20:24])[0]
-        self.inRedirect = struct.unpack('>i', dataGram[24:28])[0]
-        self.inEcho = struct.unpack('>i', dataGram[28:32])[0]
-        self.inEchoReply = struct.unpack('>i', dataGram[32:36])[0]
-        self.inTimestamp = struct.unpack('>i', dataGram[36:40])[0]
-        self.inAddressMask = struct.unpack('>i', dataGram[40:44])[0]
-        self.inAddressMaskReply = struct.unpack('>i', dataGram[44:48])[0]
-        self.outMessage = struct.unpack('>i', dataGram[48:52])[0]
-        self.outError = struct.unpack('>i', dataGram[52:56])[0]
-        self.outDestinationUnreachable = struct.unpack('>i', dataGram[56:60])[0]
-        self.outTimeExceeded = struct.unpack('>i', dataGram[60:64])[0]
-        self.outParameterProblem = struct.unpack('>i', dataGram[64:68])[0]
-        self.outSourceQuence = struct.unpack('>i', dataGram[68:72])[0]
-        self.outRedirect = struct.unpack('>i', dataGram[72:76])[0]
-        self.outEcho = struct.unpack('>i', dataGram[76:80])[0]
-        self.outEchoReply = struct.unpack('>i', dataGram[80:84])[0]
-        self.outTimestamp = struct.unpack('>i', dataGram[84:88])[0]
-        self.outTimestampReply = struct.unpack('>i', dataGram[88:92])[0]
-        self.outAddressMask = struct.unpack('>i', dataGram[92:96])[0]
-        self.outAddressMaskReplay = struct.unpack('>i', dataGram[96:100])[0]
+        self.inMessage = unpack('>i', dataGram[0:4])[0]
+        self.inError = unpack('>i', dataGram[4:8])[0]
+        self.inDestinationUnreachable = unpack('>i', dataGram[8:12])[0]
+        self.inTimeExceeded = unpack('>i', dataGram[12:16])[0]
+        self.inParameterProblem = unpack('>i', dataGram[16:20])[0]
+        self.inSourceQuence = unpack('>i', dataGram[20:24])[0]
+        self.inRedirect = unpack('>i', dataGram[24:28])[0]
+        self.inEcho = unpack('>i', dataGram[28:32])[0]
+        self.inEchoReply = unpack('>i', dataGram[32:36])[0]
+        self.inTimestamp = unpack('>i', dataGram[36:40])[0]
+        self.inAddressMask = unpack('>i', dataGram[40:44])[0]
+        self.inAddressMaskReply = unpack('>i', dataGram[44:48])[0]
+        self.outMessage = unpack('>i', dataGram[48:52])[0]
+        self.outError = unpack('>i', dataGram[52:56])[0]
+        self.outDestinationUnreachable = unpack('>i', dataGram[56:60])[0]
+        self.outTimeExceeded = unpack('>i', dataGram[60:64])[0]
+        self.outParameterProblem = unpack('>i', dataGram[64:68])[0]
+        self.outSourceQuence = unpack('>i', dataGram[68:72])[0]
+        self.outRedirect = unpack('>i', dataGram[72:76])[0]
+        self.outEcho = unpack('>i', dataGram[76:80])[0]
+        self.outEchoReply = unpack('>i', dataGram[80:84])[0]
+        self.outTimestamp = unpack('>i', dataGram[84:88])[0]
+        self.outTimestampReply = unpack('>i', dataGram[88:92])[0]
+        self.outAddressMask = unpack('>i', dataGram[92:96])[0]
+        self.outAddressMaskReplay = unpack('>i', dataGram[96:100])[0]
 
 class sFlowMib2TCP:
     "counterData: enterprise = 0, format = 2009"
@@ -664,21 +679,21 @@ class sFlowMib2TCP:
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.algorithm = struct.unpack('>i', dataGram[0:4])[0]
-        self.rtoMin = struct.unpack('>i', dataGram[4:8])[0]
-        self.rtoMax = struct.unpack('>i', dataGram[8:12])[0]
-        self.maxConnection = struct.unpack('>i', dataGram[12:16])[0]
-        self.activeOpen = struct.unpack('>i', dataGram[16:20])[0]
-        self.passiveOpen = struct.unpack('>i', dataGram[20:24])[0]
-        self.attemptFail = struct.unpack('>i', dataGram[24:28])[0]
-        self.establishedReset = struct.unpack('>i', dataGram[28:32])[0]
-        self.currentEstablished = struct.unpack('>i', dataGram[32:36])[0]
-        self.inSegment = struct.unpack('>i', dataGram[36:40])[0]
-        self.outSegment = struct.unpack('>i', dataGram[40:44])[0]
-        self.retransmitSegment = struct.unpack('>i', dataGram[44:48])[0]
-        self.inError = struct.unpack('>i', dataGram[48:52])[0]
-        self.outReset = struct.unpack('>i', dataGram[52:56])[0]
-        self.inCsumError = struct.unpack('>i', dataGram[56:60])[0]
+        self.algorithm = unpack('>i', dataGram[0:4])[0]
+        self.rtoMin = unpack('>i', dataGram[4:8])[0]
+        self.rtoMax = unpack('>i', dataGram[8:12])[0]
+        self.maxConnection = unpack('>i', dataGram[12:16])[0]
+        self.activeOpen = unpack('>i', dataGram[16:20])[0]
+        self.passiveOpen = unpack('>i', dataGram[20:24])[0]
+        self.attemptFail = unpack('>i', dataGram[24:28])[0]
+        self.establishedReset = unpack('>i', dataGram[28:32])[0]
+        self.currentEstablished = unpack('>i', dataGram[32:36])[0]
+        self.inSegment = unpack('>i', dataGram[36:40])[0]
+        self.outSegment = unpack('>i', dataGram[40:44])[0]
+        self.retransmitSegment = unpack('>i', dataGram[44:48])[0]
+        self.inError = unpack('>i', dataGram[48:52])[0]
+        self.outReset = unpack('>i', dataGram[52:56])[0]
+        self.inCsumError = unpack('>i', dataGram[56:60])[0]
 
 class sFlowMib2UDP:
     "counterData: enterprise = 0, format = 2010"
@@ -686,13 +701,13 @@ class sFlowMib2UDP:
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.inDatagrams = struct.unpack('>i', dataGram[0:4])[0]
-        self.noPorts = struct.unpack('>i', dataGram[4:8])[0]
-        self.inErrors = struct.unpack('>i', dataGram[8:12])[0]
-        self.outDatagrams = struct.unpack('>i', dataGram[12:16])[0]
-        self.receiveBufferError = struct.unpack('>i', dataGram[16:20])[0]
-        self.sendBufferError = struct.unpack('>i', dataGram[20:24])[0]
-        self.inCheckSumError = struct.unpack('>i', dataGram[24:28])[0]
+        self.inDatagrams = unpack('>i', dataGram[0:4])[0]
+        self.noPorts = unpack('>i', dataGram[4:8])[0]
+        self.inErrors = unpack('>i', dataGram[8:12])[0]
+        self.outDatagrams = unpack('>i', dataGram[12:16])[0]
+        self.receiveBufferError = unpack('>i', dataGram[16:20])[0]
+        self.sendBufferError = unpack('>i', dataGram[20:24])[0]
+        self.inCheckSumError = unpack('>i', dataGram[24:28])[0]
 
 
 class virtNode():
@@ -701,11 +716,11 @@ class virtNode():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.mhz = struct.unpack('>i', dataGram[0:4])[0]
-        self.cpus = struct.unpack('>i', dataGram[4:8])[0]
-        self.memory = struct.unpack('>q', dataGram[8:16])[0]
-        self.memoryFree = struct.unpack('>q', dataGram[16:24])[0]
-        self.numDomains = struct.unpack('>i', dataGram[24:28])[0]
+        self.mhz = unpack('>i', dataGram[0:4])[0]
+        self.cpus = unpack('>i', dataGram[4:8])[0]
+        self.memory = unpack('>q', dataGram[8:16])[0]
+        self.memoryFree = unpack('>q', dataGram[16:24])[0]
+        self.numDomains = unpack('>i', dataGram[24:28])[0]
 
 
 class virtCpu():
@@ -714,9 +729,9 @@ class virtCpu():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.state = struct.unpack('>i', dataGram[0:4])[0]
-        self.cpuTime = struct.unpack('>i', dataGram[4:8])[0]
-        self.nrVirtCpu = struct.unpack('>i', dataGram[8:12])[0]
+        self.state = unpack('>i', dataGram[0:4])[0]
+        self.cpuTime = unpack('>i', dataGram[4:8])[0]
+        self.nrVirtCpu = unpack('>i', dataGram[8:12])[0]
 
 
 class virtMemory():
@@ -725,8 +740,8 @@ class virtMemory():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.memory = struct.unpack('>q', dataGram[0:8])[0]
-        self.maxMemory = struct.unpack('>q', dataGram[8:16])[0]
+        self.memory = unpack('>q', dataGram[0:8])[0]
+        self.maxMemory = unpack('>q', dataGram[8:16])[0]
 
 
 class virtDiskIo():
@@ -735,14 +750,14 @@ class virtDiskIo():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.capacity = struct.unpack('>q', dataGram[0:8])[0]
-        self.allocation = struct.unpack('>q', dataGram[8:16])[0]
-        self.available = struct.unpack('>q', dataGram[16:24])[0]
-        self.rdReq = struct.unpack('>i', dataGram[24:28])[0]
-        self.rdBytes = struct.unpack('>q', dataGram[28:36])[0]
-        self.wrReq = struct.unpack('>i', dataGram[36:40])[0]
-        self.wrBytes = struct.unpack('>q', dataGram[40:48])[0]
-        self.errs = struct.unpack('>i', dataGram[48:52])[0]
+        self.capacity = unpack('>q', dataGram[0:8])[0]
+        self.allocation = unpack('>q', dataGram[8:16])[0]
+        self.available = unpack('>q', dataGram[16:24])[0]
+        self.rdReq = unpack('>i', dataGram[24:28])[0]
+        self.rdBytes = unpack('>q', dataGram[28:36])[0]
+        self.wrReq = unpack('>i', dataGram[36:40])[0]
+        self.wrBytes = unpack('>q', dataGram[40:48])[0]
+        self.errs = unpack('>i', dataGram[48:52])[0]
 
 
 class virtNetIo():
@@ -751,11 +766,11 @@ class virtNetIo():
     def __init__(self, length, dataGram):
         self.len = length
         self.data = dataGram
-        self.rxBytes = struct.unpack('>q', dataGram[0:8])[0]
-        self.rxPackets = struct.unpack('>i', dataGram[8:12])[0]
-        self.rxErrs = struct.unpack('>i', dataGram[12:16])[0]
-        self.rxDrop = struct.unpack('>i', dataGram[16:20])[0]
-        self.txBytes = struct.unpack('>q', dataGram[20:28])[0]
-        self.txPackets = struct.unpack('>i', dataGram[28:32])[0]
-        self.txErrs = struct.unpack('>i', dataGram[32:36])[0]
-        self.txDrop = struct.unpack('>i', dataGram[36:40])[0]
+        self.rxBytes = unpack('>q', dataGram[0:8])[0]
+        self.rxPackets = unpack('>i', dataGram[8:12])[0]
+        self.rxErrs = unpack('>i', dataGram[12:16])[0]
+        self.rxDrop = unpack('>i', dataGram[16:20])[0]
+        self.txBytes = unpack('>q', dataGram[20:28])[0]
+        self.txPackets = unpack('>i', dataGram[28:32])[0]
+        self.txErrs = unpack('>i', dataGram[32:36])[0]
+        self.txDrop = unpack('>i', dataGram[36:40])[0]
