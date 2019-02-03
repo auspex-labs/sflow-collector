@@ -1,8 +1,9 @@
 #!/usr/bin/python
+import binascii
 import socket
 import struct
 import uuid
-import binascii
+
 
 
 # The sFlow Collector is a class for parsing sFlow data.
@@ -20,84 +21,80 @@ import binascii
 #   sample
 #       record
 
+#sFlow Record class.
+
+class Record:
+    def __init__(self, header, length, sampleType, dataGram):
+        self.header = header
+        self.enterprise = (self.header & 4294901760)/4096
+        self.format = (self.header & 4095)
+        self.len = length
+        self.sampleType = sampleType
+        self.data = dataGram
+
+# sFlow Sample class.
+
+class Sample:
+    def __init__(self, header, sampleSize, dataGram):
+
+        self.record = []
+        self.data = dataGram
+        
+        SampleHeader = struct.unpack('>i', header)[0]
+
+        self.sequence = struct.unpack('>i', dataGram[0:4])[0]
+        SampleSource = struct.unpack('>i', dataGram[4:8])[0]
+
+        self.enterprise = (SampleHeader & 4294963200)/4096
+        self.sampleType = (SampleHeader & 4095) # 0 sample_data / 1 flow_data (single) / 2 counter_data (single) / 3 flow_data (expanded) / 4 counter_data (expanded)
+        self.len = sampleSize
+
+        self.sourceType = (SampleSource & 4278190080)/16777216
+        self.sourceIndex = (SampleSource & 16777215)
+
+        dataPosition = 8
+
+        if self.sampleType == 1: #Flow
+            self.sampleRate = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
+            self.samplePool = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
+            self.droppedPackets = struct.unpack('>i', dataGram[(dataPosition + 8):(dataPosition + 12)])[0]
+            self.inputInterface = struct.unpack('>i', dataGram[(dataPosition + 12):(dataPosition + 16)])[0]
+            self.outputInterface = struct.unpack('>i', dataGram[(dataPosition + 16):(dataPosition + 20)])[0]
+            self.recordCount = struct.unpack('>i', dataGram[(dataPosition + 20):(dataPosition + 24)])[0]
+            dataPosition = 32
+
+            for _ in range(self.recordCount):
+                RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
+                RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
+                RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]
+                self.record.append(Record(RecordHeader, RecordSize, self.sampleType, RecordData))
+                dataPosition = dataPosition + 8 + RecordSize
+
+        elif self.sampleType == 2: #Counters
+            self.recordCount = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
+            self.sampleRate = 0
+            self.samplePool = 0
+            self.droppedPackets = 0
+            self.inputInterface = 0
+            self.outputInterface = 0
+            dataPosition = 12
+
+            for _ in range(self.recordCount):
+                RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
+                RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
+                RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize + 8)]
+                self.record.append(Record(RecordHeader, RecordSize, self.sampleType, RecordData))
+                dataPosition = dataPosition + 8 + RecordSize
+        else:
+            self.recordCount = 0
+            self.sampleRate = 0
+            self.samplePool = 0
+            self.droppedPackets = 0
+            self.inputInterface = 0
+            self.outputInterface = 0
+
 class sFlow:
     def __init__(self, dataGram):
-
-        # sFlow Sample class.
-
-        class Sample:
-            def __init__(self, header, sampleSize, dataGram):
-
-            	#sFlow Record class.
-
-                class Record:
-                    def __init__(self, header, length, sampleType, dataGram):
-                        self.header = header
-                        self.enterprise = (self.header & 4294901760)/4096
-                        self.format = (self.header & 4095)
-                        self.len = length
-                        self.sampleType = sampleType
-                        self.data = dataGram
-
-                self.record = []
-                self.data = dataGram
-                SampleHeader = struct.unpack('>i', header)[0]
-
-                self.sequence = struct.unpack('>i', dataGram[0:4])[0]
-                SampleSource = struct.unpack('>i', dataGram[4:8])[0]
-
-                self.enterprise = (SampleHeader & 4294963200)/4096
-                self.sampleType = (SampleHeader & 4095) # 0 sample_data / 1 flow_data (single) / 2 counter_data (single) / 3 flow_data (expanded) / 4 counter_data (expanded)
-                self.len = sampleSize
-
-                self.sourceType = (SampleSource & 4278190080)/16777216
-                self.sourceIndex = (SampleSource & 16777215)
-
-                dataPosition = 8
-
-                #
-
-                if self.sampleType == 1: #Flow
-                    self.sampleRate = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
-                    self.samplePool = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-                    self.droppedPackets = struct.unpack('>i', dataGram[(dataPosition + 8):(dataPosition + 12)])[0]
-                    self.inputInterface = struct.unpack('>i', dataGram[(dataPosition + 12):(dataPosition + 16)])[0]
-                    self.outputInterface = struct.unpack('>i', dataGram[(dataPosition + 16):(dataPosition + 20)])[0]
-                    self.recordCount = struct.unpack('>i', dataGram[(dataPosition + 20):(dataPosition + 24)])[0]
-                    dataPosition = 32
-
-                    for _ in range(self.recordCount):
-                        RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
-                        RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-                        RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize +8)]
-                        self.record.append(Record(RecordHeader, RecordSize, self.sampleType, RecordData))
-                        dataPosition = dataPosition + 8 + RecordSize
-
-                elif self.sampleType == 2: #Counters
-                    self.recordCount = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
-                    self.sampleRate = 0
-                    self.samplePool = 0
-                    self.droppedPackets = 0
-                    self.inputInterface = 0
-                    self.outputInterface = 0
-                    dataPosition = 12
-
-                    for _ in range(self.recordCount):
-                        RecordHeader = struct.unpack('>i', dataGram[(dataPosition):(dataPosition + 4)])[0]
-                        RecordSize = struct.unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-                        RecordData = dataGram[(dataPosition + 8):(dataPosition + RecordSize + 8)]
-                        self.record.append(Record(RecordHeader, RecordSize, self.sampleType, RecordData))
-                        dataPosition = dataPosition + 8 + RecordSize
-                else:
-                    self.recordCount = 0
-                    self.sampleRate = 0
-                    self.samplePool = 0
-                    self.droppedPackets = 0
-                    self.inputInterface = 0
-                    self.outputInterface = 0
-
-
-        # Begin sFlow
         
         dataPosition = 0
         self.sample = []
@@ -106,14 +103,14 @@ class sFlow:
         self.addressType = struct.unpack('>i', dataGram[4:8])[0]
         self.len = len(dataGram)
         if self.addressType == 1:
-            self.agentAddress = socket.inet_ntoa(dataGram[8:12])
+            self.agentAddress = socket.inet_ntop(socket.AF_INET, dataGram[8:12])
             self.subAgent = struct.unpack('>i', dataGram[12:16])[0]
             self.sequenceNumber = struct.unpack('>i', dataGram[16:20])[0]
             self.sysUpTime = struct.unpack('>i', dataGram[20:24])[0]
             self.NumberSample = struct.unpack('>i', dataGram[24:28])[0]
             dataPosition = 28
         elif self.addressType == 2:
-            self.agentAddress = binascii.hexlify(dataGram[8:24]) #Temporary fix due to lack of IPv6 support on WIN32
+            self.agentAddress = socket.inet_ntop(socket.AF_INET6, dataGram[8:24]) #Temporary fix due to lack of IPv6 support on WIN32
             self.subAgent = struct.unpack('>i', dataGram[24:28])[0]
             self.sequenceNumber = struct.unpack('>i', dataGram[28:32])[0]
             self.sysUpTime = struct.unpack('>i', dataGram[32:36])[0]
@@ -144,6 +141,7 @@ class sFlow:
 #   Ethernet Interface      2-0-2
 #   VLAN                    2-0-5
 #   Processor               2-0-1001
+#   Port Name               2-0-1005
 #   Host Description        2-0-2000
 #   Host Adapaters          2-0-2001
 #   Host Parent             2-0-2002
@@ -198,10 +196,10 @@ class sFlowIfCounter: #2-1 (88 bytes)
         self.len = length
         self.data = dataGram
         self.index = struct.unpack('>i', dataGram[0:4])[0]
-        self.type = struct.unpack('>i', dataGram[4:8])[0]
+        self.type = struct.unpack('>i', dataGram[4:8])[0] #6 = 1Gbe Ethernet
         self.speed = struct.unpack('>q', dataGram[8:16])[0] #64-bit
-        self.direction = struct.unpack('>i', dataGram[16:20])[0]
-        self.status = struct.unpack('>i', dataGram[20:24])[0] #This is really a 2-bit value
+        self.direction = struct.unpack('>i', dataGram[16:20])[0] # 1 = full, 2 = half
+        self.status = struct.unpack('>i', dataGram[20:24])[0] #This is really a 2-bit value - 0 d/d 3 u/u
         self.inputOctets = struct.unpack('>q', dataGram[24:32])[0] #64-bit
         self.inputPackets = struct.unpack('>i', dataGram[32:36])[0]
         self.inputMulticast = struct.unpack('>i', dataGram[36:40])[0]
@@ -254,7 +252,15 @@ class sFlowProcessor: #2-1001 (28 bytes)
         self.cpu1m = struct.unpack('>i', dataGram[4:8])[0] 
         self.cpu5m = struct.unpack('>i', dataGram[8:12])[0]
         self.totalMemory = struct.unpack('>q', dataGram[12:20])[0] #64-bit
-        self.freeMemory = struct.unpack('>q', dataGram[20:28])[0] #64-bit       
+        self.freeMemory = struct.unpack('>q', dataGram[20:28])[0] #64-bit
+
+class sFlowPortName: #2-1005 (Variable)
+    def __init__(self, length, dataGram):
+        self.len = length
+        self.data = dataGram
+        dataPosition = 4
+        nameLength = struct.unpack('>i', dataGram[0:4])[0]
+        self.PortName = dataGram[dataPosition:(dataPosition + nameLength)].decode("utf-8")
 
 class sFlowHostDisc: #2-2000 (variable length)
     def __init__(self, length, dataGram):
