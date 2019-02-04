@@ -8,6 +8,8 @@ The sflow-collector provides a simple sample collector and a class which will pa
 
 The code has been refactored from Python 2.7 to Python 3.6
 
+The sFlow Collector is using Camel Case instead of Snake Case for historical reasons.
+
 This is a work in progess.
 
 ## Structures

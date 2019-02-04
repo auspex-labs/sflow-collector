@@ -12,12 +12,13 @@ sock.bind((UDP_IP, UDP_PORT))
 
 while True:
                                                  
-    data, addr = sock.recvfrom(3000) # 1386 bytes is the largest possible sFlow packet, by spec 3000 seems to be the number by practice
+    # 1386 bytes is the largest possible sFlow packet, 3000 in practice
+    data, addr = sock.recvfrom(3000) 
     sFlowData = sflow.sFlow(data)
 
     #Below this point is test code.
 
-    print()
+    #print()
     #print("Source:", addr[0])
     #print "length:", sFlowData.len
     #print("DG Version:", sFlowData.dgVersion)
@@ -27,13 +28,13 @@ while True:
     #print("Sequence Number:", sFlowData.sequenceNumber)
     #print("System UpTime:", sFlowData.sysUpTime)
     #print "Number of Samples:", sFlowData.NumberSample
-    #print ""
+    #print ()
     for i in range(sFlowData.NumberSample):
-        #print "Sample Number:", i + 1
+        #print("Sample Number:", i + 1)
         #print("Sample Sequence:", sFlowData.sample[i].sequence)
         #print("Sample Enterprise:", sFlowData.sample[i].enterprise)
         #print("Sample Type:", sFlowData.sample[i].sampleType)
-        # print("Sample Length:", sFlowData.sample[i].len)
+        #print("Sample Length:", sFlowData.sample[i].len)
         #print("Sample Source Type:", sFlowData.sample[i].sourceType)
         #print("Sample Source Index:", sFlowData.sample[i].sourceIndex)
         #print("Sample Rate:", sFlowData.sample[i].sampleRate)
@@ -41,10 +42,10 @@ while True:
         #print("Sample Dropped Packets:", sFlowData.sample[i].droppedPackets)
         #print("Sample Input Interface:", sFlowData.sample[i].inputInterface)
         #print("Sample Output Interface:", sFlowData.sample[i].outputInterface)
-        #print "Sample Record Count:", sFlowData.sample[i].recordCount
-        print()
+        #print("Sample Record Count:", sFlowData.sample[i].recordCount)
+        #print()
         for j in range(sFlowData.sample[i].recordCount):
-            #print "Record Header:", sFlowData.sample[i].record[j].header
+            #print("Record Header:", sFlowData.sample[i].record[j].header)
             #print("Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
             #print("Record Sample Type:", sFlowData.sample[i].record[j].sampleType)
             #print("Record Format:", sFlowData.sample[i].record[j].format)
@@ -73,9 +74,11 @@ while True:
                     #print("Flow 1001")
                 elif sFlowData.sample[i].record[j].enterprise == 8800:
                     # Obsolete Enterprise - https://github.com/pmacct/pmacct/issues/71
-                    print("Flow Record Enterprise 8800 - Obsolete")
+                    #print("Flow Record Enterprise 8800 - Obsolete")
                     #print("Flow Record Type:", sFlowData.sample[i].record[j].format)
+                    pass
                 else:
+                    print("Source:", addr[0])
                     print("Flow Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
                     print("Flow Record Type:", sFlowData.sample[i].record[j].format)
             elif sFlowData.sample[i].record[j].sampleType == 2:
@@ -92,7 +95,7 @@ while True:
                     #print ("If Counter I Broadcast:", record.inputBroadcast)
                     #print ("If Counter I Discards:", record.inputDiscarded)
                     #print ("If Counter I Errors:", record.inputErrors)
-                    #print ("If Counter I Unknown:", record.inputUnknown) 
+                    #print ("If Counter I Unknown:", record.inputUnknown)
                     #print ("If Counter O Octets:", record.outputOctets)
                     #print ("If Counter O Packets:", record.outputPackets)
                     #print ("If Counter O Multicast:", record.outputMulticast)
@@ -125,7 +128,7 @@ while True:
                     #print "VLAN :", record.multicast
                     #print "VLAN :", record.broadcast
                     #print "VLAN :", record.discard
-                    print("Counter 5")
+                    #print("Counter 5")
                 elif sFlowData.sample[i].record[j].format == 1001:
                     record = sflow.sFlowProcessor(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print "Processor :", record.cpu5s 
@@ -214,13 +217,15 @@ while True:
                     #print "UDP In Errors:", record.inErrors
                     #print "UDP Out Datagrams:", record.outDatagrams
                     #print "UDP Receive Buffer Error:", record.receiveBufferError
-                    #print "UDP Send Buffer Error:", record.sendBufferError 
+                    #print "UDP Send Buffer Error:", record.sendBufferError
                     #print "UDP In Check Sum Error:", record.inCheckSumError
-                    #print("Counter 2010") 
+                    #print("Counter 2010")
                 else:
+                    print("Source:", addr[0])
                     print("Counter Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
                     print("Counter Record Type:", sFlowData.sample[i].record[j].format)
             else:
+                print("Source:", addr[0])
                 print("Sample Type", sFlowData.sample[i].record[j].sampleType)
                 print("Sample Record Enterprise:", sFlowData.sample[i].record[j].enterprise)
                 print("Sample Record Type:", sFlowData.sample[i].record[j].format)

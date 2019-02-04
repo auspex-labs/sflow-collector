@@ -14,7 +14,7 @@ import uuid
 #
 # The records may have different formats.
 
-#QUESTION (17-06-29) Is the raw data for each block actually needed? What is the cost for preserving them?
+#QUESTION (17-06-29) Is the raw data for each block actually needed?
 
 
 # sFlow
@@ -39,14 +39,15 @@ class Sample:
 
         self.record = []
         self.data = dataGram
-        
+
         SampleHeader = struct.unpack('>i', header)[0]
 
         self.sequence = struct.unpack('>i', dataGram[0:4])[0]
         SampleSource = struct.unpack('>i', dataGram[4:8])[0]
 
         self.enterprise = (SampleHeader & 4294963200)/4096
-        self.sampleType = (SampleHeader & 4095) # 0 sample_data / 1 flow_data (single) / 2 counter_data (single) / 3 flow_data (expanded) / 4 counter_data (expanded)
+        # 0 sample_data / 1 flow_data (single) / 2 counter_data (single) / 3 flow_data (expanded) / 4 counter_data (expanded)
+        self.sampleType = (SampleHeader & 4095)
         self.len = sampleSize
 
         self.sourceType = (SampleSource & 4278190080)/16777216
@@ -95,7 +96,7 @@ class Sample:
 
 class sFlow:
     def __init__(self, dataGram):
-        
+
         dataPosition = 0
         self.sample = []
         self.data = dataGram
@@ -110,7 +111,7 @@ class sFlow:
             self.NumberSample = struct.unpack('>i', dataGram[24:28])[0]
             dataPosition = 28
         elif self.addressType == 2:
-            self.agentAddress = socket.inet_ntop(socket.AF_INET6, dataGram[8:24]) #Temporary fix due to lack of IPv6 support on WIN32
+            self.agentAddress = socket.inet_ntop(socket.AF_INET6, dataGram[8:24])
             self.subAgent = struct.unpack('>i', dataGram[24:28])[0]
             self.sequenceNumber = struct.unpack('>i', dataGram[28:32])[0]
             self.sysUpTime = struct.unpack('>i', dataGram[32:36])[0]
@@ -156,7 +157,7 @@ class sFlow:
 
 
 
-#IDEA (17-03-07) Sanity check for the fixed length records could be implimented with a simple value check.
+#IDEA (17-03-07) Sanity check for the fixed length records could be implimented.
 
 #Flow Record Types
 
@@ -169,8 +170,10 @@ class sFlowRawPacketHeader: #1-1  (Variable)
         self.payloadRemoved = struct.unpack('>i', dataGram[8:12])[0]
         headerSize = struct.unpack('>i', dataGram[12:16])[0]
         self.headerSize = headerSize
-        self.header = dataGram[16:(headerSize + 16)] #Need a class for parsing the header information.
-            
+        self.header = dataGram[16:(headerSize + 16)]
+
+#Need a class for parsing the header information.
+
 class sFlowEthernetFrame: #1-2  (24 bytes)
     def __init__(self, length, dataGram):
         self.len = length
@@ -249,7 +252,7 @@ class sFlowProcessor: #2-1001 (28 bytes)
         self.len = length
         self.data = dataGram
         self.cpu5s = struct.unpack('>i', dataGram[0:4])[0]
-        self.cpu1m = struct.unpack('>i', dataGram[4:8])[0] 
+        self.cpu1m = struct.unpack('>i', dataGram[4:8])[0]
         self.cpu5m = struct.unpack('>i', dataGram[8:12])[0]
         self.totalMemory = struct.unpack('>q', dataGram[12:20])[0] #64-bit
         self.freeMemory = struct.unpack('>q', dataGram[20:28])[0] #64-bit
@@ -295,7 +298,6 @@ class sFlowHostParent: #2-2002 (8 bytes)
         self.data = dataGram
         self.containerType = struct.unpack('>i', dataGram[0:4])[0]
         self.containerIndex = struct.unpack('>i', dataGram[4:8])[0]
-    
 
 class sFlowHostCPU: #2-2003 (80 bytes)
     def __init__(self, length, dataGram):
@@ -388,10 +390,10 @@ class sFlowMib2IP: #2-2007 (76 bytes)
         self.fragmentOkay = struct.unpack('>i', dataGram[64:68])[0]
         self.fragmentFail = struct.unpack('>i', dataGram[68:72])[0]
         self.fragmentCreate = struct.unpack('>i', dataGram[72:76])[0]
-        
+
 class sFlowMib2ICMP: #2-2008 (100 bytes)
     def __init__(self, length, dataGram):
-        self.len = length 
+        self.len = length
         self.data = dataGram
         self.inMessage = struct.unpack('>i', dataGram[0:4])[0]
         self.inError = struct.unpack('>i', dataGram[4:8])[0]
@@ -418,7 +420,7 @@ class sFlowMib2ICMP: #2-2008 (100 bytes)
         self.outTimestampReply = struct.unpack('>i', dataGram[88:92])[0]
         self.outAddressMask = struct.unpack('>i', dataGram[92:96])[0]
         self.outAddressMaskReplay = struct.unpack('>i', dataGram[96:100])[0]
-        
+
 class sFlowMib2TCP: #2-2009 (60 bytes)
     def __init__(self, length, dataGram):
         self.len = length
@@ -438,7 +440,7 @@ class sFlowMib2TCP: #2-2009 (60 bytes)
         self.inError = struct.unpack('>i', dataGram[48:52])[0]
         self.outReset = struct.unpack('>i', dataGram[52:56])[0]
         self.inCsumError = struct.unpack('>i', dataGram[56:60])[0]
-        
+
 class sFlowMib2UDP: #2-2010 (28 bytes)
     def __init__(self, length, dataGram):
         self.len = length
