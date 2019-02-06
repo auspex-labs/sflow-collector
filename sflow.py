@@ -486,7 +486,7 @@ class sFlowExtendedSocketIpv6():
 
 #Counter Record Types
 
-class sFlowIfCounter:
+class sFlowIfCounters():
     "counterData: enterprise = 0, format = 1"
 
     def __init__(self, length, dataGram):
@@ -513,7 +513,7 @@ class sFlowIfCounter:
         self.promiscuous = unpack('>i', dataGram[84:88])[0]
 
 
-class sFlowEthernetInterface: #2-2 (52 bytes)
+class sFlowEthernetInterface():
     "counterData: enterprise = 0, format = 2"
 
     def __init__(self, length, dataGram):
@@ -582,7 +582,7 @@ class sFlowVgCounters():
         self.dot12HCOutHighPriorityOctets = unpack('>q', dataGram[72:80])[0]
 
 
-class sFlowVLAN: #2-5 (28 bytes)
+class sFlowVLAN():
     "counterData: enterprise = 0, format = 5"
 
     def __init__(self, length, dataGram):
@@ -682,7 +682,7 @@ class sFlowHostAdapters():
             self.adapters.append(hostadapter)
 
 
-class sFlowHostParent:
+class sFlowHostParent():
     "counterData: enterprise = 0, format = 2002"
 
     def __init__(self, length, dataGram):
@@ -692,7 +692,7 @@ class sFlowHostParent:
         self.containerIndex = unpack('>i', dataGram[4:8])[0]
 
 
-class sFlowHostCPU:
+class sFlowHostCPU():
     "counterData: enterprise = 0, format = 2003"
 
     def __init__(self, length, dataGram):
@@ -719,7 +719,7 @@ class sFlowHostCPU:
         self.guestOS = unpack('>i', dataGram[72:76])[0]
         self.guestNice = unpack('>i', dataGram[76:80])[0]
 
-class sFlowHostMemory:
+class sFlowHostMemory():
     "counterData: enterprise = 0, format = 2004"
 
     def __init__(self, length, dataGram):
@@ -737,7 +737,7 @@ class sFlowHostMemory:
         self.swapIn = unpack('>i', dataGram[64:68])[0]
         self.swapOut = unpack('>i', dataGram[68:72])[0]
 
-class sFlowHostDiskIO:
+class sFlowHostDiskIO():
     "counterData: enterprise = 0, format = 2005"
 
     def __init__(self, length, dataGram):
@@ -753,7 +753,7 @@ class sFlowHostDiskIO:
         self.writeByte = unpack('>q', dataGram[40:48])[0] #64-bit
         self.writeTime = unpack('>i', dataGram[48:52])[0]
 
-class sFlowHostNetIO:
+class sFlowHostNetIO():
     "counterData: enterprise = 0, format = 2006"
 
     def __init__(self, length, dataGram):
@@ -768,7 +768,7 @@ class sFlowHostNetIO:
         self.outError = unpack('>i', dataGram[32:36])[0]
         self.outDrop = unpack('>i', dataGram[36:40])[0]
 
-class sFlowMib2IP:
+class sFlowMib2IP():
     "counterData: enterprise = 0, format = 2007"
 
     def __init__(self, length, dataGram):
@@ -794,7 +794,7 @@ class sFlowMib2IP:
         self.fragmentFail = unpack('>i', dataGram[68:72])[0]
         self.fragmentCreate = unpack('>i', dataGram[72:76])[0]
 
-class sFlowMib2ICMP:
+class sFlowMib2ICMP():
     "counterData: enterprise = 0, format = 2008"
 
     def __init__(self, length, dataGram):
@@ -826,7 +826,7 @@ class sFlowMib2ICMP:
         self.outAddressMask = unpack('>i', dataGram[92:96])[0]
         self.outAddressMaskReplay = unpack('>i', dataGram[96:100])[0]
 
-class sFlowMib2TCP:
+class sFlowMib2TCP():
     "counterData: enterprise = 0, format = 2009"
 
     def __init__(self, length, dataGram):
@@ -848,7 +848,7 @@ class sFlowMib2TCP:
         self.outReset = unpack('>i', dataGram[52:56])[0]
         self.inCsumError = unpack('>i', dataGram[56:60])[0]
 
-class sFlowMib2UDP:
+class sFlowMib2UDP():
     "counterData: enterprise = 0, format = 2010"
 
     def __init__(self, length, dataGram):
@@ -863,7 +863,7 @@ class sFlowMib2UDP:
         self.inCheckSumError = unpack('>i', dataGram[24:28])[0]
 
 
-class virtNode():
+class sFlowVirtNode():
     "counterData: enterprise = 0, format = 2100"
 
     def __init__(self, length, dataGram):
@@ -876,7 +876,7 @@ class virtNode():
         self.numDomains = unpack('>i', dataGram[24:28])[0]
 
 
-class virtCpu():
+class sFlowVirtCPU():
     "counterData: enterprise = 0, format = 2101"
 
     def __init__(self, length, dataGram):
@@ -887,7 +887,7 @@ class virtCpu():
         self.nrVirtCpu = unpack('>i', dataGram[8:12])[0]
 
 
-class virtMemory():
+class sFlowVirtMemory():
     "counterData: enterprise = 0, format = 2102"
 
     def __init__(self, length, dataGram):
@@ -897,7 +897,7 @@ class virtMemory():
         self.maxMemory = unpack('>q', dataGram[8:16])[0]
 
 
-class virtDiskIo():
+class sFlowVirtDiskIO():
     "counterData: enterprise = 0, format = 2103"
 
     def __init__(self, length, dataGram):
@@ -913,7 +913,7 @@ class virtDiskIo():
         self.errs = unpack('>i', dataGram[48:52])[0]
 
 
-class virtNetIo():
+class sFlowVirtNetIO():
     "counterData: enterprise = 0, format = 2104"
 
     def __init__(self, length, dataGram):

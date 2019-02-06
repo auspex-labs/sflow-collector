@@ -139,7 +139,7 @@ while True:
                     #print("Port Name", record.PortName)
                     #print("Counter 1005")
                 elif sFlowData.sample[i].record[j].format == 2000:
-                    record = sflow.sFlowHostDisc(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
+                    record = sflow.sFlowHostDescr(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
                     #print("Counter 2000")
                 elif sFlowData.sample[i].record[j].format == 2001:
                     record = sflow.sFlowHostAdapters(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
