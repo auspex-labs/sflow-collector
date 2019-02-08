@@ -28,7 +28,7 @@ while True:
     #print("System UpTime:", sFlowData.sysUpTime)
     #print "Number of Samples:", sFlowData.NumberSample
     #print ""
-    for i in range(sFlowData.NumberSample):
+    for i in range(sFlowData.numberSample):
         #print "Sample Number:", i + 1
         #print("Sample Sequence:", sFlowData.samples[i].sequence)
         #print("Sample Enterprise:", sFlowData.samples[i].enterprise)
@@ -136,7 +136,7 @@ while True:
                     #print("Counter 1001")
                 elif sFlowData.samples[i].records[j].format == 1005:
                     record = sflow.sFlowPortName(sFlowData.samples[i].records[j].len, sFlowData.samples[i].records[j].data)
-                    #print("Port Name", record.PortName)
+                    #print("Port Name", record.portName)
                     #print("Counter 1005")
                 elif sFlowData.samples[i].records[j].format == 2000:
                     record = sflow.sFlowHostDescr(sFlowData.samples[i].records[j].len, sFlowData.samples[i].records[j].data)

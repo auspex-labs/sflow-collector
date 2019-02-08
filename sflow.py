@@ -167,14 +167,13 @@ class sFlow:
             self.sysUpTime = 0
             self.numberSample = 0
         self.samples = []
-        if self.NumberSample > 0:
-            for _ in range(self.NumberSample):
-                sampleHeader = dataGram[(dataPosition):(dataPosition + 4)]
-                sampleSize = unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
-                sampleDataGram = dataGram[(dataPosition + 8):(dataPosition + sampleSize + 8)]
+        for _ in range(self.numberSample):
+            sampleHeader = dataGram[(dataPosition):(dataPosition + 4)]
+            sampleSize = unpack('>i', dataGram[(dataPosition + 4):(dataPosition + 8)])[0]
+            sampleDataGram = dataGram[(dataPosition + 8):(dataPosition + sampleSize + 8)]
 
-                self.samples.append(sFlowSample(sampleHeader, sampleSize, sampleDataGram))
-                dataPosition = dataPosition + 8 + sampleSize
+            self.samples.append(sFlowSample(sampleHeader, sampleSize, sampleDataGram))
+            dataPosition = dataPosition + 8 + sampleSize
 
 # Flow
 #   Raw Packet Header       1-0-1
