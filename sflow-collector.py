@@ -19,15 +19,15 @@ while True:
 
     print()
     #print("Source:", addr[0])
-    #print "length:", sFlowData.len
+    #print("length:", sFlowData.len)
     #print("DG Version:", sFlowData.dgVersion)
-    #print "Address Type:", sFlowData.addressType
+    #print("Address Type:", sFlowData.addressType)
     #print("Agent Address:", sFlowData.agentAddress)
     #print("Sub Agent:", sFlowData.subAgent)
     #print("Sequence Number:", sFlowData.sequenceNumber)
     #print("System UpTime:", sFlowData.sysUpTime)
-    #print "Number of Samples:", sFlowData.NumberSample
-    #print ""
+    #print("Number of Samples:", sFlowData.NumberSample)
+    #print()
     for i in range(sFlowData.NumberSample):
         #print "Sample Number:", i + 1
         #print("Sample Sequence:", sFlowData.samples[i].sequence)
@@ -42,7 +42,7 @@ while True:
         #print("Sample Input Interface:", sFlowData.samples[i].inputInterface)
         #print("Sample Output Interface:", sFlowData.samples[i].outputInterface)
         #print "Sample Record Count:", sFlowData.samples[i].recordCount
-        print()
+        #print()
         for j in range(sFlowData.samples[i].recordCount):
             #print "Record Header:", sFlowData.samples[i].records[j].header
             #print("Record Enterprise:", sFlowData.samples[i].records[j].enterprise)
@@ -73,8 +73,9 @@ while True:
                     #print("Flow 1001")
                 elif sFlowData.samples[i].records[j].enterprise == 8800:
                     # Obsolete Enterprise - https://github.com/pmacct/pmacct/issues/71
-                    print("Flow Record Enterprise 8800 - Obsolete")
+                    #print("Flow Record Enterprise 8800 - Obsolete")
                     #print("Flow Record Type:", sFlowData.samples[i].records[j].format)
+                    pass
                 else:
                     print("Flow Record Enterprise:", sFlowData.samples[i].records[j].enterprise)
                     print("Flow Record Type:", sFlowData.samples[i].records[j].format)
