@@ -68,8 +68,8 @@ class sFlowSample:
         self.len = sampleSize
         self.data = dataGram
         
-        SampleHeader = unpack('>i', header)[0]
-        self.enterprise, self.sampleType = divmod(SampleHeader, 4096)
+        sampleHeader = unpack('>i', header)[0]
+        self.enterprise, self.sampleType = divmod(sampleHeader, 4096)
         # 0 sample_data / 1 flow_data (single) / 2 counter_data (single)
         #             / 3 flow_data (expanded) / 4 counter_data (expanded)
 
@@ -77,8 +77,8 @@ class sFlowSample:
 
 
         if self.sampleType in [1, 2]:
-            SampleSource = unpack('>i', dataGram[4:8])[0]
-            self.sourceType, self.sourceIndex = divmod(SampleSource, 16777216)
+            sampleSource = unpack('>i', dataGram[4:8])[0]
+            self.sourceType, self.sourceIndex = divmod(sampleSource, 16777216)
             dataPosition = 8
         elif self.sampleType in [3, 4]:
             self.sourceType, self.sourceIndex = unpack('>ii', dataGram[4:12])
@@ -151,21 +151,21 @@ class sFlow:
             self.subAgent = unpack('>i', dataGram[12:16])[0]
             self.sequenceNumber = unpack('>i', dataGram[16:20])[0]
             self.sysUpTime = unpack('>i', dataGram[20:24])[0]
-            self.NumberSample = unpack('>i', dataGram[24:28])[0]
+            self.numberSample = unpack('>i', dataGram[24:28])[0]
             dataPosition = 28
         elif self.addressType == 2:
             self.agentAddress = inet_ntop(AF_INET6, dataGram[8:24]) #Temporary fix due to lack of IPv6 support on WIN32
             self.subAgent = unpack('>i', dataGram[24:28])[0]
             self.sequenceNumber = unpack('>i', dataGram[28:32])[0]
             self.sysUpTime = unpack('>i', dataGram[32:36])[0]
-            self.NumberSample = unpack('>i', dataGram[36:40])[0]
+            self.numberSample = unpack('>i', dataGram[36:40])[0]
             dataPosition = 40
         else:
             self.agentAddress = 0
             self.subAgent = 0
             self.sequenceNumber = 0
             self.sysUpTime = 0
-            self.NumberSample = 0
+            self.numberSample = 0
         self.samples = []
         if self.NumberSample > 0:
             for _ in range(self.NumberSample):
@@ -378,7 +378,7 @@ class sFlowExtendedUrl():
         dataPosition += 4
         self.host = dataGram[dataPosition:(dataPosition + nameLength)].decode('utf-8')
         nameLength = unpack('>i', dataGram[0:4])[0]
-        self.PortName = dataGram[dataPosition:(dataPosition + nameLength)].decode("utf-8")
+        self.portName = dataGram[dataPosition:(dataPosition + nameLength)].decode("utf-8")
 
 
 class sFlowExtendedMpls():

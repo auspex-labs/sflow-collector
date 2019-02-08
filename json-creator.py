@@ -92,7 +92,7 @@ while True:
             for fieldName, fieldValue in recordClass.__dict__.items():
                 if fieldName not in ['len', 'data']:
                     if isinstance(fieldValue, bytes):
-                        recordItems.append(f'{fieldName}: {list(fieldValue)}')
+                        recordItems.append(f'"{fieldName}": "{list(fieldValue)}"')
                     else:
                         recordItems.append(f'{fieldName}: {fieldValue}')
             recordPart = f'"record": {{{", ".join(recordItems)}}}'
