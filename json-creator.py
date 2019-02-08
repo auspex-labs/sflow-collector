@@ -1,4 +1,3 @@
-from sflow import sFlow
 #!/usr/bin/python
 from socket import socket, AF_INET, SOCK_DGRAM
 import sflow
@@ -56,11 +55,12 @@ UDP_PORT = 6343
 
 sock = socket(AF_INET, SOCK_DGRAM)
 sock.bind((UDP_IP, UDP_PORT))
-
+print('Collector started')
 while True:
-                                                 
+    print('Waiting for data')                         
     data, addr = sock.recvfrom(3000) # 1386 bytes is the largest possible sFlow packet, by spec 3000 seems to be the number by practice
-    sFlowData = sFlow(data)
+    print('Data received')
+    sFlowData = sflow.sFlow(data)
 
     sFlowItems = []
     sFlowItems.append(f'"DG Version": "{sFlowData.dgVersion}"')
@@ -68,9 +68,9 @@ while True:
     sFlowItems.append(f'"Sub Agent": "{sFlowData.subAgent}"')
     sFlowItems.append(f'"Sequence Number": "{sFlowData.sequenceNumber}"')
     sFlowItems.append(f'"System UpTime": "{sFlowData.sysUpTime}"')
-    sFlowPart = f'"sflow": {"{"}{", ".join(sFlowItems)}{"}"}'
+    sFlowPart = f'"sflow": {{{", ".join(sFlowItems)}}}'
 
-    for sample in sFlowData.sample:
+    for sample in sFlowData.samples:
         sampleItems = []
         sampleItems.append(f'"Sequence": "{sample.sequence}"')
         sampleItems.append(f'"Enterprise": "{sample.enterprise}"')
@@ -79,26 +79,22 @@ while True:
         sampleItems.append(f'"Rate": "{sample.sampleRate}"')
         sampleItems.append(f'"Pool": "{sample.samplePool}"')
         sampleItems.append(f'"Dropped": "{sample.droppedPackets}"')
-        sampleItems.append(f'"Input": "{sample.inputInterface}"')
-        sampleItems.append(f'"Output": "{sample.outputInterface}"')
-        samplePart = f'"sample": {"{"}{", ".join(sampleItems)}{"}"}'
+        sampleItems.append(f'"Input": "{sample.inputIfFormat}"')
+        sampleItems.append(f'"Input": "{sample.inputIfValue}"')
+        sampleItems.append(f'"Output": "{sample.outputIfFormat}"')
+        sampleItems.append(f'"Output": "{sample.outputIfValue}"')
+        samplePart = f'"sample": {{{", ".join(sampleItems)}}}'
         
-        for record in sample.record:
+        for record in sample.records:
             sFlowClass = recordClasses[record.sampleType, record.enterprise, record.format]
-            test = sFlowClass(record.len, record.data)
+            recordClass = sFlowClass(record.len, record.data)
             recordItems = []
-            for fieldName, fieldValue in test.__dict__.items():
+            for fieldName, fieldValue in recordClass.__dict__.items():
                 if fieldName not in ['len', 'data']:
                     if isinstance(fieldValue, bytes):
                         recordItems.append(f'{fieldName}: {list(fieldValue)}')
                     else:
                         recordItems.append(f'{fieldName}: {fieldValue}')
-            recordPart = f'"record": {"{"}{", ".join(recordItems)}{"}"}'
-            wholeRecord = f'{"{"}{sFlowPart}, {samplePart}, {recordPart}{"}"}'
+            recordPart = f'"record": {{{", ".join(recordItems)}}}'
+            wholeRecord = f'{{{sFlowPart}, {samplePart}, {recordPart}}}'
             print(wholeRecord)
-        
-
-
-
-
-
