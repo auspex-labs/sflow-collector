@@ -84,6 +84,18 @@ while True:
                     #print "Frame Length:", record.frameLength
                     #print "Payload Removed:", record.payloadRemoved
                     #print "Header Size:", record.headerSize
+                    MACfrom = records.srcMAC.decode("utf-8")
+                    MACfrom = ':'.join(MACfrom[i : i + 2] for i in range(0, 11, 2))
+                    print ("SrcMac:",MACfrom)
+                    MACto = records.dstMAC.decode("utf-8")
+                    MACto = ':'.join(MACto[i : i + 2] for i in range(0, 11, 2))
+                    print ("DstMAC:",MACto)
+                    print ("srcIp:",records.srcIp)
+                    print ("dstIp:",records.dstIp)
+                    print ("srcPort:",records.srcPort)
+                    print ("dstPort:",records.dstPort)
+                    print ('Len:',records.len)
+                    print ('Type:',records.type)
                     print("Flow 1")
                 elif sFlowData.sample[i].record[j].format == 2 and sFlowData.sample[i].record[j].enterprise == 0:
                     record = sflow.sFlowEthernetFrame(sFlowData.sample[i].record[j].len, sFlowData.sample[i].record[j].data)
