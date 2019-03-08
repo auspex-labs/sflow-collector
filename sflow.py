@@ -216,7 +216,16 @@ class sFlowRawPacketHeader():
         self.payloadRemoved = unpack('>i', dataGram[8:12])[0]
         self.headerSize = unpack('>i', dataGram[12:16])[0]
         self.header = dataGram[(16):(16 + self.headerSize)] 
-        #Need a class for parsing the header information.
+        ofset=0
+        self.type = unpack('>H',dataGram[36:38])[0]
+        if self.type == int(16384): #if 802.1q info in sample header
+            ofset=4
+        self.srcMAC = hexlify(dataGram[22:28])
+        self.dstMAC = hexlify(dataGram[16:22])
+        self.srcIp = inet_ntop(AF_INET, dataGram[46-ofset:50-ofset])
+        self.dstIp = inet_ntop(AF_INET, dataGram[50-ofset:54-ofset])
+        self.srcPort = unpack('>H', dataGram[54-ofset:56-ofset])[0]
+        self.dstPort = unpack('>H', dataGram[56-ofset:58-ofset])[0]
 
 
 class sFlowEthernetFrame():
