@@ -329,7 +329,6 @@ class sFlowExtendedGateway():
             self.asPathType = 0
             self.asPathCount = 0
             self.dstAutonomousSystemsPath = []
-            communitiesCount = 0
             self.communities = []
             self.localpref = 0
             return
