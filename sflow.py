@@ -50,6 +50,9 @@ class sFlowRecordBase:
         self.len = length
         self.data = dataGram
 
+    def __repr__(self):
+        return "sFlow Record Type Not Implimented."
+
 
 # Flow Record Types
 
@@ -78,10 +81,11 @@ class sFlowRawPacketHeader:
 
     def __repr__(self):
         return f"""
-            Raw Packet Header Protocol: {self.headerProtocol}
-            Frame Length: {self.frameLength}
-            Payload Removed: {self.payloadRemoved}
-            Header Size: {self.headerSize}
+            Raw Packet Header:
+                Raw Packet Header Protocol: {self.headerProtocol}
+                Frame Length: {self.frameLength}
+                Payload Removed: {self.payloadRemoved}
+                Header Size: {self.headerSize}
         """
 
 
@@ -97,7 +101,13 @@ class sFlowEthernetFrame:
         self.type = unpack(">i", dataGram[20:24])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Ethernet Frame:
+                Length: {self.len}
+                Source MAC: {self.srcMAC}
+                Destination MAC: {self.dstMAC}
+                Frame Type: {self.type}
+        """
 
 
 class sFlowSampledIpv4:
@@ -116,7 +126,9 @@ class sFlowSampledIpv4:
         self.tos = unpack(">i", dataGram[28:32])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            IPv4 Sample:
+        """
 
 
 class sFlowSampledIpv6:
@@ -135,7 +147,9 @@ class sFlowSampledIpv6:
         self.priority = unpack(">i", dataGram[52:56])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            IPv6 Sample:
+        """
 
 
 class sFlowExtendedSwitch:
@@ -150,7 +164,9 @@ class sFlowExtendedSwitch:
         self.dstPriority = unpack(">i", dataGram[12:16])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended Switch:
+        """
 
 
 class sFlowExtendedRouter:
@@ -176,7 +192,9 @@ class sFlowExtendedRouter:
         self.dstMaskLen = unpack(">i", dataGram[dataPosition : (dataPosition + 4)])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended Router:
+        """
 
 
 class sFlowExtendedGateway:
@@ -224,7 +242,9 @@ class sFlowExtendedGateway:
         self.localpref = unpack(">i", dataGram[dataPosition : (dataPosition + 4)])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended Gateway:
+        """
 
 
 class sFlowExtendedUser:
@@ -243,7 +263,9 @@ class sFlowExtendedUser:
         self.dstUser = dataGram[dataPosition : (dataPosition + nameLength)].decode("utf-8")
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended User:
+        """
 
 
 class sFlowExtendedUrl:
@@ -264,7 +286,9 @@ class sFlowExtendedUrl:
         self.PortName = dataGram[dataPosition : (dataPosition + nameLength)].decode("utf-8")
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended URL:
+        """
 
 
 class sFlowExtendedMpls:
@@ -301,7 +325,9 @@ class sFlowExtendedMpls:
         )
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended MPLS:
+        """
 
 
 class sFlowExtendedNat:
@@ -335,7 +361,9 @@ class sFlowExtendedNat:
             return
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended NAT:
+        """
 
 
 class sFlowExtendedMplsTunnel:
@@ -352,7 +380,9 @@ class sFlowExtendedMplsTunnel:
         self.tunnelCos = unpack(">i", dataGram[dataPosition : (dataPosition + 4)])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended MPLS Tunnel:
+        """
 
 
 class sFlowExtendedMplsVc:
@@ -369,7 +399,9 @@ class sFlowExtendedMplsVc:
         self.vcLabelCos = unpack(">i", dataGram[dataPosition : (dataPosition + 4)])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended MPLS Virtual Circuit:
+        """
 
 
 class sFlowExtendedMpls_FTN:
@@ -384,7 +416,9 @@ class sFlowExtendedMpls_FTN:
         self.mplsFTNMask = unpack(">i", dataGram[dataPosition : (dataPosition + 4)])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended MPLS FTN:
+        """
 
 
 class sFlowExtendedMpls_LDP_FEC:
@@ -396,7 +430,9 @@ class sFlowExtendedMpls_LDP_FEC:
         self.mplsFecAddrPrefixLength = unpack(">i", dataGram)[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended MPLS LDP FEC:
+        """
 
 
 class sFlowExtendedVlantunnel:
@@ -409,7 +445,9 @@ class sFlowExtendedVlantunnel:
         self.stack = unpack(f'>{"i" * stackCount}', dataGram[4 : (4 + stackCount * 4)])
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended VLAN Tunnel:
+        """
 
 
 class sFlowExtendedSocketIpv4:
@@ -425,7 +463,9 @@ class sFlowExtendedSocketIpv4:
         self.remotePort = unpack(">i", dataGram[16:20])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended IPv4 Socket:
+        """
 
 
 class sFlowExtendedSocketIpv6:
@@ -441,7 +481,9 @@ class sFlowExtendedSocketIpv6:
         self.remotePort = unpack(">i", dataGram[40:44])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Extended IPv6 Socket:
+        """
 
 
 # Counter Record Types
@@ -520,7 +562,9 @@ class sFlowEthernetInterface:
         self.symbolError = unpack(">i", dataGram[48:52])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Ethernet Counters:
+        """
 
 
 class sFlowTokenringCounters:
@@ -549,7 +593,9 @@ class sFlowTokenringCounters:
         self.dot5StatsFreqErrors = unpack(">i", dataGram[68:72])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Token Ring Counters:
+        """
 
 
 class sFlowVgCounters:
@@ -574,7 +620,9 @@ class sFlowVgCounters:
         self.dot12HCOutHighPriorityOctets = unpack(">q", dataGram[72:80])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            VG Counters:
+        """
 
 
 class sFlowVLAN:
@@ -591,7 +639,9 @@ class sFlowVLAN:
         self.discard = unpack(">i", dataGram[24:28])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            VLAN Counters:
+        """
 
 
 class sFlowProcessor:
@@ -607,7 +657,9 @@ class sFlowProcessor:
         self.freeMemory = unpack(">q", dataGram[20:28])[0]  # 64-bit
 
     def __repr__(self):
-        return ""
+        return f"""
+            Processor Counters:
+        """
 
 
 class sFlowOfPort:
@@ -620,7 +672,9 @@ class sFlowOfPort:
         self.portNo = unpack(">i", dataGram[8:12])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            OpenFlow Port:
+        """
 
 
 class sFlowPortName:
@@ -633,7 +687,9 @@ class sFlowPortName:
         self.PortName = dataGram[4 : (4 + nameLength)].decode("utf-8")
 
     def __repr__(self):
-        return ""
+        return f"""
+            OpenFlow Port Name:
+        """
 
 
 class sFlowHostDescr:
@@ -657,7 +713,9 @@ class sFlowHostDescr:
         self.osRelease = dataGram[dataPosition : (dataPosition + nameLength)].decode("utf-8")
 
     def __repr__(self):
-        return ""
+        return f"""
+            Host Description:
+        """
 
 
 class sFlowHostAdapters:
@@ -688,7 +746,9 @@ class sFlowHostAdapters:
             self.adapters.append(hostadapter)
 
     def __repr__(self):
-        return ""
+        return f"""
+            Host Adapters:
+        """
 
 
 class sFlowHostParent:
@@ -701,7 +761,9 @@ class sFlowHostParent:
         self.containerIndex = unpack(">i", dataGram[4:8])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Host Parent:
+        """
 
 
 class sFlowHostCPU:
@@ -732,7 +794,9 @@ class sFlowHostCPU:
         self.guestNice = unpack(">i", dataGram[76:80])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Host CPU Counters:
+        """
 
 
 class sFlowHostMemory:
@@ -754,7 +818,9 @@ class sFlowHostMemory:
         self.swapOut = unpack(">i", dataGram[68:72])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Host Memory Counters:
+        """
 
 
 class sFlowHostDiskIO:
@@ -774,7 +840,9 @@ class sFlowHostDiskIO:
         self.writeTime = unpack(">i", dataGram[48:52])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Host Disk I/O Counters:
+        """
 
 
 class sFlowHostNetIO:
@@ -793,7 +861,9 @@ class sFlowHostNetIO:
         self.outDrop = unpack(">i", dataGram[36:40])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Host Network I/O Counters:
+        """
 
 
 class sFlowMib2IP:
@@ -823,7 +893,9 @@ class sFlowMib2IP:
         self.fragmentCreate = unpack(">i", dataGram[72:76])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            MIB2 IP Counters:
+        """
 
 
 class sFlowMib2ICMP:
@@ -859,7 +931,9 @@ class sFlowMib2ICMP:
         self.outAddressMaskReplay = unpack(">i", dataGram[96:100])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            MIB2 ICMP Counters:
+        """
 
 
 class sFlowMib2TCP:
@@ -885,7 +959,9 @@ class sFlowMib2TCP:
         self.inCsumError = unpack(">i", dataGram[56:60])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            MIB2 TCP Counters:
+        """
 
 
 class sFlowMib2UDP:
@@ -903,7 +979,9 @@ class sFlowMib2UDP:
         self.inCheckSumError = unpack(">i", dataGram[24:28])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            MIB2 UDP Counters:
+        """
 
 
 class sFlowVirtNode:
@@ -919,7 +997,9 @@ class sFlowVirtNode:
         self.numDomains = unpack(">i", dataGram[24:28])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Virtual Node Counters:
+        """
 
 
 class sFlowVirtCPU:
@@ -933,7 +1013,9 @@ class sFlowVirtCPU:
         self.nrVirtCpu = unpack(">i", dataGram[8:12])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Virtual CPU Counters:
+        """
 
 
 class sFlowVirtMemory:
@@ -946,7 +1028,9 @@ class sFlowVirtMemory:
         self.maxMemory = unpack(">q", dataGram[8:16])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Virtual Memory Counters:
+        """
 
 
 class sFlowVirtDiskIO:
@@ -965,7 +1049,9 @@ class sFlowVirtDiskIO:
         self.errs = unpack(">i", dataGram[48:52])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Virtual Disk IO Counters:
+        """
 
 
 class sFlowVirtNetIO:
@@ -984,7 +1070,9 @@ class sFlowVirtNetIO:
         self.txDrop = unpack(">i", dataGram[36:40])[0]
 
     def __repr__(self):
-        return ""
+        return f"""
+            Virtual Network IO Counters:
+        """
 
 
 s_flow_record_format = {
@@ -1044,7 +1132,7 @@ class sFlowRecord:
         self.len = length
         self.sampleType = sampleType
         self.dataGram = dataGram
-        self.data = s_flow_record_format.get((sampleType, self.enterprise, self.format))(length, dataGram)
+        self.data = s_flow_record_format.get((sampleType, self.enterprise, self.format), sFlowRecordBase)(length, dataGram)
 
 
 # sFlow Sample class.
