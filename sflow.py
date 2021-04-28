@@ -1,9 +1,8 @@
 #!/usr/bin/python
-from struct import unpack, pack
+from struct import unpack
 from socket import inet_ntop, AF_INET, AF_INET6
 from binascii import hexlify
 from uuid import UUID
-from ctypes import c_ubyte, c_ushort, c_ulong, c_ulonglong
 
 
 # The sFlow Collector is a class for parsing sFlow data.
@@ -82,10 +81,18 @@ class sFlowRawPacketHeader:
     def __repr__(self):
         return f"""
             Raw Packet Header:
-                Raw Packet Header Protocol: {self.headerProtocol}
+                Length: {self.len}
+                Protocol: {self.headerProtocol}
                 Frame Length: {self.frameLength}
+                Header Size: {self.headerSize}
                 Payload Removed: {self.payloadRemoved}
                 Header Size: {self.headerSize}
+                Source MAC: {self.srcMAC}
+                Destination MAC: {self.dstMAC}
+                Source IP: {self.srcIp}
+                Destination IP: {self.dstIp}
+                Source Port: {self.srcPort}
+                Destination Port: {self.dstPort}
         """
 
 
@@ -128,6 +135,14 @@ class sFlowSampledIpv4:
     def __repr__(self):
         return f"""
             IPv4 Sample:
+                Length: {self.len}
+                Protocol: {self.protocol}
+                Source IP: {self.srcIp}
+                Destination IP: {self.dstIp}
+                Source Port: {self.srcPort}
+                Destination Port: {self.dstPort}
+                TCP Flags: {self.tcpFlags}
+                Type of Service: {self.tos}
         """
 
 
@@ -149,6 +164,7 @@ class sFlowSampledIpv6:
     def __repr__(self):
         return f"""
             IPv6 Sample:
+                Length: {self.len}
         """
 
 
@@ -166,6 +182,7 @@ class sFlowExtendedSwitch:
     def __repr__(self):
         return f"""
             Extended Switch:
+                Length: {self.len}
         """
 
 
@@ -194,6 +211,7 @@ class sFlowExtendedRouter:
     def __repr__(self):
         return f"""
             Extended Router:
+                Length: {self.len}
         """
 
 
@@ -244,6 +262,7 @@ class sFlowExtendedGateway:
     def __repr__(self):
         return f"""
             Extended Gateway:
+                Length: {self.len}
         """
 
 
@@ -265,6 +284,7 @@ class sFlowExtendedUser:
     def __repr__(self):
         return f"""
             Extended User:
+                Length: {self.len}
         """
 
 
@@ -288,6 +308,7 @@ class sFlowExtendedUrl:
     def __repr__(self):
         return f"""
             Extended URL:
+                Length: {self.len}
         """
 
 
@@ -327,6 +348,7 @@ class sFlowExtendedMpls:
     def __repr__(self):
         return f"""
             Extended MPLS:
+                Length: {self.len}
         """
 
 
@@ -363,6 +385,7 @@ class sFlowExtendedNat:
     def __repr__(self):
         return f"""
             Extended NAT:
+                Length: {self.len}
         """
 
 
@@ -382,6 +405,7 @@ class sFlowExtendedMplsTunnel:
     def __repr__(self):
         return f"""
             Extended MPLS Tunnel:
+                Length: {self.len}
         """
 
 
@@ -401,6 +425,7 @@ class sFlowExtendedMplsVc:
     def __repr__(self):
         return f"""
             Extended MPLS Virtual Circuit:
+                Length: {self.len}
         """
 
 
@@ -418,6 +443,7 @@ class sFlowExtendedMpls_FTN:
     def __repr__(self):
         return f"""
             Extended MPLS FTN:
+                Length: {self.len}
         """
 
 
@@ -432,6 +458,7 @@ class sFlowExtendedMpls_LDP_FEC:
     def __repr__(self):
         return f"""
             Extended MPLS LDP FEC:
+                Length: {self.len}
         """
 
 
@@ -447,6 +474,7 @@ class sFlowExtendedVlantunnel:
     def __repr__(self):
         return f"""
             Extended VLAN Tunnel:
+                Length: {self.len}
         """
 
 
@@ -465,6 +493,7 @@ class sFlowExtendedSocketIpv4:
     def __repr__(self):
         return f"""
             Extended IPv4 Socket:
+                Length: {self.len}
         """
 
 
@@ -483,6 +512,7 @@ class sFlowExtendedSocketIpv6:
     def __repr__(self):
         return f"""
             Extended IPv6 Socket:
+                Length: {self.len}
         """
 
 
@@ -564,6 +594,7 @@ class sFlowEthernetInterface:
     def __repr__(self):
         return f"""
             Ethernet Counters:
+                Length: {self.len}
         """
 
 
@@ -595,6 +626,7 @@ class sFlowTokenringCounters:
     def __repr__(self):
         return f"""
             Token Ring Counters:
+                Length: {self.len}
         """
 
 
@@ -622,6 +654,7 @@ class sFlowVgCounters:
     def __repr__(self):
         return f"""
             VG Counters:
+                Length: {self.len}
         """
 
 
@@ -641,6 +674,7 @@ class sFlowVLAN:
     def __repr__(self):
         return f"""
             VLAN Counters:
+                Length: {self.len}
         """
 
 
@@ -659,6 +693,7 @@ class sFlowProcessor:
     def __repr__(self):
         return f"""
             Processor Counters:
+                Length: {self.len}
         """
 
 
@@ -674,6 +709,7 @@ class sFlowOfPort:
     def __repr__(self):
         return f"""
             OpenFlow Port:
+                Length: {self.len}
         """
 
 
@@ -689,6 +725,7 @@ class sFlowPortName:
     def __repr__(self):
         return f"""
             OpenFlow Port Name:
+                Length: {self.len}
         """
 
 
@@ -715,6 +752,7 @@ class sFlowHostDescr:
     def __repr__(self):
         return f"""
             Host Description:
+                Length: {self.len}
         """
 
 
@@ -748,6 +786,7 @@ class sFlowHostAdapters:
     def __repr__(self):
         return f"""
             Host Adapters:
+                Length: {self.len}
         """
 
 
@@ -763,6 +802,7 @@ class sFlowHostParent:
     def __repr__(self):
         return f"""
             Host Parent:
+                Length: {self.len}
         """
 
 
