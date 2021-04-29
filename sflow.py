@@ -2,7 +2,6 @@ from struct import unpack
 from socket import inet_ntop, AF_INET, AF_INET6
 from uuid import UUID
 
-
 # The sFlow Collector is a class for parsing sFlow data.
 
 # sFlow datagrams contain a header, which may contain samples which may contain records.
@@ -1177,13 +1176,13 @@ s_flow_record_format = {
 class sFlowRecord:
     """sFlowRecord class:"""
 
-    def __init__(self, header, length, sampleType, datagram):
+    def __init__(self, header, length, sample_type, datagram):
         self.header = header
         self.enterprise, self.format = divmod(self.header, 4096)
         self.len = length
-        self.sampleType = sampleType
+        self.sample_type = sample_type
         self.datagram = datagram
-        self.data = s_flow_record_format.get((sampleType, self.enterprise, self.format), sFlowRecordBase)(length, datagram)
+        self.data = s_flow_record_format.get((sample_type, self.enterprise, self.format), sFlowRecordBase)(length, datagram)
 
 
 # sFlow Sample class.
@@ -1212,32 +1211,32 @@ class sFlowSample:
         self.data = datagram
 
         sample_header = unpack(">i", header)[0]
-        self.enterprise, self.sampleType = divmod(sample_header, 4096)
+        self.enterprise, self.sample_type = divmod(sample_header, 4096)
         # 0 sample_data / 1 flow_data (single) / 2 counter_data (single)
         #             / 3 flow_data (expanded) / 4 counter_data (expanded)
 
         self.sequence = unpack(">i", datagram[0:4])[0]
 
-        if self.sampleType in [1, 2]:
+        if self.sample_type in [1, 2]:
             sample_source = unpack(">i", datagram[4:8])[0]
             self.sourceType, self.sourceIndex = divmod(sample_source, 16777216)
             data_position = 8
-        elif self.sampleType in [3, 4]:
+        elif self.sample_type in [3, 4]:
             self.sourceType, self.sourceIndex = unpack(">ii", datagram[4:12])
             data_position = 12
         else:
             pass  # sampleTypeError
         self.records = []
 
-        if self.sampleType in [1, 3]:  # Flow
+        if self.sample_type in [1, 3]:  # Flow
             self.sampleRate, self.samplePool, self.droppedPackets = unpack(">iii", datagram[data_position : (data_position + 12)])
             data_position += 12
-            if self.sampleType == 1:
+            if self.sample_type == 1:
                 input_interface, output_interface = unpack(">ii", datagram[(data_position) : (data_position + 8)])
                 data_position += 8
                 self.inputIfFormat, self.inputIfValue = divmod(input_interface, 1073741824)
                 self.outputIfFormat, self.outputIfValue = divmod(output_interface, 1073741824)
-            elif self.sampleType == 3:
+            elif self.sample_type == 3:
                 self.inputIfFormat, self.inputIfValue, self.outputIfFormat, self.outputIfValue = unpack(
                     ">ii", datagram[data_position : (data_position + 16)]
                 )
@@ -1245,7 +1244,7 @@ class sFlowSample:
             self.recordCount = unpack(">i", datagram[data_position : data_position + 4])[0]
             data_position += 4
 
-        elif self.sampleType in [2, 4]:  # Counters
+        elif self.sample_type in [2, 4]:  # Counters
             self.recordCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
             data_position += 4
             self.sampleRate = 0
@@ -1261,7 +1260,7 @@ class sFlowSample:
             record_header = unpack(">i", datagram[(data_position) : (data_position + 4)])[0]
             record_size = unpack(">i", datagram[(data_position + 4) : (data_position + 8)])[0]
             record_data = datagram[(data_position + 8) : (data_position + record_size + 8)]
-            self.records.append(sFlowRecord(record_header, record_size, self.sampleType, record_data))
+            self.records.append(sFlowRecord(record_header, record_size, self.sample_type, record_data))
             data_position += record_size + 8
 
 

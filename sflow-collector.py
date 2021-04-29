@@ -34,7 +34,7 @@ while True:
         # print "Sample Number:", i + 1
         # print("Sample Sequence:", sFlowData.samples[i].sequence)
         # print("Sample Enterprise:", sFlowData.samples[i].enterprise)
-        # print("Sample Type:", sFlowData.samples[i].sampleType)
+        # print("Sample Type:", sFlowData.samples[i].sample_type)
         # print("Sample Length:", sFlowData.samples[i].len)
         # print("Sample Source Type:", sFlowData.samples[i].sourceType)
         # print("Sample Source Index:", sFlowData.samples[i].sourceIndex)
@@ -47,7 +47,7 @@ while True:
         # print()
         for j in range(sFlowData.samples[i].recordCount):
             # record = sFlowData.samples[i].records[j].data
-            print("Sample Type", sFlowData.samples[i].records[j].sampleType)
+            print("Sample Type", sFlowData.samples[i].records[j].sample_type)
             print("Sample Record Enterprise:", sFlowData.samples[i].records[j].enterprise)
             print("Sample Record Type:", sFlowData.samples[i].records[j].format)
             print(repr(sFlowData.samples[i].records[j].data))
