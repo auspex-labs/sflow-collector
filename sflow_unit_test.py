@@ -1,5 +1,5 @@
-#!/usr/bin/python
 import socket
+
 import sflow
 
 # Basic Listener
@@ -69,8 +69,8 @@ while True:
         # print "Sample Rate:", sFlowData.sample[i].sampleRate
         # print "Sample Pool:", sFlowData.sample[i].samplePool
         # print "Sample Dropped Packets:", sFlowData.sample[i].droppedPackets
-        # print "Sample Input Interface:", sFlowData.sample[i].inputInterface
-        # print "Sample Output Interface:", sFlowData.sample[i].outputInterface
+        # print "Sample Input Interface:", sFlowData.sample[i].input_interface
+        # print "Sample Output Interface:", sFlowData.sample[i].output_interface
         # print "Sample Record Count:", sFlowData.sample[i].recordCount
         # print ""
         for j in range(sFlowData.sample[i].recordCount):
