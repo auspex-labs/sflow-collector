@@ -50,4 +50,4 @@ while True:
             print("Sample Type", sflow_data.samples[i].records[j].sample_type)
             print("Sample Record Enterprise:", sflow_data.samples[i].records[j].enterprise)
             print("Sample Record Type:", sflow_data.samples[i].records[j].format)
-            print(repr(sflow_data.samples[i].records[j].data))
+            print(repr(sflow_data.samples[i].records[j].record))

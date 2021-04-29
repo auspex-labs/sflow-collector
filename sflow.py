@@ -94,6 +94,9 @@ class sFlowRawPacketHeader:
                 Destination Port: {self.dstPort}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowEthernetFrame:
     "flowData: enterprise = 0, format = 2"
@@ -113,6 +116,9 @@ class sFlowEthernetFrame:
                 Destination MAC: {self.dstMAC}
                 Frame Type: {self.type}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowSampledIpv4:
@@ -142,6 +148,9 @@ class sFlowSampledIpv4:
                 Type of Service: {self.tos}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowSampledIpv6:
     "flowData: enterprise = 0, format = 4"
@@ -164,6 +173,9 @@ class sFlowSampledIpv6:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowExtendedSwitch:
     "flowData: enterprise = 0, format = 1001"
@@ -181,6 +193,9 @@ class sFlowExtendedSwitch:
             Extended Switch:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowExtendedRouter:
@@ -210,6 +225,9 @@ class sFlowExtendedRouter:
             Extended Router:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowExtendedGateway:
@@ -262,6 +280,9 @@ class sFlowExtendedGateway:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowExtendedUser:
     "flowData: enterprise = 0, format = 1004"
@@ -283,6 +304,9 @@ class sFlowExtendedUser:
             Extended User:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowExtendedUrl:
@@ -307,6 +331,9 @@ class sFlowExtendedUrl:
             Extended URL:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowExtendedMpls:
@@ -348,6 +375,9 @@ class sFlowExtendedMpls:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowExtendedNat:
     "flowData: enterprise = 0, format = 1007"
@@ -385,6 +415,9 @@ class sFlowExtendedNat:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowExtendedMplsTunnel:
     "flowData: enterprise = 0, format = 1008"
@@ -404,6 +437,9 @@ class sFlowExtendedMplsTunnel:
             Extended MPLS Tunnel:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowExtendedMplsVc:
@@ -425,6 +461,9 @@ class sFlowExtendedMplsVc:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowExtendedMpls_FTN:
     "flowData: enterprise = 0, format = 1010"
@@ -443,6 +482,9 @@ class sFlowExtendedMpls_FTN:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowExtendedMpls_LDP_FEC:
     "flowData: enterprise = 0, format = 1011"
@@ -457,6 +499,9 @@ class sFlowExtendedMpls_LDP_FEC:
             Extended MPLS LDP FEC:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowExtendedVlantunnel:
@@ -473,6 +518,9 @@ class sFlowExtendedVlantunnel:
             Extended VLAN Tunnel:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowExtendedSocketIpv4:
@@ -493,6 +541,9 @@ class sFlowExtendedSocketIpv4:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowExtendedSocketIpv6:
     "flowData: enterprise = 0, format = 2101"
@@ -511,6 +562,9 @@ class sFlowExtendedSocketIpv6:
             Extended IPv6 Socket:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 # Counter Record Types
@@ -545,7 +599,6 @@ class sFlowIfCounters:
     def __repr__(self) -> str:
         return f"""
             Interface Counters:
-                Length: {self.len}
                 Index: {self.index}
                 Type: {self.type}
                 Speed: {self.speed}
@@ -566,6 +619,9 @@ class sFlowIfCounters:
                 Out Errors: {self.outputErrors}
                 Promiscuous: {self.promiscuous}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowEthernetInterface:
@@ -593,6 +649,9 @@ class sFlowEthernetInterface:
             Ethernet Counters:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowTokenringCounters:
@@ -626,6 +685,9 @@ class sFlowTokenringCounters:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowVgCounters:
     "counterData: enterprise = 0, format = 4"
@@ -654,6 +716,9 @@ class sFlowVgCounters:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowVLAN:
     "counterData: enterprise = 0, format = 5"
@@ -674,6 +739,9 @@ class sFlowVLAN:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowProcessor:
     "counterData: enterprise = 0, format = 1001"
@@ -693,6 +761,9 @@ class sFlowProcessor:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowOfPort:
     "counterData: enterprise = 0, format = 1004"
@@ -709,6 +780,9 @@ class sFlowOfPort:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowPortName:
     "counterData: enterprise = 0, format = 1005"
@@ -724,6 +798,9 @@ class sFlowPortName:
             OpenFlow Port Name:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowHostDescr:
@@ -752,6 +829,9 @@ class sFlowHostDescr:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowHostAdapters:
     "counterData: enterprise = 0, format = 2001"
@@ -766,9 +846,9 @@ class sFlowHostAdapters:
         self.len = length
         self.data = datagram
         self.adapters = []
-        host_adapter_count = unpack(">i", datagram[0:4])[0]
+        self.host_adapter_count = unpack(">i", datagram[0:4])[0]
         data_position = 4
-        for _ in range(host_adapter_count):
+        for _ in range(self.host_adapter_count):
             hostadapter = self.hostAdapter()
             hostadapter.ifIndex = unpack(">i", datagram[data_position : (data_position + 4)])[0]
             data_position += 4
@@ -776,7 +856,9 @@ class sFlowHostAdapters:
             data_position += 4
             hostadapter.macAddresses = []
             for mac_address in range(hostadapter.macAddressCount):
-                hostadapter.macAddresses.append(datagram[(data_position + mac_address * 8) : (data_position + mac_address * 8 + 6)]).hex("-")
+                hostadapter.macAddresses.append(
+                    datagram[(data_position + mac_address * 8) : (data_position + mac_address * 8 + 6)]
+                ).hex("-")
             data_position += hostadapter.macAddressCount * 8
             self.adapters.append(hostadapter)
 
@@ -785,6 +867,9 @@ class sFlowHostAdapters:
             Host Adapters:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return self.host_adapter_count
 
 
 class sFlowHostParent:
@@ -801,6 +886,9 @@ class sFlowHostParent:
             Host Parent:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowHostCPU:
@@ -836,6 +924,9 @@ class sFlowHostCPU:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowHostMemory:
     "counterData: enterprise = 0, format = 2004"
@@ -861,6 +952,9 @@ class sFlowHostMemory:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowHostDiskIO:
     "counterData: enterprise = 0, format = 2005"
@@ -884,6 +978,9 @@ class sFlowHostDiskIO:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowHostNetIO:
     "counterData: enterprise = 0, format = 2006"
@@ -905,6 +1002,9 @@ class sFlowHostNetIO:
             Host Network I/O Counters:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowMib2IP:
@@ -938,6 +1038,9 @@ class sFlowMib2IP:
             MIB2 IP Counters:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowMib2ICMP:
@@ -978,6 +1081,9 @@ class sFlowMib2ICMP:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowMib2TCP:
     "counterData: enterprise = 0, format = 2009"
@@ -1007,6 +1113,9 @@ class sFlowMib2TCP:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowMib2UDP:
     "counterData: enterprise = 0, format = 2010"
@@ -1028,6 +1137,9 @@ class sFlowMib2UDP:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowVirtNode:
     "counterData: enterprise = 0, format = 2100"
@@ -1047,6 +1159,9 @@ class sFlowVirtNode:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowVirtCPU:
     "counterData: enterprise = 0, format = 2101"
@@ -1064,6 +1179,9 @@ class sFlowVirtCPU:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowVirtMemory:
     "counterData: enterprise = 0, format = 2102"
@@ -1079,6 +1197,9 @@ class sFlowVirtMemory:
             Virtual Memory Counters:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 class sFlowVirtDiskIO:
@@ -1102,6 +1223,9 @@ class sFlowVirtDiskIO:
                 Length: {self.len}
         """
 
+    def __len__(self):
+        return 1
+
 
 class sFlowVirtNetIO:
     "counterData: enterprise = 0, format = 2104"
@@ -1123,6 +1247,9 @@ class sFlowVirtNetIO:
             Virtual Network IO Counters:
                 Length: {self.len}
         """
+
+    def __len__(self):
+        return 1
 
 
 s_flow_record_format = {
@@ -1182,7 +1309,7 @@ class sFlowRecord:
         self.len = length
         self.sample_type = sample_type
         self.datagram = datagram
-        self.data = s_flow_record_format.get((sample_type, self.enterprise, self.format), sFlowRecordBase)(length, datagram)
+        self.record = s_flow_record_format.get((sample_type, self.enterprise, self.format), sFlowRecordBase)(length, datagram)
 
 
 # sFlow Sample class.
