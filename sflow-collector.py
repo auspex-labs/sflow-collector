@@ -15,39 +15,39 @@ while True:
     data, addr = sock.recvfrom(
         3000
     )  # 1386 bytes is the largest possible sFlow packet, by spec 3000 seems to be the number by practice
-    sFlowData = sflow.sFlow(data)
+    sflow_data = sflow.sFlow(data)
 
     # Below this point is test code.
 
     # print()
     print("Source:", addr[0])
-    # print("length:", sFlowData.len)
-    # print("DG Version:", sFlowData.dgVersion)
-    # print("Address Type:", sFlowData.addressType)
-    # print("Agent Address:", sFlowData.agentAddress)
-    # print("Sub Agent:", sFlowData.subAgent)
-    # print("Sequence Number:", sFlowData.sequenceNumber)
-    # print("System UpTime:", sFlowData.sysUpTime)
-    # print("Number of Samples:", sFlowData.NumberSample)
+    # print("length:", sflow_data.len)
+    # print("DG Version:", sflow_data.dgVersion)
+    # print("Address Type:", sflow_data.addressType)
+    # print("Agent Address:", sflow_data.agentAddress)
+    # print("Sub Agent:", sflow_data.subAgent)
+    # print("Sequence Number:", sflow_data.sequenceNumber)
+    # print("System UpTime:", sflow_data.sysUpTime)
+    # print("Number of Samples:", sflow_data.NumberSample)
     # print()
-    for i in range(sFlowData.NumberSample):
+    for i in range(sflow_data.NumberSample):
         # print "Sample Number:", i + 1
-        # print("Sample Sequence:", sFlowData.samples[i].sequence)
-        # print("Sample Enterprise:", sFlowData.samples[i].enterprise)
-        # print("Sample Type:", sFlowData.samples[i].sample_type)
-        # print("Sample Length:", sFlowData.samples[i].len)
-        # print("Sample Source Type:", sFlowData.samples[i].sourceType)
-        # print("Sample Source Index:", sFlowData.samples[i].sourceIndex)
-        # print("Sample Rate:", sFlowData.samples[i].sampleRate)
-        # print("Sample Pool:", sFlowData.samples[i].samplePool)
-        # print("Sample Dropped Packets:", sFlowData.samples[i].droppedPackets)
-        # print("Sample Input Interface:", sFlowData.samples[i].input_interface)
-        # print("Sample Output Interface:", sFlowData.samples[i].output_interface)
-        # print "Sample Record Count:", sFlowData.samples[i].recordCount
+        # print("Sample Sequence:", sflow_data.samples[i].sequence)
+        # print("Sample Enterprise:", sflow_data.samples[i].enterprise)
+        # print("Sample Type:", sflow_data.samples[i].sample_type)
+        # print("Sample Length:", sflow_data.samples[i].len)
+        # print("Sample Source Type:", sflow_data.samples[i].sourceType)
+        # print("Sample Source Index:", sflow_data.samples[i].sourceIndex)
+        # print("Sample Rate:", sflow_data.samples[i].sampleRate)
+        # print("Sample Pool:", sflow_data.samples[i].samplePool)
+        # print("Sample Dropped Packets:", sflow_data.samples[i].droppedPackets)
+        # print("Sample Input Interface:", sflow_data.samples[i].input_interface)
+        # print("Sample Output Interface:", sflow_data.samples[i].output_interface)
+        # print "Sample Record Count:", sflow_data.samples[i].recordCount
         # print()
-        for j in range(sFlowData.samples[i].recordCount):
-            # record = sFlowData.samples[i].records[j].data
-            print("Sample Type", sFlowData.samples[i].records[j].sample_type)
-            print("Sample Record Enterprise:", sFlowData.samples[i].records[j].enterprise)
-            print("Sample Record Type:", sFlowData.samples[i].records[j].format)
-            print(repr(sFlowData.samples[i].records[j].data))
+        for j in range(sflow_data.samples[i].recordCount):
+            # record = sflow_data.samples[i].records[j].data
+            print("Sample Type", sflow_data.samples[i].records[j].sample_type)
+            print("Sample Record Enterprise:", sflow_data.samples[i].records[j].enterprise)
+            print("Sample Record Type:", sflow_data.samples[i].records[j].format)
+            print(repr(sflow_data.samples[i].records[j].data))
