@@ -46,7 +46,7 @@ class sFlowRecordBase:
         self.data = datagram
 
     def __repr__(self):
-        return """
+        return f"""
             sFlow Record Type Not Implimented:
                 Length: {len(self.data)}
             """
@@ -70,7 +70,7 @@ class sFlowRawPacketHeader:
         self.header = datagram[(16) : (16 + self.headerSize)]
         ofset = 0
         self.type = unpack(">H", datagram[36:38])[0]
-        if self.type == int(16384):  # if 802.1q info in sample header
+        if self.type == int(16384):  # 802.1q info in sample header
             ofset = 4
         self.srcMAC = datagram[22:28].hex("-")
         self.dstMAC = datagram[16:22].hex("-")
@@ -1265,8 +1265,8 @@ class sFlowRecord:
 
     def __init__(self, header, sample_type, datagram):
         self.header = header
-        self.enterprise, self.format = divmod(self.header, 4096)
         self.sample_type = sample_type
+        self.enterprise, self.format = divmod(self.header, 4096)
         self.datagram = datagram
         self.record = s_flow_record_format.get((sample_type, self.enterprise, self.format), sFlowRecordBase)(datagram)
 
