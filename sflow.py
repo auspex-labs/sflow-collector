@@ -168,7 +168,13 @@ class sFlowSampledIpv6:
     def __repr__(self):
         return f"""
             IPv6 Sample:
-                Length: {len(self.data)}
+                Protocol: {self.protocol}
+                Source IP: {self.srcIp}
+                Destination IP: {self.dstIp}
+                Source Port: {self.srcPort}
+                Destination Port: {self.dstPort}
+                TCP Flags: {self.tcpFlags}
+                Priority: {self.priority}
         """
 
     def __len__(self):
@@ -188,7 +194,10 @@ class sFlowExtendedSwitch:
     def __repr__(self):
         return f"""
             Extended Switch:
-                Length: {len(self.data)}
+                Source VLAN: {self.srcVLAN}
+                Source Priority: {self.srcPriority}
+                Destination VLAN: {self.dstVLAN}
+                Destination Priority: {self.dstPriority}
         """
 
     def __len__(self):
@@ -219,7 +228,9 @@ class sFlowExtendedRouter:
     def __repr__(self):
         return f"""
             Extended Router:
-                Length: {len(self.data)}
+                Next Hop Address: {self.nextHop}
+                Source Mask Length: {self.srcMaskLen}
+                Destination Mask Length: {self.dstMaskLen}
         """
 
     def __len__(self):
@@ -259,12 +270,15 @@ class sFlowExtendedGateway:
         data_position += 4
         self.asPathCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.dstAsPath = unpack(f'>{"i" * self.asPathCount}', datagram[data_position : (data_position + self.asPathCount * 4)])
+        self.dstAsPath = unpack(
+            f'>{"i" * self.asPathCount}', datagram[data_position : (data_position + self.asPathCount * 4)]
+        )  # TODO: Double Check
         data_position += self.asPathCount * 4
         self.communitiesCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
         self.communities = unpack(
-            f'>{"i" * self.communitiesCount}', datagram[data_position : (data_position + self.communitiesCount * 4)]
+            f'>{"i" * self.communitiesCount}',
+            datagram[data_position : (data_position + self.communitiesCount * 4)],  # TODO: Double Check
         )
         data_position += self.communitiesCount * 4
         self.localpref = unpack(">i", datagram[data_position : (data_position + 4)])[0]
@@ -272,7 +286,15 @@ class sFlowExtendedGateway:
     def __repr__(self):
         return f"""
             Extended Gateway:
-                Length: {len(self.data)}
+                Next Hop Address: {self.nextHop}
+                ASN: {self.asNumber}
+                Source ASN: {self.srcAutonomousSystemsNumber}
+                Source Peer ASN: {self.srcPeerAutonomousSystemsNumber}
+                AS Path Typr: {self.asPathType}
+                AS Path Count: {self.asPathCount}
+                Destination ASN: {self.dstAutonomousSystemsPath}
+                Communities: {self.communities}
+                Local Preference: {self.localpref}
         """
 
     def __len__(self):
@@ -296,7 +318,10 @@ class sFlowExtendedUser:
     def __repr__(self):
         return f"""
             Extended User:
-                Length: {len(self.data)}
+                Source Character Set: {self.srcCharset}
+                Source User: {self.srcUser}
+                Destination Character Set: {self.dstCharset}
+                Destination User: {self.dstUser}
         """
 
     def __len__(self):
@@ -322,7 +347,10 @@ class sFlowExtendedUrl:
     def __repr__(self):
         return f"""
             Extended URL:
-                Length: {len(self.data)}
+                URL: {self.url}
+                Host: {self.host}
+                Port: {self.PortName}
+                Direction: {self.direction}
         """
 
     def __len__(self):
@@ -352,19 +380,23 @@ class sFlowExtendedMpls:
         self.inLabelStackCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
         self.inLabelStack = unpack(
-            f'>{"i" * self.inLabelStackCount}', datagram[data_position : (data_position + self.inLabelStackCount * 4)]
-        )
+            f'>{"i" * self.inLabelStackCount}', datagram[data_position : (data_position + self.inLabelStackCount * 4)] 
+        ) # TODO: Double Check
         data_position += self.inLabelStackCount * 4
         self.outLabelStackCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
         self.outLabelStack = unpack(
-            f'>{"i" * self.outLabelStackCount}', datagram[data_position : (data_position + self.outLabelStackCount * 4)]
-        )
+            f'>{"i" * self.outLabelStackCount}', datagram[data_position : (data_position + self.outLabelStackCount * 4)] 
+        ) # TODO: Double Check
 
     def __repr__(self):
         return f"""
             Extended MPLS:
-                Length: {len(self.data)}
+                Next Hop: {self.nextHop}
+                In Label Stack Count: {self.inLabelStackCount}
+                In Label Stack: {self.inLabelStack}
+                Out Label Stack Count: {self.outLabelStackCount}
+                Out Label Stack: { self.outLabelStack}
         """
 
     def __len__(self):
@@ -403,7 +435,8 @@ class sFlowExtendedNat:
     def __repr__(self):
         return f"""
             Extended NAT:
-                Length: {len(self.data)}
+                Source Address: {self.srcAddress}
+                Destination Address: {self.dstAddress}
         """
 
     def __len__(self):
@@ -425,7 +458,9 @@ class sFlowExtendedMplsTunnel:
     def __repr__(self):
         return f"""
             Extended MPLS Tunnel:
-                Length: {len(self.data)}
+                Host: {self.host}
+                Tunnel ID: {self.tunnelId}
+                Tunnel COS: {self.tunnelCos}
         """
 
     def __len__(self):
@@ -447,7 +482,9 @@ class sFlowExtendedMplsVc:
     def __repr__(self):
         return f"""
             Extended MPLS Virtual Circuit:
-                Length: {len(self.data)}
+                VC Instance Name: {self.vcInstanceName}
+                VLL VC ID: {self.vllVcId}
+                VC Label COS: {self.vcLabelCos}
         """
 
     def __len__(self):
@@ -467,7 +504,8 @@ class sFlowExtendedMpls_FTN:
     def __repr__(self):
         return f"""
             Extended MPLS FTN:
-                Length: {len(self.data)}
+                Description: {self.mplsFTNDescr}
+                Mask: {self.mplsFTNMask}
         """
 
     def __len__(self):
@@ -484,7 +522,7 @@ class sFlowExtendedMpls_LDP_FEC:
     def __repr__(self):
         return f"""
             Extended MPLS LDP FEC:
-                Length: {len(self.data)}
+                LDP FEC Address Prefix Length: {self.mplsFecAddrPrefixLength}
         """
 
     def __len__(self):
@@ -502,7 +540,7 @@ class sFlowExtendedVlantunnel:
     def __repr__(self):
         return f"""
             Extended VLAN Tunnel:
-                Length: {len(self.data)}
+                Stack: {self.stack}
         """
 
     def __len__(self):
@@ -523,7 +561,11 @@ class sFlowExtendedSocketIpv4:
     def __repr__(self):
         return f"""
             Extended IPv4 Socket:
-                Length: {len(self.data)}
+                Protocol: {self.protocol}
+                Local IP: {self.localIp}
+                Local Port: {self.localPort}
+                Remote IP: {self.remoteIp}
+                Remote Port: {self.remotePort}
         """
 
     def __len__(self):
@@ -544,7 +586,11 @@ class sFlowExtendedSocketIpv6:
     def __repr__(self):
         return f"""
             Extended IPv6 Socket:
-                Length: {len(self.data)}
+                Protocol: {self.protocol}
+                Local IP: {self.localIp}
+                Local Port: {self.localPort}
+                Remote IP: {self.remoteIp}
+                Remote Port: {self.remotePort}
         """
 
     def __len__(self):
