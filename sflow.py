@@ -380,14 +380,14 @@ class sFlowExtendedMpls:
         self.inLabelStackCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
         self.inLabelStack = unpack(
-            f'>{"i" * self.inLabelStackCount}', datagram[data_position : (data_position + self.inLabelStackCount * 4)] 
-        ) # TODO: Double Check
+            f'>{"i" * self.inLabelStackCount}', datagram[data_position : (data_position + self.inLabelStackCount * 4)]
+        )  # TODO: Double Check
         data_position += self.inLabelStackCount * 4
         self.outLabelStackCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
         self.outLabelStack = unpack(
-            f'>{"i" * self.outLabelStackCount}', datagram[data_position : (data_position + self.outLabelStackCount * 4)] 
-        ) # TODO: Double Check
+            f'>{"i" * self.outLabelStackCount}', datagram[data_position : (data_position + self.outLabelStackCount * 4)]
+        )  # TODO: Double Check
 
     def __repr__(self):
         return f"""
