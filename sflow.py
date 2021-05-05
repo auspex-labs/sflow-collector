@@ -62,36 +62,35 @@ class sFlowRawPacketHeader:
     "flowData: enterprise = 0, format = 1"
 
     def __init__(self, datagram):
-        self.headerProtocol = unpack(">i", datagram[0:4])[0]
-        self.frameLength = unpack(">i", datagram[4:8])[0]
-        self.payloadRemoved = unpack(">i", datagram[8:12])[0]
-        self.headerSize = unpack(">i", datagram[12:16])[0]
-        self.header = datagram[(16) : (16 + self.headerSize)]
-        ofset = 0
+        self.header_protocol = unpack(">i", datagram[0:4])[0]
+        self.frame_length = unpack(">i", datagram[4:8])[0]
+        self.payload_removed = unpack(">i", datagram[8:12])[0]
+        self.header_size = unpack(">i", datagram[12:16])[0]
+        self.header = datagram[(16) : (16 + self.header_size)]
+        offset = 0
         self.type = unpack(">H", datagram[36:38])[0]
         if self.type == int(16384):  # 802.1q info in sample header
-            ofset = 4
-        self.srcMAC = datagram[22:28].hex("-")
-        self.dstMAC = datagram[16:22].hex("-")
-        self.srcIp = inet_ntop(AF_INET, datagram[46 - ofset : 50 - ofset])
-        self.dstIp = inet_ntop(AF_INET, datagram[50 - ofset : 54 - ofset])
-        self.srcPort = unpack(">H", datagram[54 - ofset : 56 - ofset])[0]
-        self.dstPort = unpack(">H", datagram[56 - ofset : 58 - ofset])[0]
+            offset = 4
+        self.source_mac = datagram[22:28].hex("-")
+        self.destination_mac = datagram[16:22].hex("-")
+        self.source_ip = inet_ntop(AF_INET, datagram[46 - offset : 50 - offset])
+        self.destination_ip = inet_ntop(AF_INET, datagram[50 - offset : 54 - offset])
+        self.source_port = unpack(">H", datagram[54 - offset : 56 - offset])[0]
+        self.destination_port = unpack(">H", datagram[56 - offset : 58 - offset])[0]
 
     def __repr__(self):
         return f"""
             Raw Packet Header:
-                Protocol: {self.headerProtocol}
-                Frame Length: {self.frameLength}
-                Header Size: {self.headerSize}
-                Payload Removed: {self.payloadRemoved}
-                Header Size: {self.headerSize}
-                Source MAC: {self.srcMAC}
-                Destination MAC: {self.dstMAC}
-                Source IP: {self.srcIp}
-                Destination IP: {self.dstIp}
-                Source Port: {self.srcPort}
-                Destination Port: {self.dstPort}
+                Protocol: {self.header_protocol}
+                Frame Length: {self.frame_length}
+                Header Size: {self.header_size}
+                Payload Removed: {self.payload_removed}
+                Source MAC: {self.source_mac}
+                Destination MAC: {self.destination_mac}
+                Source IP: {self.source_ip}
+                Destination IP: {self.destination_ip}
+                Source Port: {self.source_port}
+                Destination Port: {self.destination_port}
         """
 
     def __len__(self):
@@ -102,16 +101,17 @@ class sFlowEthernetFrame:
     "flowData: enterprise = 0, format = 2"
 
     def __init__(self, datagram):
-        self.frameLength = unpack(">i", datagram[0:4])[0]
-        self.srcMAC = datagram[4:10].hex("-")
-        self.dstMAC = datagram[12:18].hex("-")
+        self.frame_length = unpack(">i", datagram[0:4])[0]
+        self.source_mac = datagram[4:10].hex("-")
+        self.destination_mac = datagram[12:18].hex("-")
         self.type = unpack(">i", datagram[20:24])[0]
 
     def __repr__(self):
         return f"""
             Ethernet Frame:
-                Source MAC: {self.srcMAC}
-                Destination MAC: {self.dstMAC}
+                Frame Length: {self.frame_length}
+                Source MAC: {self.source_mac}
+                Destination MAC: {self.destination_mac}
                 Frame Type: {self.type}
         """
 
@@ -125,10 +125,10 @@ class sFlowSampledIpv4:
     def __init__(self, datagram):
         self.length = unpack(">i", datagram[0:4])[0]
         self.protocol = unpack(">i", datagram[4:8])[0]
-        self.srcIp = inet_ntop(AF_INET, datagram[8:12])
-        self.dstIp = inet_ntop(AF_INET, datagram[12:16])
-        self.srcPort = unpack(">i", datagram[16:20])[0]
-        self.dstPort = unpack(">i", datagram[20:24])[0]
+        self.source_ip = inet_ntop(AF_INET, datagram[8:12])
+        self.destination_ip = inet_ntop(AF_INET, datagram[12:16])
+        self.source_port = unpack(">i", datagram[16:20])[0]
+        self.destination_port = unpack(">i", datagram[20:24])[0]
         self.tcpFlags = unpack(">i", datagram[24:28])[0]
         self.tos = unpack(">i", datagram[28:32])[0]
 
@@ -136,10 +136,10 @@ class sFlowSampledIpv4:
         return f"""
             IPv4 Sample:
                 Protocol: {self.protocol}
-                Source IP: {self.srcIp}
-                Destination IP: {self.dstIp}
-                Source Port: {self.srcPort}
-                Destination Port: {self.dstPort}
+                Source IP: {self.source_ip}
+                Destination IP: {self.destination_ip}
+                Source Port: {self.source_port}
+                Destination Port: {self.destination_port}
                 TCP Flags: {self.tcpFlags}
                 Type of Service: {self.tos}
         """
@@ -154,10 +154,10 @@ class sFlowSampledIpv6:
     def __init__(self, datagram):
         self.length = unpack(">i", datagram[0:4])[0]
         self.protocol = unpack(">i", datagram[4:8])[0]
-        self.srcIp = inet_ntop(AF_INET6, datagram[8:24])
-        self.dstIp = inet_ntop(AF_INET6, datagram[24:40])
-        self.srcPort = unpack(">i", datagram[40:44])[0]
-        self.dstPort = unpack(">i", datagram[44:48])[0]
+        self.source_ip = inet_ntop(AF_INET6, datagram[8:24])
+        self.destination_ip = inet_ntop(AF_INET6, datagram[24:40])
+        self.source_port = unpack(">i", datagram[40:44])[0]
+        self.destination_port = unpack(">i", datagram[44:48])[0]
         self.tcpFlags = unpack(">i", datagram[48:52])[0]
         self.priority = unpack(">i", datagram[52:56])[0]
 
@@ -165,10 +165,10 @@ class sFlowSampledIpv6:
         return f"""
             IPv6 Sample:
                 Protocol: {self.protocol}
-                Source IP: {self.srcIp}
-                Destination IP: {self.dstIp}
-                Source Port: {self.srcPort}
-                Destination Port: {self.dstPort}
+                Source IP: {self.source_ip}
+                Destination IP: {self.destination_ip}
+                Source Port: {self.source_port}
+                Destination Port: {self.destination_port}
                 TCP Flags: {self.tcpFlags}
                 Priority: {self.priority}
         """
