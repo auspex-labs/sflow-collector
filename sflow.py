@@ -129,7 +129,7 @@ class sFlowSampledIpv4:
         self.destination_ip = inet_ntop(AF_INET, datagram[12:16])
         self.source_port = unpack(">i", datagram[16:20])[0]
         self.destination_port = unpack(">i", datagram[20:24])[0]
-        self.tcpFlags = unpack(">i", datagram[24:28])[0]
+        self.tcp_flags = unpack(">i", datagram[24:28])[0]
         self.tos = unpack(">i", datagram[28:32])[0]
 
     def __repr__(self):
@@ -140,7 +140,7 @@ class sFlowSampledIpv4:
                 Destination IP: {self.destination_ip}
                 Source Port: {self.source_port}
                 Destination Port: {self.destination_port}
-                TCP Flags: {self.tcpFlags}
+                TCP Flags: {self.tcp_flags}
                 Type of Service: {self.tos}
         """
 
@@ -158,7 +158,7 @@ class sFlowSampledIpv6:
         self.destination_ip = inet_ntop(AF_INET6, datagram[24:40])
         self.source_port = unpack(">i", datagram[40:44])[0]
         self.destination_port = unpack(">i", datagram[44:48])[0]
-        self.tcpFlags = unpack(">i", datagram[48:52])[0]
+        self.tcp_flags = unpack(">i", datagram[48:52])[0]
         self.priority = unpack(">i", datagram[52:56])[0]
 
     def __repr__(self):
@@ -169,7 +169,7 @@ class sFlowSampledIpv6:
                 Destination IP: {self.destination_ip}
                 Source Port: {self.source_port}
                 Destination Port: {self.destination_port}
-                TCP Flags: {self.tcpFlags}
+                TCP Flags: {self.tcp_flags}
                 Priority: {self.priority}
         """
 
@@ -181,18 +181,18 @@ class sFlowExtendedSwitch:
     "flowData: enterprise = 0, format = 1001"
 
     def __init__(self, datagram):
-        self.srcVLAN = unpack(">i", datagram[0:4])[0]
-        self.srcPriority = unpack(">i", datagram[4:8])[0]
-        self.dstVLAN = unpack(">i", datagram[8:12])[0]
-        self.dstPriority = unpack(">i", datagram[12:16])[0]
+        self.source_vlan = unpack(">i", datagram[0:4])[0]
+        self.source_priority = unpack(">i", datagram[4:8])[0]
+        self.destination_vlan = unpack(">i", datagram[8:12])[0]
+        self.destination_priority = unpack(">i", datagram[12:16])[0]
 
     def __repr__(self):
         return f"""
             Extended Switch:
-                Source VLAN: {self.srcVLAN}
-                Source Priority: {self.srcPriority}
-                Destination VLAN: {self.dstVLAN}
-                Destination Priority: {self.dstPriority}
+                Source VLAN: {self.source_vlan}
+                Source Priority: {self.source_priority}
+                Destination VLAN: {self.destination_vlan}
+                Destination Priority: {self.destination_priority}
         """
 
     def __len__(self):
@@ -203,28 +203,28 @@ class sFlowExtendedRouter:
     "flowData: enterprise = 0, format = 1002"
 
     def __init__(self, datagram):
-        self.addressType = unpack(">i", datagram[0:4])[0]
-        if self.addressType == 1:
-            self.nextHop = inet_ntop(AF_INET, datagram[4:8])
+        self.address_type = unpack(">i", datagram[0:4])[0]
+        if self.address_type == 1:
+            self.next_hop = inet_ntop(AF_INET, datagram[4:8])
             data_position = 8
-        elif self.addressType == 2:
-            self.nextHop = inet_ntop(AF_INET6, datagram[4:20])
+        elif self.address_type == 2:
+            self.next_hop = inet_ntop(AF_INET6, datagram[4:20])
             data_position = 20
         else:
-            self.nextHop = 0
-            self.srcMaskLen = 0
-            self.dstMaskLen = 0
+            self.next_hop = 0
+            self.source_mask_length = 0
+            self.destination_mask_length = 0
             return
-        self.srcMaskLen = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.source_mask_length = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.dstMaskLen = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.destination_mask_length = unpack(">i", datagram[data_position : (data_position + 4)])[0]
 
     def __repr__(self):
         return f"""
             Extended Router:
-                Next Hop Address: {self.nextHop}
-                Source Mask Length: {self.srcMaskLen}
-                Destination Mask Length: {self.dstMaskLen}
+                Next Hop Address: {self.next_hop}
+                Source Mask Length: {self.source_mask_length}
+                Destination Mask Length: {self.destination_mask_length}
         """
 
     def __len__(self):
@@ -235,15 +235,15 @@ class sFlowExtendedGateway:
     "flowData: enterprise = 0, format = 1003"
 
     def __init__(self, datagram):
-        self.addressType = unpack(">i", datagram[0:4])[0]
-        if self.addressType == 1:
-            self.nextHop = inet_ntop(AF_INET, datagram[4:8])
+        self.address_type = unpack(">i", datagram[0:4])[0]
+        if self.address_type == 1:
+            self.next_hop = inet_ntop(AF_INET, datagram[4:8])
             data_position = 8
-        elif self.addressType == 2:
-            self.nextHop = inet_ntop(AF_INET6, datagram[4:20])
+        elif self.address_type == 2:
+            self.next_hop = inet_ntop(AF_INET6, datagram[4:20])
             data_position = 20
         else:
-            self.nextHop = 0
+            self.next_hop = 0
             self.asNumber = 0
             self.srcAutonomousSystemsNumber = 0
             self.srcPeerAutonomousSystemsNumber = 0
@@ -279,7 +279,7 @@ class sFlowExtendedGateway:
     def __repr__(self):
         return f"""
             Extended Gateway:
-                Next Hop Address: {self.nextHop}
+                Next Hop Address: {self.next_hop}
                 ASN: {self.asNumber}
                 Source ASN: {self.srcAutonomousSystemsNumber}
                 Source Peer ASN: {self.srcPeerAutonomousSystemsNumber}
@@ -352,16 +352,16 @@ class sFlowExtendedMpls:
     "flowData: enterprise = 0, format = 1006"
 
     def __init__(self, datagram):
-        self.addressType = unpack(">i", datagram[0:4])[0]
+        self.address_type = unpack(">i", datagram[0:4])[0]
         data_position = 4
-        if self.addressType == 1:
-            self.nextHop = inet_ntop(AF_INET, datagram[data_position : (data_position + 4)])
+        if self.address_type == 1:
+            self.next_hop = inet_ntop(AF_INET, datagram[data_position : (data_position + 4)])
             data_position += 4
-        elif self.addressType == 2:
-            self.nextHop = inet_ntop(AF_INET6, datagram[data_position : (data_position + 16)])
+        elif self.address_type == 2:
+            self.next_hop = inet_ntop(AF_INET6, datagram[data_position : (data_position + 16)])
             data_position += 16
         else:
-            self.nextHop = 0
+            self.next_hop = 0
             self.inLabelStackCount = 0
             self.inLabelStack = []
             self.outLabelStackCount = 0
@@ -382,7 +382,7 @@ class sFlowExtendedMpls:
     def __repr__(self):
         return f"""
             Extended MPLS:
-                Next Hop: {self.nextHop}
+                Next Hop: {self.next_hop}
                 In Label Stack Count: {self.inLabelStackCount}
                 In Label Stack: {self.inLabelStack}
                 Out Label Stack Count: {self.outLabelStackCount}
@@ -1382,15 +1382,15 @@ class sFlow:
         self.len = len(datagram)
         self.data = datagram
         self.dgVersion = unpack(">i", datagram[0:4])[0]
-        self.addressType = unpack(">i", datagram[4:8])[0]
-        if self.addressType == 1:
+        self.address_type = unpack(">i", datagram[4:8])[0]
+        if self.address_type == 1:
             self.agentAddress = inet_ntop(AF_INET, datagram[8:12])
             self.subAgent = unpack(">i", datagram[12:16])[0]
             self.sequenceNumber = unpack(">i", datagram[16:20])[0]
             self.sysUpTime = unpack(">i", datagram[20:24])[0]
             self.NumberSample = unpack(">i", datagram[24:28])[0]
             data_position = 28
-        elif self.addressType == 2:
+        elif self.address_type == 2:
             self.agentAddress = inet_ntop(AF_INET6, datagram[8:24])  # Temporary fix due to lack of IPv6 support on WIN32
             self.subAgent = unpack(">i", datagram[24:28])[0]
             self.sequenceNumber = unpack(">i", datagram[28:32])[0]
