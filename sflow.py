@@ -655,7 +655,19 @@ class sFlowEthernetInterface:
     def __repr__(self):
         return f"""
             Ethernet Counters:
-                Length: {len(self.data)}
+                Alignment Errors: {self.alignmentError}
+                FCS Errors: {self.fcsError}
+                Single Collisions: {self.singleCollision}
+                Multiple Collisions: {self.multipleCollision}
+                SQE Tests: {self.sqeTest}
+                Defered: {self.deferred}
+                Late Collisions: {self.lateCollision}
+                Excessive Collisions: {self.excessiveCollision}
+                Internal Transmit Errors: {self.internalTransmitError}
+                Carrier Sense Error: {self.carrierSenseError}
+                Frame Too Long: {self.frameTooLong}
+                Internal Receive Error: {self.internalReceiveError}
+                Symbol Errors: {self.symbolError}   
         """
 
     def __len__(self):
