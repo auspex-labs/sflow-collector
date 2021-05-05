@@ -48,7 +48,7 @@ class sFlowRecordBase:
     def __repr__(self):
         return f"""
             sFlow Record Type Not Implimented:
-                Length: {len(self.data)}
+                Incomplete
             """
 
     def __len__(self):
@@ -700,7 +700,7 @@ class sFlowTokenringCounters:
     def __repr__(self):
         return f"""
             Token Ring Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -729,7 +729,7 @@ class sFlowVgCounters:
     def __repr__(self):
         return f"""
             VG Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -750,7 +750,7 @@ class sFlowVLAN:
     def __repr__(self):
         return f"""
             VLAN Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -770,7 +770,7 @@ class sFlowProcessor:
     def __repr__(self):
         return f"""
             Processor Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -787,7 +787,7 @@ class sFlowOfPort:
     def __repr__(self):
         return f"""
             OpenFlow Port:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -804,7 +804,7 @@ class sFlowPortName:
     def __repr__(self):
         return f"""
             OpenFlow Port Name:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -832,7 +832,7 @@ class sFlowHostDescr:
     def __repr__(self):
         return f"""
             Host Description:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -869,7 +869,7 @@ class sFlowHostAdapters:
     def __repr__(self):
         return f"""
             Host Adapters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -886,7 +886,7 @@ class sFlowHostParent:
     def __repr__(self):
         return f"""
             Host Parent:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -921,7 +921,7 @@ class sFlowHostCPU:
     def __repr__(self):
         return f"""
             Host CPU Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -947,7 +947,7 @@ class sFlowHostMemory:
     def __repr__(self):
         return f"""
             Host Memory Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -971,7 +971,7 @@ class sFlowHostDiskIO:
     def __repr__(self):
         return f"""
             Host Disk I/O Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -994,7 +994,7 @@ class sFlowHostNetIO:
     def __repr__(self):
         return f"""
             Host Network I/O Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -1028,7 +1028,7 @@ class sFlowMib2IP:
     def __repr__(self):
         return f"""
             MIB2 IP Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -1068,7 +1068,7 @@ class sFlowMib2ICMP:
     def __repr__(self):
         return f"""
             MIB2 ICMP Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -1098,7 +1098,7 @@ class sFlowMib2TCP:
     def __repr__(self):
         return f"""
             MIB2 TCP Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -1120,7 +1120,7 @@ class sFlowMib2UDP:
     def __repr__(self):
         return f"""
             MIB2 UDP Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -1140,7 +1140,7 @@ class sFlowVirtNode:
     def __repr__(self):
         return f"""
             Virtual Node Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -1158,7 +1158,7 @@ class sFlowVirtCPU:
     def __repr__(self):
         return f"""
             Virtual CPU Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -1175,7 +1175,7 @@ class sFlowVirtMemory:
     def __repr__(self):
         return f"""
             Virtual Memory Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -1198,7 +1198,7 @@ class sFlowVirtDiskIO:
     def __repr__(self):
         return f"""
             Virtual Disk IO Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
@@ -1221,7 +1221,7 @@ class sFlowVirtNetIO:
     def __repr__(self):
         return f"""
             Virtual Network IO Counters:
-                Length: {len(self.data)}
+                Incomplete
         """
 
     def __len__(self):
