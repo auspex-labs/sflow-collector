@@ -667,7 +667,7 @@ class sFlowEthernetInterface:
                 Carrier Sense Error: {self.carrierSenseError}
                 Frame Too Long: {self.frameTooLong}
                 Internal Receive Error: {self.internalReceiveError}
-                Symbol Errors: {self.symbolError}   
+                Symbol Errors: {self.symbolError}
         """
 
     def __len__(self):
