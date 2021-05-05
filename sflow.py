@@ -62,7 +62,6 @@ class sFlowRawPacketHeader:
     "flowData: enterprise = 0, format = 1"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.headerProtocol = unpack(">i", datagram[0:4])[0]
         self.frameLength = unpack(">i", datagram[4:8])[0]
         self.payloadRemoved = unpack(">i", datagram[8:12])[0]
@@ -103,7 +102,6 @@ class sFlowEthernetFrame:
     "flowData: enterprise = 0, format = 2"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.frameLength = unpack(">i", datagram[0:4])[0]
         self.srcMAC = datagram[4:10].hex("-")
         self.dstMAC = datagram[12:18].hex("-")
@@ -125,7 +123,6 @@ class sFlowSampledIpv4:
     "flowData: enterprise = 0, format = 3"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.length = unpack(">i", datagram[0:4])[0]
         self.protocol = unpack(">i", datagram[4:8])[0]
         self.srcIp = inet_ntop(AF_INET, datagram[8:12])
@@ -155,7 +152,6 @@ class sFlowSampledIpv6:
     "flowData: enterprise = 0, format = 4"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.length = unpack(">i", datagram[0:4])[0]
         self.protocol = unpack(">i", datagram[4:8])[0]
         self.srcIp = inet_ntop(AF_INET6, datagram[8:24])
@@ -185,7 +181,6 @@ class sFlowExtendedSwitch:
     "flowData: enterprise = 0, format = 1001"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.srcVLAN = unpack(">i", datagram[0:4])[0]
         self.srcPriority = unpack(">i", datagram[4:8])[0]
         self.dstVLAN = unpack(">i", datagram[8:12])[0]
@@ -208,7 +203,6 @@ class sFlowExtendedRouter:
     "flowData: enterprise = 0, format = 1002"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.addressType = unpack(">i", datagram[0:4])[0]
         if self.addressType == 1:
             self.nextHop = inet_ntop(AF_INET, datagram[4:8])
@@ -241,7 +235,6 @@ class sFlowExtendedGateway:
     "flowData: enterprise = 0, format = 1003"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.addressType = unpack(">i", datagram[0:4])[0]
         if self.addressType == 1:
             self.nextHop = inet_ntop(AF_INET, datagram[4:8])
@@ -305,7 +298,6 @@ class sFlowExtendedUser:
     "flowData: enterprise = 0, format = 1004"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.srcCharset = unpack(">i", datagram[0:4])
         name_length = unpack(">i", datagram[4:8])[0]
         self.srcUser = datagram[8 : (8 + name_length)].decode("utf-8")
@@ -332,7 +324,6 @@ class sFlowExtendedUrl:
     "flowData: enterprise = 0, format = 1005"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.direction = unpack(">i", datagram[0:4])[0]
         name_length = min(unpack(">i", datagram[4:8])[0], 255)
         data_position = 8
@@ -361,7 +352,6 @@ class sFlowExtendedMpls:
     "flowData: enterprise = 0, format = 1006"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.addressType = unpack(">i", datagram[0:4])[0]
         data_position = 4
         if self.addressType == 1:
@@ -407,7 +397,6 @@ class sFlowExtendedNat:
     "flowData: enterprise = 0, format = 1007"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.srcAddressType = unpack(">i", datagram[0:4])[0]
         data_position = 4
         if self.srcAddressType == 1:
@@ -447,7 +436,6 @@ class sFlowExtendedMplsTunnel:
     "flowData: enterprise = 0, format = 1008"
 
     def __init__(self, datagram):
-        self.data = datagram
         name_length = min(unpack(">i", datagram[0:4])[0], 255)
         self.host = datagram[4 : (4 + name_length)].decode("utf-8")
         data_position = 4 + name_length + (4 - name_length) % 4
@@ -471,7 +459,6 @@ class sFlowExtendedMplsVc:
     "flowData: enterprise = 0, format = 1009"
 
     def __init__(self, datagram):
-        self.data = datagram
         name_length = min(unpack(">i", datagram[0:4])[0], 255)
         self.vcInstanceName = datagram[4 : (4 + name_length)].decode("utf-8")
         data_position = 4 + name_length + (4 - name_length) % 4
@@ -495,7 +482,6 @@ class sFlowExtendedMpls_FTN:
     "flowData: enterprise = 0, format = 1010"
 
     def __init__(self, datagram):
-        self.data = datagram
         name_length = min(unpack(">i", datagram[0:4])[0], 255)
         self.mplsFTNDescr = datagram[4 : (4 + name_length)].decode("utf-8")
         data_position = 4 + name_length + (4 - name_length) % 4
@@ -516,7 +502,6 @@ class sFlowExtendedMpls_LDP_FEC:
     "flowData: enterprise = 0, format = 1011"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.mplsFecAddrPrefixLength = unpack(">i", datagram)[0]
 
     def __repr__(self):
@@ -533,7 +518,6 @@ class sFlowExtendedVlantunnel:
     "flowData: enterprise = 0, format = 1012"
 
     def __init__(self, datagram):
-        self.data = datagram
         stack_count = unpack(">i", datagram[0:4])[0]
         self.stack = unpack(f'>{"i" * stack_count}', datagram[4 : (4 + stack_count * 4)])
 
@@ -551,7 +535,6 @@ class sFlowExtendedSocketIpv4:
     "flowData: enterprise = 0, format = 2100"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.protocol = unpack(">i", datagram[0:4])[0]
         self.localIp = inet_ntop(AF_INET, datagram[4:8])
         self.remoteIp = inet_ntop(AF_INET, datagram[8:12])
@@ -576,7 +559,6 @@ class sFlowExtendedSocketIpv6:
     "flowData: enterprise = 0, format = 2101"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.protocol = unpack(">i", datagram[0:4])[0]
         self.localIp = inet_ntop(AF_INET6, datagram[4:20])
         self.remoteIp = inet_ntop(AF_INET6, datagram[20:36])
@@ -604,7 +586,6 @@ class sFlowIfCounters:
     "counterData: enterprise = 0, format = 1"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.index = unpack(">i", datagram[0:4])[0]
         self.type = unpack(">i", datagram[4:8])[0]
         self.speed = unpack(">q", datagram[8:16])[0]  # 64-bit
@@ -657,7 +638,6 @@ class sFlowEthernetInterface:
     "counterData: enterprise = 0, format = 2"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.alignmentError = unpack(">i", datagram[0:4])[0]
         self.fcsError = unpack(">i", datagram[4:8])[0]
         self.singleCollision = unpack(">i", datagram[8:12])[0]
@@ -686,7 +666,6 @@ class sFlowTokenringCounters:
     "counterData: enterprise = 0, format = 3"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.dot5StatsLineErrors = unpack(">i", datagram[0:4])[0]
         self.dot5StatsBurstErrors = unpack(">i", datagram[4:8])[0]
         self.dot5StatsACErrors = unpack(">i", datagram[8:12])[0]
@@ -720,7 +699,6 @@ class sFlowVgCounters:
     "counterData: enterprise = 0, format = 4"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.dot12InHighPriorityFrames = unpack(">i", datagram[0:4])[0]
         self.dot12InHighPriorityOctets = unpack(">q", datagram[4:12])[0]
         self.dot12InNormPriorityFrames = unpack(">i", datagram[12:16])[0]
@@ -750,7 +728,6 @@ class sFlowVLAN:
     "counterData: enterprise = 0, format = 5"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.vlanID = unpack(">i", datagram[0:4])[0]
         self.octets = unpack(">q", datagram[4:12])[0]  # 64-bit
         self.unicast = unpack(">i", datagram[12:16])[0]
@@ -772,7 +749,6 @@ class sFlowProcessor:
     "counterData: enterprise = 0, format = 1001"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.cpu5s = unpack(">i", datagram[0:4])[0]
         self.cpu1m = unpack(">i", datagram[4:8])[0]
         self.cpu5m = unpack(">i", datagram[8:12])[0]
@@ -793,7 +769,6 @@ class sFlowOfPort:
     "counterData: enterprise = 0, format = 1004"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.datapathId = unpack(">i", datagram[0:8])[0]
         self.portNo = unpack(">i", datagram[8:12])[0]
 
@@ -811,7 +786,6 @@ class sFlowPortName:
     "counterData: enterprise = 0, format = 1005"
 
     def __init__(self, datagram):
-        self.data = datagram
         name_length = unpack(">i", datagram[0:4])[0]
         self.PortName = datagram[4 : (4 + name_length)].decode("utf-8")
 
@@ -829,7 +803,6 @@ class sFlowHostDescr:
     "counterData: enterprise = 0, format = 2000"
 
     def __init__(self, datagram):
-        self.data = datagram
         name_length = min(unpack(">i", datagram[0:4])[0], 64)
         data_position = 4
         self.hostname = datagram[data_position : (data_position + name_length)].decode("utf-8")
@@ -864,7 +837,6 @@ class sFlowHostAdapters:
             self.macAddresses = None
 
     def __init__(self, datagram):
-        self.data = datagram
         self.adapters = []
         self.host_adapter_count = unpack(">i", datagram[0:4])[0]
         data_position = 4
@@ -896,7 +868,6 @@ class sFlowHostParent:
     "counterData: enterprise = 0, format = 2002"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.containerType = unpack(">i", datagram[0:4])[0]
         self.containerIndex = unpack(">i", datagram[4:8])[0]
 
@@ -914,7 +885,6 @@ class sFlowHostCPU:
     "counterData: enterprise = 0, format = 2003"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.avgLoad1 = unpack(">f", datagram[0:4])[0]  # Floating Point
         self.avgLoad5 = unpack(">f", datagram[4:8])[0]  # Floating Point
         self.avgLoad15 = unpack(">f", datagram[8:12])[0]  # Floating Point
@@ -950,7 +920,6 @@ class sFlowHostMemory:
     "counterData: enterprise = 0, format = 2004"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.memTotal = unpack(">q", datagram[0:8])[0]  # 64-bit
         self.memFree = unpack(">q", datagram[8:16])[0]  # 64-bit
         self.memShared = unpack(">q", datagram[16:24])[0]  # 64-bit
@@ -977,7 +946,6 @@ class sFlowHostDiskIO:
     "counterData: enterprise = 0, format = 2005"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.diskTotal = unpack(">q", datagram[0:8])[0]  # 64-bit
         self.diskFree = unpack(">q", datagram[8:16])[0]  # 64-bit
         self.partMaxused = (unpack(">i", datagram[16:20])[0]) / float(100)
@@ -1002,7 +970,6 @@ class sFlowHostNetIO:
     "counterData: enterprise = 0, format = 2006"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.inByte = unpack(">q", datagram[0:8])[0]  # 64-bit
         self.inPacket = unpack(">i", datagram[8:12])[0]
         self.inError = unpack(">i", datagram[12:16])[0]
@@ -1026,7 +993,6 @@ class sFlowMib2IP:
     "counterData: enterprise = 0, format = 2007"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.forwarding = unpack(">i", datagram[0:4])[0]
         self.defaultTTL = unpack(">i", datagram[4:8])[0]
         self.inReceives = unpack(">i", datagram[8:12])[0]
@@ -1061,7 +1027,6 @@ class sFlowMib2ICMP:
     "counterData: enterprise = 0, format = 2008"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.inMessage = unpack(">i", datagram[0:4])[0]
         self.inError = unpack(">i", datagram[4:8])[0]
         self.inDestinationUnreachable = unpack(">i", datagram[8:12])[0]
@@ -1102,7 +1067,6 @@ class sFlowMib2TCP:
     "counterData: enterprise = 0, format = 2009"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.algorithm = unpack(">i", datagram[0:4])[0]
         self.rtoMin = unpack(">i", datagram[4:8])[0]
         self.rtoMax = unpack(">i", datagram[8:12])[0]
@@ -1133,7 +1097,6 @@ class sFlowMib2UDP:
     "counterData: enterprise = 0, format = 2010"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.inDatagrams = unpack(">i", datagram[0:4])[0]
         self.noPorts = unpack(">i", datagram[4:8])[0]
         self.inErrors = unpack(">i", datagram[8:12])[0]
@@ -1156,7 +1119,6 @@ class sFlowVirtNode:
     "counterData: enterprise = 0, format = 2100"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.mhz = unpack(">i", datagram[0:4])[0]
         self.cpus = unpack(">i", datagram[4:8])[0]
         self.memory = unpack(">q", datagram[8:16])[0]
@@ -1177,7 +1139,6 @@ class sFlowVirtCPU:
     "counterData: enterprise = 0, format = 2101"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.state = unpack(">i", datagram[0:4])[0]
         self.cpuTime = unpack(">i", datagram[4:8])[0]
         self.nrVirtCpu = unpack(">i", datagram[8:12])[0]
@@ -1196,7 +1157,6 @@ class sFlowVirtMemory:
     "counterData: enterprise = 0, format = 2102"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.memory = unpack(">q", datagram[0:8])[0]
         self.maxMemory = unpack(">q", datagram[8:16])[0]
 
@@ -1214,7 +1174,6 @@ class sFlowVirtDiskIO:
     "counterData: enterprise = 0, format = 2103"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.capacity = unpack(">q", datagram[0:8])[0]
         self.allocation = unpack(">q", datagram[8:16])[0]
         self.available = unpack(">q", datagram[16:24])[0]
@@ -1238,7 +1197,6 @@ class sFlowVirtNetIO:
     "counterData: enterprise = 0, format = 2104"
 
     def __init__(self, datagram):
-        self.data = datagram
         self.rxBytes = unpack(">q", datagram[0:8])[0]
         self.rxPackets = unpack(">i", datagram[8:12])[0]
         self.rxErrs = unpack(">i", datagram[12:16])[0]
