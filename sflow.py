@@ -244,50 +244,51 @@ class sFlowExtendedGateway:
             data_position = 20
         else:
             self.next_hop = 0
-            self.asNumber = 0
-            self.srcAutonomousSystemsNumber = 0
-            self.srcPeerAutonomousSystemsNumber = 0
-            self.asPathType = 0
-            self.asPathCount = 0
-            self.dstAutonomousSystemsPath = []
+            self.asn = 0
+            self.source_asn = 0
+            self.source_peer_asn = 0
+            self.as_path_type = 0
+            self.as_path_count = 0
+            self.destination_as_path = []
             self.communities = []
-            self.localpref = 0
+            self.local_preference = 0
             return
-        self.asNumber = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.asn = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.srcAsNumber = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.source_asn = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.srcPeerAsNumber = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.source_peer_asn = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.asPathType = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.as_path_type = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.asPathCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.as_path_count = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.dstAsPath = unpack(
-            f'>{"i" * self.asPathCount}', datagram[data_position : (data_position + self.asPathCount * 4)]
+        self.destination_as_path = unpack(
+            f'>{"i" * self.as_path_count}', datagram[data_position : (data_position + self.as_path_count * 4)]
         )  # TODO: Double Check
-        data_position += self.asPathCount * 4
-        self.communitiesCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        data_position += self.as_path_count * 4
+        self.community_count = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
         self.communities = unpack(
-            f'>{"i" * self.communitiesCount}',
-            datagram[data_position : (data_position + self.communitiesCount * 4)],  # TODO: Double Check
+            f'>{"i" * self.community_count}',
+            datagram[data_position : (data_position + self.community_count * 4)],  # TODO: Double Check
         )
-        data_position += self.communitiesCount * 4
-        self.localpref = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        data_position += self.community_count * 4
+        self.local_preference = unpack(">i", datagram[data_position : (data_position + 4)])[0]
 
     def __repr__(self):
         return f"""
             Extended Gateway:
                 Next Hop Address: {self.next_hop}
-                ASN: {self.asNumber}
-                Source ASN: {self.srcAutonomousSystemsNumber}
-                Source Peer ASN: {self.srcPeerAutonomousSystemsNumber}
-                AS Path Typr: {self.asPathType}
-                AS Path Count: {self.asPathCount}
-                Destination ASN: {self.dstAutonomousSystemsPath}
+                ASN: {self.asn}
+                Source ASN: {self.source_asn}
+                Source Peer ASN: {self.source_peer_asn}
+                AS Path Typr: {self.as_path_type}
+                AS Path Count: {self.as_path_count}
+                Destination ASN: {self.destination_as_path}
+                Community Count: {self.community_count}
                 Communities: {self.communities}
-                Local Preference: {self.localpref}
+                Local Preference: {self.local_preference}
         """
 
     def __len__(self):
@@ -298,22 +299,22 @@ class sFlowExtendedUser:
     "flowData: enterprise = 0, format = 1004"
 
     def __init__(self, datagram):
-        self.srcCharset = unpack(">i", datagram[0:4])
+        self.source_character_set = unpack(">i", datagram[0:4])
         name_length = unpack(">i", datagram[4:8])[0]
-        self.srcUser = datagram[8 : (8 + name_length)].decode("utf-8")
+        self.source_user = datagram[8 : (8 + name_length)].decode("utf-8")
         data_position = name_length + (4 - name_length) % 4
-        self.dstCharset = datagram[data_position : (data_position + name_length)].decode("utf-8")
+        self.destination_character_set = datagram[data_position : (data_position + name_length)].decode("utf-8")
         data_position += 4
         name_length = unpack(">i", datagram[4:8])[0]
-        self.dstUser = datagram[data_position : (data_position + name_length)].decode("utf-8")
+        self.destination_user = datagram[data_position : (data_position + name_length)].decode("utf-8")
 
     def __repr__(self):
         return f"""
             Extended User:
-                Source Character Set: {self.srcCharset}
-                Source User: {self.srcUser}
-                Destination Character Set: {self.dstCharset}
-                Destination User: {self.dstUser}
+                Source Character Set: {self.source_character_set}
+                Source User: {self.source_user}
+                Destination Character Set: {self.destination_character_set}
+                Destination User: {self.destination_user}
         """
 
     def __len__(self):
@@ -333,14 +334,14 @@ class sFlowExtendedUrl:
         data_position += 4
         self.host = datagram[data_position : (data_position + name_length)].decode("utf-8")
         name_length = unpack(">i", datagram[0:4])[0]
-        self.PortName = datagram[data_position : (data_position + name_length)].decode("utf-8")
+        self.port_name = datagram[data_position : (data_position + name_length)].decode("utf-8")
 
     def __repr__(self):
         return f"""
             Extended URL:
                 URL: {self.url}
                 Host: {self.host}
-                Port: {self.PortName}
+                Port: {self.port_name}
                 Direction: {self.direction}
         """
 
@@ -362,31 +363,31 @@ class sFlowExtendedMpls:
             data_position += 16
         else:
             self.next_hop = 0
-            self.inLabelStackCount = 0
-            self.inLabelStack = []
-            self.outLabelStackCount = 0
-            self.outLabelStack = []
+            self.in_label_stack_count = 0
+            self.in_label_stack = []
+            self.out_label_stack_count = 0
+            self.out_label_stack = []
             return
-        self.inLabelStackCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.in_label_stack_count = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.inLabelStack = unpack(
-            f'>{"i" * self.inLabelStackCount}', datagram[data_position : (data_position + self.inLabelStackCount * 4)]
+        self.in_label_stack = unpack(
+            f'>{"i" * self.in_label_stack_count}', datagram[data_position : (data_position + self.in_label_stack_count * 4)]
         )  # TODO: Double Check
-        data_position += self.inLabelStackCount * 4
-        self.outLabelStackCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        data_position += self.in_label_stack_count * 4
+        self.out_label_stack_count = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.outLabelStack = unpack(
-            f'>{"i" * self.outLabelStackCount}', datagram[data_position : (data_position + self.outLabelStackCount * 4)]
+        self.out_label_stack = unpack(
+            f'>{"i" * self.out_label_stack_count}', datagram[data_position : (data_position + self.out_label_stack_count * 4)]
         )  # TODO: Double Check
 
     def __repr__(self):
         return f"""
             Extended MPLS:
                 Next Hop: {self.next_hop}
-                In Label Stack Count: {self.inLabelStackCount}
-                In Label Stack: {self.inLabelStack}
-                Out Label Stack Count: {self.outLabelStackCount}
-                Out Label Stack: { self.outLabelStack}
+                In Label Stack Count: {self.in_label_stack_count}
+                In Label Stack: {self.in_label_stack}
+                Out Label Stack Count: {self.out_label_stack_count}
+                Out Label Stack: { self.out_label_stack}
         """
 
     def __len__(self):
@@ -397,35 +398,35 @@ class sFlowExtendedNat:
     "flowData: enterprise = 0, format = 1007"
 
     def __init__(self, datagram):
-        self.srcAddressType = unpack(">i", datagram[0:4])[0]
+        self.source_address_type = unpack(">i", datagram[0:4])[0]
         data_position = 4
-        if self.srcAddressType == 1:
-            self.srcAddress = inet_ntop(AF_INET, datagram[data_position : (data_position + 4)])
+        if self.source_address_type == 1:
+            self.source_address = inet_ntop(AF_INET, datagram[data_position : (data_position + 4)])
             data_position += 4
-        elif self.srcAddressType == 2:
-            self.srcAddress = inet_ntop(AF_INET6, datagram[data_position : (data_position + 16)])
+        elif self.source_address_type == 2:
+            self.source_address = inet_ntop(AF_INET6, datagram[data_position : (data_position + 16)])
             data_position += 16
         else:
-            self.srcAddress = 0
-            self.dstAddress = 0
+            self.source_address = 0
+            self.destination_address = 0
             return
-        self.dstAddressType = unpack(">i", datagram[0:4])[0]
+        self.destination_address_type = unpack(">i", datagram[0:4])[0]
         data_position += 4
-        if self.dstAddressType == 1:
-            self.dstAddress = inet_ntop(AF_INET, datagram[data_position : (data_position + 4)])
+        if self.destination_address_type == 1:
+            self.destination_address = inet_ntop(AF_INET, datagram[data_position : (data_position + 4)])
             data_position += 4
-        elif self.dstAddressType == 2:
-            self.dstAddress = inet_ntop(AF_INET6, datagram[data_position : (data_position + 16)])
+        elif self.destination_address_type == 2:
+            self.destination_address = inet_ntop(AF_INET6, datagram[data_position : (data_position + 16)])
             data_position += 16
         else:
-            self.dstAddress = 0
+            self.destination_address = 0
             return
 
     def __repr__(self):
         return f"""
             Extended NAT:
-                Source Address: {self.srcAddress}
-                Destination Address: {self.dstAddress}
+                Source Address: {self.source_address}
+                Destination Address: {self.destination_address}
         """
 
     def __len__(self):
@@ -439,16 +440,16 @@ class sFlowExtendedMplsTunnel:
         name_length = min(unpack(">i", datagram[0:4])[0], 255)
         self.host = datagram[4 : (4 + name_length)].decode("utf-8")
         data_position = 4 + name_length + (4 - name_length) % 4
-        self.tunnelId = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.tunnel_id = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.tunnelCos = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.tunnel_cos = unpack(">i", datagram[data_position : (data_position + 4)])[0]
 
     def __repr__(self):
         return f"""
             Extended MPLS Tunnel:
                 Host: {self.host}
-                Tunnel ID: {self.tunnelId}
-                Tunnel COS: {self.tunnelCos}
+                Tunnel ID: {self.tunnel_id}
+                Tunnel COS: {self.tunnel_cos}
         """
 
     def __len__(self):
@@ -460,18 +461,18 @@ class sFlowExtendedMplsVc:
 
     def __init__(self, datagram):
         name_length = min(unpack(">i", datagram[0:4])[0], 255)
-        self.vcInstanceName = datagram[4 : (4 + name_length)].decode("utf-8")
+        self.vc_instance_name = datagram[4 : (4 + name_length)].decode("utf-8")
         data_position = 4 + name_length + (4 - name_length) % 4
-        self.vllVcId = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.vll_vc_id = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position += 4
-        self.vcLabelCos = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.vc_label_cos = unpack(">i", datagram[data_position : (data_position + 4)])[0]
 
     def __repr__(self):
         return f"""
             Extended MPLS Virtual Circuit:
-                VC Instance Name: {self.vcInstanceName}
-                VLL VC ID: {self.vllVcId}
-                VC Label COS: {self.vcLabelCos}
+                VC Instance Name: {self.vc_instance_name}
+                VLL VC ID: {self.vll_vc_id}
+                VC Label COS: {self.vc_label_cos}
         """
 
     def __len__(self):
@@ -483,15 +484,15 @@ class sFlowExtendedMpls_FTN:
 
     def __init__(self, datagram):
         name_length = min(unpack(">i", datagram[0:4])[0], 255)
-        self.mplsFTNDescr = datagram[4 : (4 + name_length)].decode("utf-8")
+        self.mpls_ftn_description = datagram[4 : (4 + name_length)].decode("utf-8")
         data_position = 4 + name_length + (4 - name_length) % 4
-        self.mplsFTNMask = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.mpls_ftn_mask = unpack(">i", datagram[data_position : (data_position + 4)])[0]
 
     def __repr__(self):
         return f"""
             Extended MPLS FTN:
-                Description: {self.mplsFTNDescr}
-                Mask: {self.mplsFTNMask}
+                Description: {self.mpls_ftn_description}
+                Mask: {self.mpls_ftn_mask}
         """
 
     def __len__(self):
@@ -502,12 +503,12 @@ class sFlowExtendedMpls_LDP_FEC:
     "flowData: enterprise = 0, format = 1011"
 
     def __init__(self, datagram):
-        self.mplsFecAddrPrefixLength = unpack(">i", datagram)[0]
+        self.mpls_fec_address_prefix_length = unpack(">i", datagram)[0]
 
     def __repr__(self):
         return f"""
             Extended MPLS LDP FEC:
-                LDP FEC Address Prefix Length: {self.mplsFecAddrPrefixLength}
+                LDP FEC Address Prefix Length: {self.mpls_fec_address_prefix_length}
         """
 
     def __len__(self):
@@ -536,19 +537,19 @@ class sFlowExtendedSocketIpv4:
 
     def __init__(self, datagram):
         self.protocol = unpack(">i", datagram[0:4])[0]
-        self.localIp = inet_ntop(AF_INET, datagram[4:8])
-        self.remoteIp = inet_ntop(AF_INET, datagram[8:12])
-        self.localPort = unpack(">i", datagram[12:16])[0]
-        self.remotePort = unpack(">i", datagram[16:20])[0]
+        self.local_ip = inet_ntop(AF_INET, datagram[4:8])
+        self.remote_ip = inet_ntop(AF_INET, datagram[8:12])
+        self.local_port = unpack(">i", datagram[12:16])[0]
+        self.remote_port = unpack(">i", datagram[16:20])[0]
 
     def __repr__(self):
         return f"""
             Extended IPv4 Socket:
                 Protocol: {self.protocol}
-                Local IP: {self.localIp}
-                Local Port: {self.localPort}
-                Remote IP: {self.remoteIp}
-                Remote Port: {self.remotePort}
+                Local IP: {self.local_ip}
+                Local Port: {self.local_port}
+                Remote IP: {self.remote_ip}
+                Remote Port: {self.remote_port}
         """
 
     def __len__(self):
@@ -560,19 +561,19 @@ class sFlowExtendedSocketIpv6:
 
     def __init__(self, datagram):
         self.protocol = unpack(">i", datagram[0:4])[0]
-        self.localIp = inet_ntop(AF_INET6, datagram[4:20])
-        self.remoteIp = inet_ntop(AF_INET6, datagram[20:36])
-        self.localPort = unpack(">i", datagram[36:40])[0]
-        self.remotePort = unpack(">i", datagram[40:44])[0]
+        self.local_ip = inet_ntop(AF_INET6, datagram[4:20])
+        self.remote_ip = inet_ntop(AF_INET6, datagram[20:36])
+        self.local_port = unpack(">i", datagram[36:40])[0]
+        self.remote_port = unpack(">i", datagram[40:44])[0]
 
     def __repr__(self):
         return f"""
             Extended IPv6 Socket:
                 Protocol: {self.protocol}
-                Local IP: {self.localIp}
-                Local Port: {self.localPort}
-                Remote IP: {self.remoteIp}
-                Remote Port: {self.remotePort}
+                Local IP: {self.local_ip}
+                Local Port: {self.local_port}
+                Remote IP: {self.remote_ip}
+                Remote Port: {self.remote_port}
         """
 
     def __len__(self):
@@ -591,19 +592,19 @@ class sFlowIfCounters:
         self.speed = unpack(">q", datagram[8:16])[0]  # 64-bit
         self.direction = unpack(">i", datagram[16:20])[0]
         self.status = unpack(">i", datagram[20:24])[0]  # This is really a 2-bit value
-        self.inputOctets = unpack(">q", datagram[24:32])[0]  # 64-bit
-        self.inputPackets = unpack(">i", datagram[32:36])[0]
-        self.inputMulticast = unpack(">i", datagram[36:40])[0]
-        self.inputBroadcast = unpack(">i", datagram[40:44])[0]
-        self.inputDiscarded = unpack(">i", datagram[44:48])[0]
-        self.inputErrors = unpack(">i", datagram[48:52])[0]
-        self.inputUnknown = unpack(">i", datagram[52:56])[0]
-        self.outputOctets = unpack(">q", datagram[56:64])[0]  # 64-bit
-        self.outputPackets = unpack(">i", datagram[64:68])[0]
-        self.outputMulticast = unpack(">i", datagram[68:72])[0]
-        self.outputBroadcast = unpack(">i", datagram[72:76])[0]
-        self.outputDiscarded = unpack(">i", datagram[76:80])[0]
-        self.outputErrors = unpack(">i", datagram[80:84])[0]
+        self.input_octets = unpack(">q", datagram[24:32])[0]  # 64-bit
+        self.input_packets = unpack(">i", datagram[32:36])[0]
+        self.input_multicast = unpack(">i", datagram[36:40])[0]
+        self.input_broadcast = unpack(">i", datagram[40:44])[0]
+        self.input_discarded = unpack(">i", datagram[44:48])[0]
+        self.input_errors = unpack(">i", datagram[48:52])[0]
+        self.input_unknown = unpack(">i", datagram[52:56])[0]
+        self.output_octets = unpack(">q", datagram[56:64])[0]  # 64-bit
+        self.output_packets = unpack(">i", datagram[64:68])[0]
+        self.output_multicast = unpack(">i", datagram[68:72])[0]
+        self.output_broadcast = unpack(">i", datagram[72:76])[0]
+        self.output_discarded = unpack(">i", datagram[76:80])[0]
+        self.output_errors = unpack(">i", datagram[80:84])[0]
         self.promiscuous = unpack(">i", datagram[84:88])[0]
 
     def __repr__(self) -> str:
@@ -614,19 +615,19 @@ class sFlowIfCounters:
                 Speed: {self.speed}
                 Direction: {self.direction}
                 Status: {self.status}
-                In Octets: {self.inputOctets}
-                In Packets: {self.inputPackets}
-                In Multicast: {self.inputMulticast}
-                In Broadcast: {self.inputBroadcast}
-                In Discards: {self.inputDiscarded}
-                In Errors: {self.inputErrors}
-                In Unknown: {self.inputUnknown}
-                Out Octets: {self.outputOctets}
-                Out Packets: {self.outputPackets}
-                Out Multicast: {self.outputMulticast}
-                Out Broadcast: {self.outputBroadcast}
-                Out Discard: {self.outputDiscarded}
-                Out Errors: {self.outputErrors}
+                In Octets: {self.input_octets}
+                In Packets: {self.input_packets}
+                In Multicast: {self.input_multicast}
+                In Broadcast: {self.input_broadcast}
+                In Discards: {self.input_discarded}
+                In Errors: {self.input_errors}
+                In Unknown: {self.input_unknown}
+                Out Octets: {self.output_octets}
+                Out Packets: {self.output_packets}
+                Out Multicast: {self.output_multicast}
+                Out Broadcast: {self.output_broadcast}
+                Out Discard: {self.output_discarded}
+                Out Errors: {self.output_errors}
                 Promiscuous: {self.promiscuous}
         """
 
@@ -638,36 +639,36 @@ class sFlowEthernetInterface:
     "counterData: enterprise = 0, format = 2"
 
     def __init__(self, datagram):
-        self.alignmentError = unpack(">i", datagram[0:4])[0]
-        self.fcsError = unpack(">i", datagram[4:8])[0]
-        self.singleCollision = unpack(">i", datagram[8:12])[0]
-        self.multipleCollision = unpack(">i", datagram[12:16])[0]
-        self.sqeTest = unpack(">i", datagram[16:20])[0]
+        self.alignment_error = unpack(">i", datagram[0:4])[0]
+        self.fcs_error = unpack(">i", datagram[4:8])[0]
+        self.single_collision = unpack(">i", datagram[8:12])[0]
+        self.multiple_collision = unpack(">i", datagram[12:16])[0]
+        self.sqe_test = unpack(">i", datagram[16:20])[0]
         self.deferred = unpack(">i", datagram[20:24])[0]
-        self.lateCollision = unpack(">i", datagram[24:28])[0]
-        self.excessiveCollision = unpack(">i", datagram[28:32])[0]
-        self.internalTransmitError = unpack(">i", datagram[32:36])[0]
-        self.carrierSenseError = unpack(">i", datagram[36:40])[0]
-        self.frameTooLong = unpack(">i", datagram[40:44])[0]
-        self.internalReceiveError = unpack(">i", datagram[44:48])[0]
-        self.symbolError = unpack(">i", datagram[48:52])[0]
+        self.late_collision = unpack(">i", datagram[24:28])[0]
+        self.excessive_collision = unpack(">i", datagram[28:32])[0]
+        self.internal_transmit_error = unpack(">i", datagram[32:36])[0]
+        self.carrier_sense_error = unpack(">i", datagram[36:40])[0]
+        self.frame_too_long = unpack(">i", datagram[40:44])[0]
+        self.internal_receive_error = unpack(">i", datagram[44:48])[0]
+        self.symbol_error = unpack(">i", datagram[48:52])[0]
 
     def __repr__(self):
         return f"""
             Ethernet Counters:
-                Alignment Errors: {self.alignmentError}
-                FCS Errors: {self.fcsError}
-                Single Collisions: {self.singleCollision}
-                Multiple Collisions: {self.multipleCollision}
-                SQE Tests: {self.sqeTest}
+                Alignment Errors: {self.alignment_error}
+                FCS Errors: {self.fcs_error}
+                Single Collisions: {self.single_collision}
+                Multiple Collisions: {self.multiple_collision}
+                SQE Tests: {self.sqe_test}
                 Defered: {self.deferred}
-                Late Collisions: {self.lateCollision}
-                Excessive Collisions: {self.excessiveCollision}
-                Internal Transmit Errors: {self.internalTransmitError}
-                Carrier Sense Error: {self.carrierSenseError}
-                Frame Too Long: {self.frameTooLong}
-                Internal Receive Error: {self.internalReceiveError}
-                Symbol Errors: {self.symbolError}
+                Late Collisions: {self.late_collision}
+                Excessive Collisions: {self.excessive_collision}
+                Internal Transmit Errors: {self.internal_transmit_error}
+                Carrier Sense Error: {self.carrier_sense_error}
+                Frame Too Long: {self.frame_too_long}
+                Internal Receive Error: {self.internal_receive_error}
+                Symbol Errors: {self.symbol_error}
         """
 
     def __len__(self):
@@ -678,29 +679,46 @@ class sFlowTokenringCounters:
     "counterData: enterprise = 0, format = 3"
 
     def __init__(self, datagram):
-        self.dot5StatsLineErrors = unpack(">i", datagram[0:4])[0]
-        self.dot5StatsBurstErrors = unpack(">i", datagram[4:8])[0]
-        self.dot5StatsACErrors = unpack(">i", datagram[8:12])[0]
-        self.dot5StatsAbortTransErrors = unpack(">i", datagram[12:16])[0]
-        self.dot5StatsInternalErrors = unpack(">i", datagram[16:20])[0]
-        self.dot5StatsLostFrameErrors = unpack(">i", datagram[20:24])[0]
-        self.dot5StatsReceiveCongestions = unpack(">i", datagram[24:28])[0]
-        self.dot5StatsFrameCopiedErrors = unpack(">i", datagram[28:32])[0]
-        self.dot5StatsTokenErrors = unpack(">i", datagram[32:36])[0]
-        self.dot5StatsSoftErrors = unpack(">i", datagram[36:40])[0]
-        self.dot5StatsHardErrors = unpack(">i", datagram[40:44])[0]
-        self.dot5StatsSignalLoss = unpack(">i", datagram[44:48])[0]
-        self.dot5StatsTransmitBeacons = unpack(">i", datagram[48:52])[0]
-        self.dot5StatsRecoverys = unpack(">i", datagram[52:56])[0]
-        self.dot5StatsLobeWires = unpack(">i", datagram[56:60])[0]
-        self.dot5StatsRemoves = unpack(">i", datagram[60:64])[0]
-        self.dot5StatsSingles = unpack(">i", datagram[64:68])[0]
-        self.dot5StatsFreqErrors = unpack(">i", datagram[68:72])[0]
+        self.line_errors = unpack(">i", datagram[0:4])[0]
+        self.burst_errors = unpack(">i", datagram[4:8])[0]
+        self.ac_errors = unpack(">i", datagram[8:12])[0]
+        self.abort_trans_errors = unpack(">i", datagram[12:16])[0]
+        self.internal_errors = unpack(">i", datagram[16:20])[0]
+        self.lost_frame_errors = unpack(">i", datagram[20:24])[0]
+        self.receive_congestions = unpack(">i", datagram[24:28])[0]
+        self.frame_copied_errors = unpack(">i", datagram[28:32])[0]
+        self.token_errors = unpack(">i", datagram[32:36])[0]
+        self.soft_errors = unpack(">i", datagram[36:40])[0]
+        self.hard_errors = unpack(">i", datagram[40:44])[0]
+        self.signal_loss = unpack(">i", datagram[44:48])[0]
+        self.transmit_beacons = unpack(">i", datagram[48:52])[0]
+        self.recoverys = unpack(">i", datagram[52:56])[0]
+        self.lobe_wires = unpack(">i", datagram[56:60])[0]
+        self.removes = unpack(">i", datagram[60:64])[0]
+        self.singles = unpack(">i", datagram[64:68])[0]
+        self.freq_errors = unpack(">i", datagram[68:72])[0]
 
     def __repr__(self):
         return f"""
             Token Ring Counters:
-                Incomplete
+                Line Errors: {self.line_errors}
+                Burst Errors: {self.burst_errors}
+                AC Errors: {self.ac_errors}
+                Abort Transmit Errors: {self.abort_trans_errors}
+                Internal Errors: {self.internal_errors}
+                Lost Frame Errors: {self.lost_frame_errors}
+                Receive Congestions: {self.receive_congestions}
+                Frame Copied Errors: {self.frame_copied_errors}
+                Token Errors: {self.token_errors}
+                Soft Errors: {self.soft_errors}
+                Hard Errors: {self.hard_errors}
+                Signal Lost: {self.signal_loss}
+                Transmit Beacons: {self.transmit_beacons}
+                Recoverys: {self.recoverys}
+                Lobe Wires: {self.lobe_wires}
+                Removes: {self.removes}
+                Singles: {self.singles}
+                Frequency Errors: {self.freq_errors}
         """
 
     def __len__(self):
@@ -711,25 +729,38 @@ class sFlowVgCounters:
     "counterData: enterprise = 0, format = 4"
 
     def __init__(self, datagram):
-        self.dot12InHighPriorityFrames = unpack(">i", datagram[0:4])[0]
-        self.dot12InHighPriorityOctets = unpack(">q", datagram[4:12])[0]
-        self.dot12InNormPriorityFrames = unpack(">i", datagram[12:16])[0]
-        self.dot12InNormPriorityOctets = unpack(">q", datagram[16:24])[0]
-        self.dot12InIPMErrors = unpack(">i", datagram[24:28])[0]
-        self.dot12InOversizeFrameErrors = unpack(">i", datagram[28:32])[0]
-        self.dot12InDataErrors = unpack(">i", datagram[32:36])[0]
-        self.dot12InNullAddressedFrames = unpack(">i", datagram[36:40])[0]
-        self.dot12OutHighPriorityFrames = unpack(">i", datagram[40:44])[0]
-        self.dot12OutHighPriorityOctets = unpack(">q", datagram[44:52])[0]
-        self.dot12TransitionIntoTrainings = unpack(">i", datagram[52:56])[0]
-        self.dot12HCInHighPriorityOctets = unpack(">q", datagram[56:64])[0]
-        self.dot12HCInNormPriorityOctets = unpack(">q", datagram[64:72])[0]
-        self.dot12HCOutHighPriorityOctets = unpack(">q", datagram[72:80])[0]
+        self.in_high_priority_frames = unpack(">i", datagram[0:4])[0]
+        self.in_high_priority_octets = unpack(">q", datagram[4:12])[0]
+        self.in_norm_priority_frames = unpack(">i", datagram[12:16])[0]
+        self.in_norm_priority_octets = unpack(">q", datagram[16:24])[0]
+        self.in_ipm_errors = unpack(">i", datagram[24:28])[0]
+        self.in_oversize_frame_errors = unpack(">i", datagram[28:32])[0]
+        self.in_data_errors = unpack(">i", datagram[32:36])[0]
+        self.in_null_addressed_frames = unpack(">i", datagram[36:40])[0]
+        self.out_high_priority_frames = unpack(">i", datagram[40:44])[0]
+        self.out_high_priority_octets = unpack(">q", datagram[44:52])[0]
+        self.transition_into_trainings = unpack(">i", datagram[52:56])[0]
+        self.hc_in_high_priority_octets = unpack(">q", datagram[56:64])[0]
+        self.hc_in_norm_priority_octets = unpack(">q", datagram[64:72])[0]
+        self.hc_out_high_priority_octets = unpack(">q", datagram[72:80])[0]
 
     def __repr__(self):
         return f"""
             VG Counters:
-                Incomplete
+                In High Priority Frames: {self.in_high_priority_frames}
+                In High Priority Octets: {self.in_high_priority_octets}
+                In Normal Priority Frames: {self.in_norm_priority_frames}
+                In Normal Priority Octets: {self.in_norm_priority_octets}
+                In IMP Errors: {self.in_ipm_errors}
+                In Oversize Frame Errors: {self.in_oversize_frame_errors}
+                In Data Errors: {self.in_data_errors}
+                In Null Addressed Frames: {self.in_null_addressed_frames}
+                Out High Priority Frames: {self.out_high_priority_frames}
+                Out High Priority Octets: {self.out_high_priority_octets}
+                Transition into Trainings: {self.transition_into_trainings}
+                HC in High Priority Octets: {self.hc_in_high_priority_octets}
+                HC in Normal Priority Octets: {self.hc_in_norm_priority_octets}
+                HS Out High Priority Octets: {self.hc_out_high_priority_octets}
         """
 
     def __len__(self):
@@ -740,7 +771,7 @@ class sFlowVLAN:
     "counterData: enterprise = 0, format = 5"
 
     def __init__(self, datagram):
-        self.vlanID = unpack(">i", datagram[0:4])[0]
+        self.vlan_id = unpack(">i", datagram[0:4])[0]
         self.octets = unpack(">q", datagram[4:12])[0]  # 64-bit
         self.unicast = unpack(">i", datagram[12:16])[0]
         self.multicast = unpack(">i", datagram[16:20])[0]
@@ -750,7 +781,12 @@ class sFlowVLAN:
     def __repr__(self):
         return f"""
             VLAN Counters:
-                Incomplete
+                VLAN ID: {self.vlan_id}
+                Octets: {self.octets}
+                Unicast: {self.unicast}
+                Multicast: {self.multicast}
+                Broadcast: {self.broadcast}
+                Discard: {self.discard}
         """
 
     def __len__(self):
@@ -761,16 +797,20 @@ class sFlowProcessor:
     "counterData: enterprise = 0, format = 1001"
 
     def __init__(self, datagram):
-        self.cpu5s = unpack(">i", datagram[0:4])[0]
-        self.cpu1m = unpack(">i", datagram[4:8])[0]
-        self.cpu5m = unpack(">i", datagram[8:12])[0]
-        self.totalMemory = unpack(">q", datagram[12:20])[0]  # 64-bit
-        self.freeMemory = unpack(">q", datagram[20:28])[0]  # 64-bit
+        self.cpu_5s = unpack(">i", datagram[0:4])[0]
+        self.cpu_1m = unpack(">i", datagram[4:8])[0]
+        self.cpu_5m = unpack(">i", datagram[8:12])[0]
+        self.total_memory = unpack(">q", datagram[12:20])[0]  # 64-bit
+        self.free_memory = unpack(">q", datagram[20:28])[0]  # 64-bit
 
     def __repr__(self):
         return f"""
             Processor Counters:
-                Incomplete
+                CPU 5s: {self.cpu_5s}
+                CPU 1m: {self.cpu_1m}
+                CPU 5m: {self.cpu_5m}
+                Total Memory: {self.total_memory}
+                Free Memory: {self.free_memory}
         """
 
     def __len__(self):
@@ -781,13 +821,14 @@ class sFlowOfPort:
     "counterData: enterprise = 0, format = 1004"
 
     def __init__(self, datagram):
-        self.datapathId = unpack(">i", datagram[0:8])[0]
-        self.portNo = unpack(">i", datagram[8:12])[0]
+        self.data_path_id = unpack(">i", datagram[0:8])[0]
+        self.port_number = unpack(">i", datagram[8:12])[0]
 
     def __repr__(self):
         return f"""
             OpenFlow Port:
-                Incomplete
+                Data Path ID: {self.data_path_id}
+                Port Number: {self.port_number}
         """
 
     def __len__(self):
@@ -799,12 +840,12 @@ class sFlowPortName:
 
     def __init__(self, datagram):
         name_length = unpack(">i", datagram[0:4])[0]
-        self.PortName = datagram[4 : (4 + name_length)].decode("utf-8")
+        self.port_name = datagram[4 : (4 + name_length)].decode("utf-8")
 
     def __repr__(self):
         return f"""
             OpenFlow Port Name:
-                Incomplete
+                Port Name: {self.port_name}
         """
 
     def __len__(self):
@@ -817,22 +858,26 @@ class sFlowHostDescr:
     def __init__(self, datagram):
         name_length = min(unpack(">i", datagram[0:4])[0], 64)
         data_position = 4
-        self.hostname = datagram[data_position : (data_position + name_length)].decode("utf-8")
+        self.host_name = datagram[data_position : (data_position + name_length)].decode("utf-8")
         data_position += name_length + (4 - name_length) % 4
         self.uuid = UUID(bytes=datagram[data_position : (data_position + 16)])
         data_position = data_position + 16
-        self.machineType = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.machine_type = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position = data_position + 4
-        self.osName = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+        self.os_name = unpack(">i", datagram[data_position : (data_position + 4)])[0]
         data_position = data_position + 4
         name_length = min(unpack(">i", datagram[data_position : (data_position + 4)])[0], 32)
         data_position += 4
-        self.osRelease = datagram[data_position : (data_position + name_length)].decode("utf-8")
+        self.os_release = datagram[data_position : (data_position + name_length)].decode("utf-8")
 
     def __repr__(self):
         return f"""
             Host Description:
-                Incomplete
+                Host Name: {self.host_name}
+                UUID: {self.uuid}
+                Machine Type: {self.machine_type}
+                Operating System: {self.os_name}
+                OS Release: {self.os_release}
         """
 
     def __len__(self):
@@ -844,9 +889,17 @@ class sFlowHostAdapters:
 
     class hostAdapter:
         def __init__(self):
-            self.ifIndex = None
-            self.macAddressCount = None
-            self.macAddresses = None
+            self.if_index = None
+            self.mac_address_count = None
+            self.mac_addresses = None
+
+        def __repr__(self):
+            return f"""
+                Adapater:
+                    Interface Index: {self.if_index}
+                    MAC Address Count: {self.mac_address_count}
+                    MAC Addresses: {self.mac_addresses}
+            """
 
     def __init__(self, datagram):
         self.adapters = []
@@ -854,23 +907,28 @@ class sFlowHostAdapters:
         data_position = 4
         for _ in range(self.host_adapter_count):
             hostadapter = self.hostAdapter()
-            hostadapter.ifIndex = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+            hostadapter.if_index = unpack(">i", datagram[data_position : (data_position + 4)])[0]
             data_position += 4
-            hostadapter.macAddressCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+            hostadapter.mac_address_count = unpack(">i", datagram[data_position : (data_position + 4)])[0]
             data_position += 4
-            hostadapter.macAddresses = []
-            for mac_address in range(hostadapter.macAddressCount):
-                hostadapter.macAddresses.append(
+            hostadapter.mac_addresses = []
+            for mac_address in range(hostadapter.mac_address_count):
+                hostadapter.mac_addresses.append(
                     datagram[(data_position + mac_address * 8) : (data_position + mac_address * 8 + 6)]
                 ).hex("-")
-            data_position += hostadapter.macAddressCount * 8
+            data_position += hostadapter.mac_address_count * 8
             self.adapters.append(hostadapter)
 
     def __repr__(self):
-        return f"""
+        response = f"""
             Host Adapters:
-                Incomplete
+                Host Adapater Count: {self.host_adapter_count}
         """
+
+        for adapater in self.adapters:
+            response += repr(adapater)
+
+        return response
 
     def __len__(self):
         return self.host_adapter_count
@@ -880,8 +938,8 @@ class sFlowHostParent:
     "counterData: enterprise = 0, format = 2002"
 
     def __init__(self, datagram):
-        self.containerType = unpack(">i", datagram[0:4])[0]
-        self.containerIndex = unpack(">i", datagram[4:8])[0]
+        self.container_type = unpack(">i", datagram[0:4])[0]
+        self.container_index = unpack(">i", datagram[4:8])[0]
 
     def __repr__(self):
         return f"""
@@ -897,31 +955,47 @@ class sFlowHostCPU:
     "counterData: enterprise = 0, format = 2003"
 
     def __init__(self, datagram):
-        self.avgLoad1 = unpack(">f", datagram[0:4])[0]  # Floating Point
-        self.avgLoad5 = unpack(">f", datagram[4:8])[0]  # Floating Point
-        self.avgLoad15 = unpack(">f", datagram[8:12])[0]  # Floating Point
-        self.runProcess = unpack(">i", datagram[12:16])[0]
-        self.totalProcess = unpack(">i", datagram[16:20])[0]
-        self.numCPU = unpack(">i", datagram[20:24])[0]
-        self.mhz = unpack(">i", datagram[24:28])[0]
+        self.average_load_1_minute = unpack(">f", datagram[0:4])[0]  # Floating Point
+        self.average_load_5_minutes = unpack(">f", datagram[4:8])[0]  # Floating Point
+        self.average_load_15_minutes = unpack(">f", datagram[8:12])[0]  # Floating Point
+        self.running_processes = unpack(">i", datagram[12:16])[0]
+        self.total_processes = unpack(">i", datagram[16:20])[0]
+        self.number_cpus = unpack(">i", datagram[20:24])[0]
+        self.cpu_mhz = unpack(">i", datagram[24:28])[0]
         self.uptime = unpack(">i", datagram[28:32])[0]
-        self.timeUser = unpack(">i", datagram[32:36])[0]
-        self.timeNices = unpack(">i", datagram[36:40])[0]
-        self.timeKennal = unpack(">i", datagram[40:44])[0]
-        self.timeIdle = unpack(">i", datagram[44:48])[0]
-        self.timeIO = unpack(">i", datagram[48:52])[0]
-        self.timeInterrupt = unpack(">i", datagram[52:56])[0]
-        self.timeSoftInterrupt = unpack(">i", datagram[56:60])[0]
-        self.interrupt = unpack(">i", datagram[60:64])[0]
-        self.contextSwitch = unpack(">i", datagram[64:68])[0]
-        self.virtualInstance = unpack(">i", datagram[68:72])[0]
-        self.guestOS = unpack(">i", datagram[72:76])[0]
-        self.guestNice = unpack(">i", datagram[76:80])[0]
+        self.user_time = unpack(">i", datagram[32:36])[0]
+        self.nice_time = unpack(">i", datagram[36:40])[0]
+        self.system_time = unpack(">i", datagram[40:44])[0]
+        self.idle_time = unpack(">i", datagram[44:48])[0]
+        self.io_wait_time = unpack(">i", datagram[48:52])[0]
+        self.intrupt_time = unpack(">i", datagram[52:56])[0]
+        self.soft_interrupt_time = unpack(">i", datagram[56:60])[0]
+        self.interrupt_count = unpack(">i", datagram[60:64])[0]
+        self.context_switch = unpack(">i", datagram[64:68])[0]
+        # self.virtual_instance = unpack(">i", datagram[68:72])[0]
+        # self.guest_os = unpack(">i", datagram[72:76])[0]
+        # self.guest_nice = unpack(">i", datagram[76:80])[0]
 
     def __repr__(self):
         return f"""
             Host CPU Counters:
-                Incomplete
+                Average Load 1 Minute: {self.average_load_1_minute}
+                Average Load 5 Minutes: {self.average_load_5_minutes}
+                Average Load 15 Minutes: {self.average_load_15_minutes}
+                Running Processes: {self.running_processes}
+                Total Processes: {self.total_processes}
+                Number of CPUs: {self.number_cpus}
+                CPU Speed in MHz: {self.cpu_mhz}
+                System Uptime: {self.system_time}
+                User Time: {self.user_time}
+                NICE Time: {self.nice_time}
+                System Time: {self.system_time}
+                Idle Time: {self.idle_time}
+                I/O Wait Time: {self.io_wait_time}
+                Interupt Time: {self.soft_interrupt_time}
+                Soft Interrupt Time: {self.soft_interrupt_time}
+                Interrupt Count: {self.interrupt_count}
+                Context Switches: {self.context_switch}
         """
 
     def __len__(self):
@@ -932,17 +1006,17 @@ class sFlowHostMemory:
     "counterData: enterprise = 0, format = 2004"
 
     def __init__(self, datagram):
-        self.memTotal = unpack(">q", datagram[0:8])[0]  # 64-bit
-        self.memFree = unpack(">q", datagram[8:16])[0]  # 64-bit
-        self.memShared = unpack(">q", datagram[16:24])[0]  # 64-bit
-        self.memBuffers = unpack(">q", datagram[24:32])[0]  # 64-bit
-        self.memCache = unpack(">q", datagram[32:40])[0]  # 64-bit
-        self.swapTotal = unpack(">q", datagram[40:48])[0]  # 64-bit
-        self.swapFree = unpack(">q", datagram[48:56])[0]  # 64-bit
-        self.pageIn = unpack(">i", datagram[56:60])[0]
-        self.pageOut = unpack(">i", datagram[60:64])[0]
-        self.swapIn = unpack(">i", datagram[64:68])[0]
-        self.swapOut = unpack(">i", datagram[68:72])[0]
+        self.memory_total = unpack(">q", datagram[0:8])[0]  # 64-bit
+        self.memory_free = unpack(">q", datagram[8:16])[0]  # 64-bit
+        self.memory_shared = unpack(">q", datagram[16:24])[0]  # 64-bit
+        self.memory_buffers = unpack(">q", datagram[24:32])[0]  # 64-bit
+        self.memory_cache = unpack(">q", datagram[32:40])[0]  # 64-bit
+        self.swap_total = unpack(">q", datagram[40:48])[0]  # 64-bit
+        self.swap_free = unpack(">q", datagram[48:56])[0]  # 64-bit
+        self.page_in = unpack(">i", datagram[56:60])[0]
+        self.page_out = unpack(">i", datagram[60:64])[0]
+        self.swap_in = unpack(">i", datagram[64:68])[0]
+        self.swap_out = unpack(">i", datagram[68:72])[0]
 
     def __repr__(self):
         return f"""
@@ -958,15 +1032,15 @@ class sFlowHostDiskIO:
     "counterData: enterprise = 0, format = 2005"
 
     def __init__(self, datagram):
-        self.diskTotal = unpack(">q", datagram[0:8])[0]  # 64-bit
-        self.diskFree = unpack(">q", datagram[8:16])[0]  # 64-bit
-        self.partMaxused = (unpack(">i", datagram[16:20])[0]) / float(100)
+        self.disk_total = unpack(">q", datagram[0:8])[0]  # 64-bit
+        self.disk_free = unpack(">q", datagram[8:16])[0]  # 64-bit
+        self.partition_max_used = (unpack(">i", datagram[16:20])[0]) / float(100)
         self.read = unpack(">i", datagram[20:24])[0]
-        self.readByte = unpack(">q", datagram[24:32])[0]  # 64-bit
-        self.readTime = unpack(">i", datagram[32:36])[0]
+        self.read_bytes = unpack(">q", datagram[24:32])[0]  # 64-bit
+        self.read_time = unpack(">i", datagram[32:36])[0]
         self.write = unpack(">i", datagram[36:40])[0]
-        self.writeByte = unpack(">q", datagram[40:48])[0]  # 64-bit
-        self.writeTime = unpack(">i", datagram[48:52])[0]
+        self.write_bytes = unpack(">q", datagram[40:48])[0]  # 64-bit
+        self.write_time = unpack(">i", datagram[48:52])[0]
 
     def __repr__(self):
         return f"""
@@ -982,14 +1056,14 @@ class sFlowHostNetIO:
     "counterData: enterprise = 0, format = 2006"
 
     def __init__(self, datagram):
-        self.inByte = unpack(">q", datagram[0:8])[0]  # 64-bit
-        self.inPacket = unpack(">i", datagram[8:12])[0]
-        self.inError = unpack(">i", datagram[12:16])[0]
-        self.inDrop = unpack(">i", datagram[16:20])[0]
-        self.outByte = unpack(">q", datagram[20:28])[0]  # 64-bit
-        self.outPacket = unpack(">i", datagram[28:32])[0]
-        self.outError = unpack(">i", datagram[32:36])[0]
-        self.outDrop = unpack(">i", datagram[36:40])[0]
+        self.in_byte = unpack(">q", datagram[0:8])[0]  # 64-bit
+        self.in_packet = unpack(">i", datagram[8:12])[0]
+        self.in_error = unpack(">i", datagram[12:16])[0]
+        self.in_drop = unpack(">i", datagram[16:20])[0]
+        self.out_byte = unpack(">q", datagram[20:28])[0]  # 64-bit
+        self.out_packet = unpack(">i", datagram[28:32])[0]
+        self.out_error = unpack(">i", datagram[32:36])[0]
+        self.out_drop = unpack(">i", datagram[36:40])[0]
 
     def __repr__(self):
         return f"""
@@ -1006,24 +1080,24 @@ class sFlowMib2IP:
 
     def __init__(self, datagram):
         self.forwarding = unpack(">i", datagram[0:4])[0]
-        self.defaultTTL = unpack(">i", datagram[4:8])[0]
-        self.inReceives = unpack(">i", datagram[8:12])[0]
-        self.inHeaderErrors = unpack(">i", datagram[12:16])[0]
-        self.inAddressErrors = unpack(">i", datagram[16:20])[0]
-        self.inForwardDatagrams = unpack(">i", datagram[20:24])[0]
-        self.inUnknownProtocols = unpack(">i", datagram[24:28])[0]
-        self.inDiscards = unpack(">i", datagram[28:32])[0]
-        self.inDelivers = unpack(">i", datagram[32:36])[0]
-        self.outRequests = unpack(">i", datagram[36:40])[0]
-        self.outDiscards = unpack(">i", datagram[40:44])[0]
-        self.outNoRoutes = unpack(">i", datagram[44:48])[0]
-        self.reassemblyTimeout = unpack(">i", datagram[48:52])[0]
-        self.reassemblyRequired = unpack(">i", datagram[52:56])[0]
-        self.reassemblyOkay = unpack(">i", datagram[56:60])[0]
-        self.reassemblyFail = unpack(">i", datagram[60:64])[0]
-        self.fragmentOkay = unpack(">i", datagram[64:68])[0]
-        self.fragmentFail = unpack(">i", datagram[68:72])[0]
-        self.fragmentCreate = unpack(">i", datagram[72:76])[0]
+        self.default_ttl = unpack(">i", datagram[4:8])[0]
+        self.in_receives = unpack(">i", datagram[8:12])[0]
+        self.in_header_errors = unpack(">i", datagram[12:16])[0]
+        self.in_address_errors = unpack(">i", datagram[16:20])[0]
+        self.in_forward_datagrams = unpack(">i", datagram[20:24])[0]
+        self.in_unknown_protocols = unpack(">i", datagram[24:28])[0]
+        self.in_discards = unpack(">i", datagram[28:32])[0]
+        self.in_delivers = unpack(">i", datagram[32:36])[0]
+        self.out_requests = unpack(">i", datagram[36:40])[0]
+        self.out_discards = unpack(">i", datagram[40:44])[0]
+        self.out_no_routes = unpack(">i", datagram[44:48])[0]
+        self.reassembly_timeout = unpack(">i", datagram[48:52])[0]
+        self.reassembly_required = unpack(">i", datagram[52:56])[0]
+        self.reassembly_okay = unpack(">i", datagram[56:60])[0]
+        self.reassembly_fail = unpack(">i", datagram[60:64])[0]
+        self.fragment_okay = unpack(">i", datagram[64:68])[0]
+        self.fragment_fail = unpack(">i", datagram[68:72])[0]
+        self.fragment_create = unpack(">i", datagram[72:76])[0]
 
     def __repr__(self):
         return f"""
@@ -1040,7 +1114,7 @@ class sFlowMib2ICMP:
 
     def __init__(self, datagram):
         self.inMessage = unpack(">i", datagram[0:4])[0]
-        self.inError = unpack(">i", datagram[4:8])[0]
+        self.in_error = unpack(">i", datagram[4:8])[0]
         self.inDestinationUnreachable = unpack(">i", datagram[8:12])[0]
         self.inTimeExceeded = unpack(">i", datagram[12:16])[0]
         self.inParameterProblem = unpack(">i", datagram[16:20])[0]
@@ -1052,7 +1126,7 @@ class sFlowMib2ICMP:
         self.inAddressMask = unpack(">i", datagram[40:44])[0]
         self.inAddressMaskReply = unpack(">i", datagram[44:48])[0]
         self.outMessage = unpack(">i", datagram[48:52])[0]
-        self.outError = unpack(">i", datagram[52:56])[0]
+        self.out_error = unpack(">i", datagram[52:56])[0]
         self.outDestinationUnreachable = unpack(">i", datagram[56:60])[0]
         self.outTimeExceeded = unpack(">i", datagram[60:64])[0]
         self.outParameterProblem = unpack(">i", datagram[64:68])[0]
@@ -1091,7 +1165,7 @@ class sFlowMib2TCP:
         self.inSegment = unpack(">i", datagram[36:40])[0]
         self.outSegment = unpack(">i", datagram[40:44])[0]
         self.retransmitSegment = unpack(">i", datagram[44:48])[0]
-        self.inError = unpack(">i", datagram[48:52])[0]
+        self.in_error = unpack(">i", datagram[48:52])[0]
         self.outReset = unpack(">i", datagram[52:56])[0]
         self.inCsumError = unpack(">i", datagram[56:60])[0]
 
@@ -1111,7 +1185,7 @@ class sFlowMib2UDP:
     def __init__(self, datagram):
         self.inDatagrams = unpack(">i", datagram[0:4])[0]
         self.noPorts = unpack(">i", datagram[4:8])[0]
-        self.inErrors = unpack(">i", datagram[8:12])[0]
+        self.in_errors = unpack(">i", datagram[8:12])[0]
         self.outDatagrams = unpack(">i", datagram[12:16])[0]
         self.receiveBufferError = unpack(">i", datagram[16:20])[0]
         self.sendBufferError = unpack(">i", datagram[20:24])[0]
