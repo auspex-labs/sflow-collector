@@ -8,8 +8,6 @@ from uuid import UUID
 # The datagram may not contain a sample, but if it does there will be at least on record.
 # The records may have different formats.
 
-# QUESTION (17-06-29) Is the raw data for each block actually needed? What is the cost for preserving them?
-
 # sFlow
 #   sample
 #       record
@@ -46,7 +44,7 @@ class sFlowRecordBase:
         self.data = datagram
 
     def __repr__(self):
-        return f"""
+        return """
             sFlow Record Type Not Implimented:
                 Incomplete
             """
@@ -944,7 +942,8 @@ class sFlowHostParent:
     def __repr__(self):
         return f"""
             Host Parent:
-                Incomplete
+                Container Type: {self.container_type}
+                Container Index: {self.container_index}
         """
 
     def __len__(self):
@@ -1021,7 +1020,17 @@ class sFlowHostMemory:
     def __repr__(self):
         return f"""
             Host Memory Counters:
-                Incomplete
+                Memory Total: {self.memory_total}
+                Memory Free: {self.memory_free}
+                Memory Shared: {self.memory_shared}
+                Memory Buffers: {self.memory_buffers}
+                Memory Cache: {self.memory_cache}
+                Swap Total: {self.swap_total}
+                Swap Free: {self.swap_free}
+                Page In: {self.page_in}
+                Page Out: {self.page_out}
+                Swap In: {self.swap_in}
+                Swap Out: {self.swap_out}
         """
 
     def __len__(self):
@@ -1045,7 +1054,15 @@ class sFlowHostDiskIO:
     def __repr__(self):
         return f"""
             Host Disk I/O Counters:
-                Incomplete
+                Disk Total: {self.disk_total}
+                Disk Free: {self.disk_free}
+                Partition Max Used: {self.partition_max_used}
+                Read: {self.read}
+                Read Bytes: {self.read_bytes}
+                Read Time: {self.read_time}
+                Write: {self.write}
+                Write Bytes: {self.write_bytes}
+                Write Time: {self.write_time}
         """
 
     def __len__(self):
@@ -1068,7 +1085,14 @@ class sFlowHostNetIO:
     def __repr__(self):
         return f"""
             Host Network I/O Counters:
-                Incomplete
+                In Bytes: {self.in_byte}
+                In Packets: {self.in_packet}
+                In Errors: {self.in_error}
+                In Drop: {self.in_drop}
+                Out Byte: {self.out_byte}
+                Out Packet: {self.out_packet}
+                Out Erros: {self.out_error}
+                Out Drop: {self.out_drop}
         """
 
     def __len__(self):
@@ -1102,7 +1126,25 @@ class sFlowMib2IP:
     def __repr__(self):
         return f"""
             MIB2 IP Counters:
-                Incomplete
+                Forwarding: {self.forwarding}
+                Default TTL: {self.default_ttl}
+                In Receives: {self.in_receives}
+                In Header Errors: {self.in_header_errors}
+                In Address Errors: {self.in_address_errors}
+                In Forward Datagrams: {self.in_forward_datagrams}
+                In Unknown Protocols: {self.in_unknown_protocols}
+                In Discards: {self.in_discards}
+                In Delivers: {self.in_delivers}
+                Out Requests: {self.out_requests}
+                Out Discards: {self.out_discards}
+                Out No Routes: {self.out_no_routes}
+                Reassembly Timeout: {self.reassembly_timeout}
+                Reassembly Required: {self.reassembly_required}
+                Reassembly Okay: {self.reassembly_okay}
+                Reassembly Fail: {self.reassembly_fail}
+                Fragment Okay: {self.fragment_okay}
+                Fragment Fail: {self.fragment_fail}
+                Fragment Create: {self.fragment_create}
         """
 
     def __len__(self):
@@ -1113,31 +1155,31 @@ class sFlowMib2ICMP:
     "counterData: enterprise = 0, format = 2008"
 
     def __init__(self, datagram):
-        self.inMessage = unpack(">i", datagram[0:4])[0]
+        self.in_message = unpack(">i", datagram[0:4])[0]
         self.in_error = unpack(">i", datagram[4:8])[0]
-        self.inDestinationUnreachable = unpack(">i", datagram[8:12])[0]
-        self.inTimeExceeded = unpack(">i", datagram[12:16])[0]
-        self.inParameterProblem = unpack(">i", datagram[16:20])[0]
-        self.inSourceQuence = unpack(">i", datagram[20:24])[0]
-        self.inRedirect = unpack(">i", datagram[24:28])[0]
-        self.inEcho = unpack(">i", datagram[28:32])[0]
-        self.inEchoReply = unpack(">i", datagram[32:36])[0]
-        self.inTimestamp = unpack(">i", datagram[36:40])[0]
-        self.inAddressMask = unpack(">i", datagram[40:44])[0]
-        self.inAddressMaskReply = unpack(">i", datagram[44:48])[0]
-        self.outMessage = unpack(">i", datagram[48:52])[0]
+        self.in_destination_unreachable = unpack(">i", datagram[8:12])[0]
+        self.in_time_exceeded = unpack(">i", datagram[12:16])[0]
+        self.in_parameter_problem = unpack(">i", datagram[16:20])[0]
+        self.in_source_quence = unpack(">i", datagram[20:24])[0]
+        self.in_redirect = unpack(">i", datagram[24:28])[0]
+        self.in_echo = unpack(">i", datagram[28:32])[0]
+        self.in_echo_reply = unpack(">i", datagram[32:36])[0]
+        self.in_timestamp = unpack(">i", datagram[36:40])[0]
+        self.in_address_mask = unpack(">i", datagram[40:44])[0]
+        self.in_address_mask_reply = unpack(">i", datagram[44:48])[0]
+        self.out_message = unpack(">i", datagram[48:52])[0]
         self.out_error = unpack(">i", datagram[52:56])[0]
-        self.outDestinationUnreachable = unpack(">i", datagram[56:60])[0]
-        self.outTimeExceeded = unpack(">i", datagram[60:64])[0]
-        self.outParameterProblem = unpack(">i", datagram[64:68])[0]
-        self.outSourceQuence = unpack(">i", datagram[68:72])[0]
-        self.outRedirect = unpack(">i", datagram[72:76])[0]
-        self.outEcho = unpack(">i", datagram[76:80])[0]
-        self.outEchoReply = unpack(">i", datagram[80:84])[0]
-        self.outTimestamp = unpack(">i", datagram[84:88])[0]
-        self.outTimestampReply = unpack(">i", datagram[88:92])[0]
-        self.outAddressMask = unpack(">i", datagram[92:96])[0]
-        self.outAddressMaskReplay = unpack(">i", datagram[96:100])[0]
+        self.out_destination_unreachable = unpack(">i", datagram[56:60])[0]
+        self.out_time_exceeded = unpack(">i", datagram[60:64])[0]
+        self.out_parameter_problem = unpack(">i", datagram[64:68])[0]
+        self.out_source_quence = unpack(">i", datagram[68:72])[0]
+        self.out_redirect = unpack(">i", datagram[72:76])[0]
+        self.out_echo = unpack(">i", datagram[76:80])[0]
+        self.out_echo_reply = unpack(">i", datagram[80:84])[0]
+        self.out_timestamp = unpack(">i", datagram[84:88])[0]
+        self.out_timestamp_reply = unpack(">i", datagram[88:92])[0]
+        self.out_address_mask = unpack(">i", datagram[92:96])[0]
+        self.out_address_mask_replay = unpack(">i", datagram[96:100])[0]
 
     def __repr__(self):
         return f"""
