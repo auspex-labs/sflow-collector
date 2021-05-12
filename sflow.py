@@ -1262,18 +1262,24 @@ class sFlowMib2UDP:
     "counterData: enterprise = 0, format = 2010"
 
     def __init__(self, datagram):
-        self.inDatagrams = unpack(">i", datagram[0:4])[0]
-        self.noPorts = unpack(">i", datagram[4:8])[0]
+        self.in_datagrams = unpack(">i", datagram[0:4])[0]
+        self.no_ports = unpack(">i", datagram[4:8])[0] # Datagrams received without an active application
         self.in_errors = unpack(">i", datagram[8:12])[0]
-        self.outDatagrams = unpack(">i", datagram[12:16])[0]
-        self.receiveBufferError = unpack(">i", datagram[16:20])[0]
-        self.sendBufferError = unpack(">i", datagram[20:24])[0]
-        self.inCheckSumError = unpack(">i", datagram[24:28])[0]
+        self.out_datagrams = unpack(">i", datagram[12:16])[0]
+        self.receive_buffer_error = unpack(">i", datagram[16:20])[0]
+        self.send_buffer_error = unpack(">i", datagram[20:24])[0]
+        self.in_checksum_error = unpack(">i", datagram[24:28])[0]
 
     def __repr__(self):
         return f"""
             MIB2 UDP Counters:
-                Incomplete
+                In Datagrams: {self.in_datagrams}
+                No Ports: {self.no_ports}
+                In Errors: {self.in_errors}
+                Out Datagrams: {self.out_datagrams}
+                Receive buffer Errors: {self.receive_buffer_error}
+                Send Buffer Errors: {self.send_buffer_error}
+                In Checksum Errors: {self.in_checksum_error}
         """
 
     def __len__(self):
