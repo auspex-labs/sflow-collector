@@ -1263,7 +1263,7 @@ class sFlowMib2UDP:
 
     def __init__(self, datagram):
         self.in_datagrams = unpack(">i", datagram[0:4])[0]
-        self.no_ports = unpack(">i", datagram[4:8])[0] # Datagrams received without an active application
+        self.no_ports = unpack(">i", datagram[4:8])[0]  # Datagrams received without an active application
         self.in_errors = unpack(">i", datagram[8:12])[0]
         self.out_datagrams = unpack(">i", datagram[12:16])[0]
         self.receive_buffer_error = unpack(">i", datagram[16:20])[0]
@@ -1321,7 +1321,7 @@ class sFlowVirtCPU:
 
     def __repr__(self):
         return f"""
-            Virtual CPU Counters: 
+            Virtual CPU Counters:
                 Virtual Domain State: {self.virtual_domain_state}
                 CPU Time Used: {self.cpu_time_used}
                 Number of Virtual CPUs: {self.number_virtual_cpus}
