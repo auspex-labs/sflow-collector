@@ -1219,25 +1219,39 @@ class sFlowMib2TCP:
 
     def __init__(self, datagram):
         self.algorithm = unpack(">i", datagram[0:4])[0]
-        self.rtoMin = unpack(">i", datagram[4:8])[0]
-        self.rtoMax = unpack(">i", datagram[8:12])[0]
-        self.maxConnection = unpack(">i", datagram[12:16])[0]
-        self.activeOpen = unpack(">i", datagram[16:20])[0]
-        self.passiveOpen = unpack(">i", datagram[20:24])[0]
-        self.attemptFail = unpack(">i", datagram[24:28])[0]
-        self.establishedReset = unpack(">i", datagram[28:32])[0]
-        self.currentEstablished = unpack(">i", datagram[32:36])[0]
-        self.inSegment = unpack(">i", datagram[36:40])[0]
-        self.outSegment = unpack(">i", datagram[40:44])[0]
-        self.retransmitSegment = unpack(">i", datagram[44:48])[0]
+        self.rto_min = unpack(">i", datagram[4:8])[0]
+        self.rto_max = unpack(">i", datagram[8:12])[0]
+        self.max_connection = unpack(">i", datagram[12:16])[0]
+        self.active_open = unpack(">i", datagram[16:20])[0]
+        self.passive_open = unpack(">i", datagram[20:24])[0]
+        self.attempt_fail = unpack(">i", datagram[24:28])[0]
+        self.established_reset = unpack(">i", datagram[28:32])[0]
+        self.current_established = unpack(">i", datagram[32:36])[0]
+        self.in_segment = unpack(">i", datagram[36:40])[0]
+        self.out_segment = unpack(">i", datagram[40:44])[0]
+        self.retransmit_segment = unpack(">i", datagram[44:48])[0]
         self.in_error = unpack(">i", datagram[48:52])[0]
-        self.outReset = unpack(">i", datagram[52:56])[0]
-        self.inCsumError = unpack(">i", datagram[56:60])[0]
+        self.out_reset = unpack(">i", datagram[52:56])[0]
+        self.in_checksum_error = unpack(">i", datagram[56:60])[0]
 
     def __repr__(self):
         return f"""
             MIB2 TCP Counters:
-                Incomplete
+                Algorithm: {self.algorithm}
+                RTO Minimum: {self.rto_min}
+                RTO Maximum: {self.rto_max}
+                Max Connection: {self.max_connection}
+                Active Open: {self.active_open}
+                Passive Open: {self.passive_open}
+                Attempt Fail: {self.attempt_fail}
+                Established Reset: {self.established_reset}
+                Current Established: {self.current_established}
+                In Segemnts: {self.in_segment}
+                Out Segments: {self.out_segment}
+                Retransmit Segments: {self.retransmit_segment}
+                In Error: {self.in_error}
+                Out Reset: {self.out_reset}
+                In Checksum Error: {self.in_checksum_error}
         """
 
     def __len__(self):
