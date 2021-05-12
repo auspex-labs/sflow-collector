@@ -1179,12 +1179,35 @@ class sFlowMib2ICMP:
         self.out_timestamp = unpack(">i", datagram[84:88])[0]
         self.out_timestamp_reply = unpack(">i", datagram[88:92])[0]
         self.out_address_mask = unpack(">i", datagram[92:96])[0]
-        self.out_address_mask_replay = unpack(">i", datagram[96:100])[0]
+        self.out_address_mask_reply = unpack(">i", datagram[96:100])[0]
 
     def __repr__(self):
         return f"""
             MIB2 ICMP Counters:
-                Incomplete
+                In Message: {self.in_message}
+                In Error: {self.in_error}
+                In Destination Unreachable: {self.in_destination_unreachable}
+                In Time Exceeded: {self.in_time_exceeded}
+                In Paramater Problem: {self.in_parameter_problem}
+                In Source Quence: {self.in_source_quence}
+                In Echo: {self.in_echo}
+                In Echo Reply: {self.in_echo_reply}
+                In Timestamp: {self.in_timestamp}
+                In Address Mask: {self.in_address_mask}
+                In Address Mask Reply: {self.in_address_mask_reply}
+                Out Message: {self.out_message}
+                Out Error: {self.out_error}
+                Out Destination Unreachable: {self.out_destination_unreachable}
+                Out Time Exceeded: {self.out_time_exceeded}
+                Out Parameter Problem: {self.out_parameter_problem}
+                Out Source Quence: {self.out_source_quence}
+                Out Redirect: {self.out_redirect}
+                Out Echo: {self.out_echo}
+                Out Echo Reply: {self.out_echo_reply}
+                Out Timestamp: {self.out_timestamp}
+                Out Timestamp Reply: {self.out_timestamp_reply}
+                Out Address Mask: {self.out_address_mask}
+                Out Address Mask Reply: {self.out_address_mask_reply}
         """
 
     def __len__(self):
