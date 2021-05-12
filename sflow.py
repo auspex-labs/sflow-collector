@@ -1293,13 +1293,18 @@ class sFlowVirtNode:
         self.mhz = unpack(">i", datagram[0:4])[0]
         self.cpus = unpack(">i", datagram[4:8])[0]
         self.memory = unpack(">q", datagram[8:16])[0]
-        self.memoryFree = unpack(">q", datagram[16:24])[0]
-        self.numDomains = unpack(">i", datagram[24:28])[0]
+        self.memory_free = unpack(">q", datagram[16:24])[0]
+        self.active_domains = unpack(">i", datagram[24:28])[0]
 
     def __repr__(self):
         return f"""
             Virtual Node Counters:
-                Incomplete
+                CPU Frequency: {self.mhz}
+                Active CPUs: {self.cpus}
+                Memory: {self.memory}
+                Free Memory: {self.memory_free}
+                Active Domains: {self.active_domains}
+
         """
 
     def __len__(self):
@@ -1310,14 +1315,16 @@ class sFlowVirtCPU:
     "counterData: enterprise = 0, format = 2101"
 
     def __init__(self, datagram):
-        self.state = unpack(">i", datagram[0:4])[0]
-        self.cpuTime = unpack(">i", datagram[4:8])[0]
-        self.nrVirtCpu = unpack(">i", datagram[8:12])[0]
+        self.virtual_domain_state = unpack(">i", datagram[0:4])[0]
+        self.cpu_time_used = unpack(">i", datagram[4:8])[0]
+        self.number_virtual_cpus = unpack(">i", datagram[8:12])[0]
 
     def __repr__(self):
         return f"""
-            Virtual CPU Counters:
-                Incomplete
+            Virtual CPU Counters: 
+                Virtual Domain State: {self.virtual_domain_state}
+                CPU Time Used: {self.cpu_time_used}
+                Number of Virtual CPUs: {self.number_virtual_cpus}
         """
 
     def __len__(self):
@@ -1329,12 +1336,13 @@ class sFlowVirtMemory:
 
     def __init__(self, datagram):
         self.memory = unpack(">q", datagram[0:8])[0]
-        self.maxMemory = unpack(">q", datagram[8:16])[0]
+        self.max_memory = unpack(">q", datagram[8:16])[0]
 
     def __repr__(self):
         return f"""
             Virtual Memory Counters:
-                Incomplete
+                Memory used by Domain: {self.memory}
+                Memory Allowed: {self.max_memory}
         """
 
     def __len__(self):
