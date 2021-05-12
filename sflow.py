@@ -1356,16 +1356,23 @@ class sFlowVirtDiskIO:
         self.capacity = unpack(">q", datagram[0:8])[0]
         self.allocation = unpack(">q", datagram[8:16])[0]
         self.available = unpack(">q", datagram[16:24])[0]
-        self.rdReq = unpack(">i", datagram[24:28])[0]
-        self.rdBytes = unpack(">q", datagram[28:36])[0]
-        self.wrReq = unpack(">i", datagram[36:40])[0]
-        self.wrBytes = unpack(">q", datagram[40:48])[0]
-        self.errs = unpack(">i", datagram[48:52])[0]
+        self.read_requests = unpack(">i", datagram[24:28])[0]
+        self.read_bytes = unpack(">q", datagram[28:36])[0]
+        self.write_requests = unpack(">i", datagram[36:40])[0]
+        self.write_bytes = unpack(">q", datagram[40:48])[0]
+        self.errors = unpack(">i", datagram[48:52])[0]
 
     def __repr__(self):
         return f"""
-            Virtual Disk IO Counters:
-                Incomplete
+            Virtual Disk Counters:
+                Capacity: {self.capacity}
+                Allocated: {self.allocation}
+                Available: {self.available}
+                Read Requests: {self.read_requests}
+                Read Bytes: {self.read_bytes}
+                Write Requests: {self.write_requests}
+                Write Bytes: {self.write_bytes}
+                Errors: {self.errors}
         """
 
     def __len__(self):
@@ -1376,19 +1383,26 @@ class sFlowVirtNetIO:
     "counterData: enterprise = 0, format = 2104"
 
     def __init__(self, datagram):
-        self.rxBytes = unpack(">q", datagram[0:8])[0]
-        self.rxPackets = unpack(">i", datagram[8:12])[0]
-        self.rxErrs = unpack(">i", datagram[12:16])[0]
-        self.rxDrop = unpack(">i", datagram[16:20])[0]
-        self.txBytes = unpack(">q", datagram[20:28])[0]
-        self.txPackets = unpack(">i", datagram[28:32])[0]
-        self.txErrs = unpack(">i", datagram[32:36])[0]
-        self.txDrop = unpack(">i", datagram[36:40])[0]
+        self.received_bytes = unpack(">q", datagram[0:8])[0]
+        self.received_packets = unpack(">i", datagram[8:12])[0]
+        self.receive_errors = unpack(">i", datagram[12:16])[0]
+        self.receive_drops = unpack(">i", datagram[16:20])[0]
+        self.transmitted_bytes = unpack(">q", datagram[20:28])[0]
+        self.transmitted_packets = unpack(">i", datagram[28:32])[0]
+        self.transmit_errors = unpack(">i", datagram[32:36])[0]
+        self.transmit_drops = unpack(">i", datagram[36:40])[0]
 
     def __repr__(self):
         return f"""
             Virtual Network IO Counters:
-                Incomplete
+                Bytes Received: {self.received_bytes}
+                Packets Received: {self.received_packets}
+                Receive Errors: {self.receive_errors}
+                Receive Drops: {self.receive_drops}
+                Bytes Transmitted: {self.transmitted_bytes}
+                Packets Transmitted: {self.transmitted_packets}
+                Transmit Errors: {self.transmit_errors}
+                Transmit Drops: {self.transmit_drops}
         """
 
     def __len__(self):
