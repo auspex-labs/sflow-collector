@@ -65,16 +65,37 @@ class sFlowRawPacketHeader:
         self.payload_removed = unpack(">i", datagram[8:12])[0]
         self.header_size = unpack(">i", datagram[12:16])[0]
         self.header = datagram[(16) : (16 + self.header_size)]
-        offset = 0
-        self.type = unpack(">H", datagram[36:38])[0]
-        if self.type == int(16384):  # 802.1q info in sample header
-            offset = 4
-        self.source_mac = datagram[22:28].hex("-")
-        self.destination_mac = datagram[16:22].hex("-")
-        self.source_ip = inet_ntop(AF_INET, datagram[46 - offset : 50 - offset])
-        self.destination_ip = inet_ntop(AF_INET, datagram[50 - offset : 54 - offset])
-        self.source_port = unpack(">H", datagram[54 - offset : 56 - offset])[0]
-        self.destination_port = unpack(">H", datagram[56 - offset : 58 - offset])[0]
+
+        if self.header_protocol == 1:  # Ethernet
+            self.destination_mac = self.header[0:6].hex("-")
+            self.source_mac = self.header[6:12].hex("-")
+            self.type = unpack(">H", self.header[12:14])[0]
+
+            offset = 0
+            if unpack(">H", self.header[12:14])[0] == 37120:  # 802.1ad
+                offset = 8
+                self.outer_vlan = divmod(unpack(">H", self.header[14:16])[0], 4096)[1]
+                self.inner_vlan = divmod(unpack(">H", self.header[18:20])[0], 4096)[1]
+
+            if unpack(">H", self.header[12:14])[0] == 33024:  # 802.1Q
+                offset = 4
+                self.vlan = divmod(unpack(">H", self.header[14:16])[0], 4096)[1]
+
+            if unpack(">H", self.header[12 + offset : 14 + offset])[0] == 2048:
+                self.ip_version, self.ip_header_legth = divmod(self.header[14 + offset], 16)
+                self.ip_dscp, self.ip_ecn = divmod(self.header[15 + offset], 4)
+                self.ip_total_length = unpack(">H", self.header[16 + offset : 18 + offset])[0]
+                self.ip_identification = unpack(">H", self.header[18 + offset : 20 + offset])[0]
+                self.ip_flags, self.ip_fragement_offset = divmod(unpack(">H", self.header[20 + offset : 22 + offset])[0], 8192)
+                self.ip_ttl = self.header[22 + offset]
+                self.ip_protocol = self.header[23 + offset]
+                self.ip_checkum = unpack(">H", self.header[24 + offset : 26 + offset])[0]
+                self.ip_source = inet_ntop(AF_INET, self.header[26 + offset : 30 + offset])
+                self.ip_destination = inet_ntop(AF_INET, self.header[30 + offset : 34 + offset])
+
+                if self.ip_header_legth > 5:
+                    self.ip_options = self.header[34 + offset : (35 + offset) + ((self.ip_header_legth - 5) * 4)]
+                self.ip_remaining_header = self.header[34 + offset + ((self.ip_header_legth - 5) * 4) :]
 
     def __repr__(self):
         return f"""
@@ -85,14 +106,39 @@ class sFlowRawPacketHeader:
                 Payload Removed: {self.payload_removed}
                 Source MAC: {self.source_mac}
                 Destination MAC: {self.destination_mac}
-                Source IP: {self.source_ip}
-                Destination IP: {self.destination_ip}
-                Source Port: {self.source_port}
-                Destination Port: {self.destination_port}
         """
 
     def __len__(self):
         return 1
+
+    def decode_ipv4(self):
+
+        decode = {}
+        offset = 0
+
+        if unpack(">H", self.header[12:14])[0] == 37120:  # 802.1ad
+            offset = 8
+            decode["802.1ad"] = True
+            decode["outer_vlan"] = divmod(unpack(">H", self.header[14:16])[0], 4096)[1]
+            decode["inner_vlan"] = divmod(unpack(">H", self.header[18:20])[0], 4096)[1]
+
+        if unpack(">H", self.header[12:14])[0] == 33024:  # 802.1Q
+            offset = 4
+            decode["802.1Q"] = True
+            decode["vlan"] = divmod(unpack(">H", self.header[14:16])[0], 4096)[1]
+
+        if unpack(">H", self.header[12 + offset : 14 + offset])[0] != 2048:
+            return decode
+
+        decode["ttl"] = self.header[22 + offset]
+        decode["protocol"] = self.header[23 + offset]
+        decode["checksum"] = unpack(">H", self.header[24 + offset : 26 + offset])[0]
+        decode["source"] = inet_ntop(AF_INET, self.header[26 + offset : 30 + offset])
+        decode["destination"] = inet_ntop(AF_INET, self.header[30 + offset : 34 + offset])
+
+        decode["header"] = self.header[34 + offset :]
+
+        return decode
 
 
 class sFlowEthernetFrame:
@@ -913,7 +959,7 @@ class sFlowHostAdapters:
             for mac_address in range(hostadapter.mac_address_count):
                 hostadapter.mac_addresses.append(
                     datagram[(data_position + mac_address * 8) : (data_position + mac_address * 8 + 6)]
-                ).hex("-")
+                )  # TODO These are sometimes none .hex("-")
             data_position += hostadapter.mac_address_count * 8
             self.adapters.append(hostadapter)
 
@@ -1572,7 +1618,7 @@ class sFlow:
             self.NumberSample = unpack(">i", datagram[24:28])[0]
             data_position = 28
         elif self.address_type == 2:
-            self.agentAddress = inet_ntop(AF_INET6, datagram[8:24])  # Temporary fix due to lack of IPv6 support on WIN32
+            self.agentAddress = inet_ntop(AF_INET6, datagram[8:24])
             self.subAgent = unpack(">i", datagram[24:28])[0]
             self.sequenceNumber = unpack(">i", datagram[28:32])[0]
             self.sysUpTime = unpack(">i", datagram[32:36])[0]

@@ -1,4 +1,5 @@
 import socket
+import pprint
 
 import sflow
 
@@ -19,8 +20,8 @@ while True:
 
     # Below this point is test code.
 
-    # print()
-    print("Source:", addr[0])
+    print(".", end="")
+    # print("Source:", addr[0])
     # print("length:", sflow_data.len)
     # print("DG Version:", sflow_data.dgVersion)
     # print("Address Type:", sflow_data.addressType)
@@ -47,8 +48,9 @@ while True:
         # print()
         for j in range(sflow_data.samples[i].recordCount):
             # record = sflow_data.samples[i].records[j].data
-            print("Sample Type", sflow_data.samples[i].records[j].sample_type)
-            print("Sample Record Enterprise:", sflow_data.samples[i].records[j].enterprise)
-            print("Sample Record Type:", sflow_data.samples[i].records[j].format)
+            # print("Sample Type:", sflow_data.samples[i].records[j].sample_type, end ="")
+            # print(" Sample Record Enterprise:", sflow_data.samples[i].records[j].enterprise, end ="")
+            # print(" Sample Record Type:", sflow_data.samples[i].records[j].format)
             # print(repr(sflow_data.samples[i].records[j].record))
-            print(vars(sflow_data.samples[i].records[j].record))
+            if sflow_data.samples[i].records[j].sample_type == 1 and sflow_data.samples[i].records[j].format == 1:
+                pprint.pprint(vars(sflow_data.samples[i].records[j].record))
