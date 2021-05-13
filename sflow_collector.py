@@ -20,7 +20,7 @@ while True:
 
     # Below this point is test code.
 
-    print(".", end="")
+    # print(".", end="")
     # print("Source:", addr[0])
     # print("length:", sflow_data.len)
     # print("DG Version:", sflow_data.dgVersion)
@@ -52,5 +52,4 @@ while True:
             # print(" Sample Record Enterprise:", sflow_data.samples[i].records[j].enterprise, end ="")
             # print(" Sample Record Type:", sflow_data.samples[i].records[j].format)
             # print(repr(sflow_data.samples[i].records[j].record))
-            if sflow_data.samples[i].records[j].sample_type == 1 and sflow_data.samples[i].records[j].format == 1:
-                pprint.pprint(vars(sflow_data.samples[i].records[j].record))
+            pprint.pprint(vars(sflow_data.samples[i].records[j].record))
