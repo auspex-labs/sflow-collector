@@ -6,7 +6,7 @@ sFlow is layer 2 packet summerization protocol intended for developing metrics f
 
 The sflow-collector provides a simple sample collector and a class which will parse the sFlow data and return it to the collector for presentation.
 
-The code has been refactored from Python 2.7 to Python 3.6+
+The code has been refactored from Python 3.6 to Python 3.8+
 
 This is a work in progess.
 
