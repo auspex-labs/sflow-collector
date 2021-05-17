@@ -1,3 +1,5 @@
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 # sflow-collector
 
 sFlow is layer 2 packet summerization protocol intended for developing metrics for system behavior and performance. sFlow transmitters are common on Network Appliances and can be run as services on Linux and Windows hosts.
