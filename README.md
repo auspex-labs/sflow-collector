@@ -1,3 +1,4 @@
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/auspex-labs/sflow-collector.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/auspex-labs/sflow-collector/alerts/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 # sflow-collector
