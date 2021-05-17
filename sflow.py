@@ -1548,44 +1548,46 @@ class sFlowSample:
 
         if self.sample_type in [1, 2]:
             sample_source = unpack(">i", datagram[4:8])[0]
-            self.sourceType, self.sourceIndex = divmod(sample_source, 16777216)
+            self.source_type, self.source_index = divmod(sample_source, 16777216)
             data_position = 8
         elif self.sample_type in [3, 4]:
-            self.sourceType, self.sourceIndex = unpack(">ii", datagram[4:12])
+            self.source_type, self.source_index = unpack(">ii", datagram[4:12])
             data_position = 12
         else:
             pass  # sampleTypeError
         self.records = []
 
         if self.sample_type in [1, 3]:  # Flow
-            self.sampleRate, self.samplePool, self.droppedPackets = unpack(">iii", datagram[data_position : (data_position + 12)])
+            self.sample_rate, self.sample_pool, self.dropped_packets = unpack(
+                ">iii", datagram[data_position : (data_position + 12)]
+            )
             data_position += 12
             if self.sample_type == 1:
                 input_interface, output_interface = unpack(">ii", datagram[(data_position) : (data_position + 8)])
                 data_position += 8
-                self.inputIfFormat, self.inputIfValue = divmod(input_interface, 1073741824)
-                self.outputIfFormat, self.outputIfValue = divmod(output_interface, 1073741824)
+                self.input_if_format, self.input_if_value = divmod(input_interface, 1073741824)
+                self.output_if_format, self.output_if_value = divmod(output_interface, 1073741824)
             elif self.sample_type == 3:
-                self.inputIfFormat, self.inputIfValue, self.outputIfFormat, self.outputIfValue = unpack(
+                self.input_if_format, self.input_if_value, self.output_if_format, self.output_if_value = unpack(
                     ">ii", datagram[data_position : (data_position + 16)]
                 )
                 data_position += 16
-            self.recordCount = unpack(">i", datagram[data_position : data_position + 4])[0]
+            self.record_count = unpack(">i", datagram[data_position : data_position + 4])[0]
             data_position += 4
 
         elif self.sample_type in [2, 4]:  # Counters
-            self.recordCount = unpack(">i", datagram[data_position : (data_position + 4)])[0]
+            self.record_count = unpack(">i", datagram[data_position : (data_position + 4)])[0]
             data_position += 4
-            self.sampleRate = 0
-            self.samplePool = 0
-            self.droppedPackets = 0
-            self.inputIfFormat = 0
-            self.inputIfValue = 0
-            self.outputIfFormat = 0
-            self.outputIfValue = 0
+            self.sample_rate = 0
+            self.sample_pool = 0
+            self.dropped_packets = 0
+            self.input_if_format = 0
+            self.input_if_value = 0
+            self.output_if_format = 0
+            self.output_if_value = 0
         else:  # sampleTypeError
-            self.recordCount = 0
-        for _ in range(self.recordCount):
+            self.record_count = 0
+        for _ in range(self.record_count):
             record_header = unpack(">i", datagram[(data_position) : (data_position + 4)])[0]
             record_size = unpack(">i", datagram[(data_position + 4) : (data_position + 8)])[0]
             record_data = datagram[(data_position + 8) : (data_position + record_size + 8)]
@@ -1608,31 +1610,31 @@ class sFlow:
 
         self.len = len(datagram)
         self.data = datagram
-        self.dgVersion = unpack(">i", datagram[0:4])[0]
+        self.datagram_version = unpack(">i", datagram[0:4])[0]
         self.address_type = unpack(">i", datagram[4:8])[0]
         if self.address_type == 1:
-            self.agentAddress = inet_ntop(AF_INET, datagram[8:12])
-            self.subAgent = unpack(">i", datagram[12:16])[0]
-            self.sequenceNumber = unpack(">i", datagram[16:20])[0]
-            self.sysUpTime = unpack(">i", datagram[20:24])[0]
-            self.NumberSample = unpack(">i", datagram[24:28])[0]
+            self.agent_address = inet_ntop(AF_INET, datagram[8:12])
+            self.sub_agent = unpack(">i", datagram[12:16])[0]
+            self.sequence_number = unpack(">i", datagram[16:20])[0]
+            self.system_uptime = unpack(">i", datagram[20:24])[0]
+            self.number_sample = unpack(">i", datagram[24:28])[0]
             data_position = 28
         elif self.address_type == 2:
-            self.agentAddress = inet_ntop(AF_INET6, datagram[8:24])
-            self.subAgent = unpack(">i", datagram[24:28])[0]
-            self.sequenceNumber = unpack(">i", datagram[28:32])[0]
-            self.sysUpTime = unpack(">i", datagram[32:36])[0]
-            self.NumberSample = unpack(">i", datagram[36:40])[0]
+            self.agent_address = inet_ntop(AF_INET6, datagram[8:24])
+            self.sub_agent = unpack(">i", datagram[24:28])[0]
+            self.sequence_number = unpack(">i", datagram[28:32])[0]
+            self.system_uptime = unpack(">i", datagram[32:36])[0]
+            self.number_sample = unpack(">i", datagram[36:40])[0]
             data_position = 40
         else:
-            self.agentAddress = 0
-            self.subAgent = 0
-            self.sequenceNumber = 0
-            self.sysUpTime = 0
-            self.NumberSample = 0
+            self.agent_address = 0
+            self.sub_agent = 0
+            self.sequence_number = 0
+            self.system_uptime = 0
+            self.number_sample = 0
         self.samples = []
-        if self.NumberSample > 0:
-            for _ in range(self.NumberSample):
+        if self.number_sample > 0:
+            for _ in range(self.number_sample):
                 sample_header = datagram[(data_position) : (data_position + 4)]
                 sample_size = unpack(">i", datagram[(data_position + 4) : (data_position + 8)])[0]
                 sample_datagram = datagram[(data_position + 8) : (data_position + sample_size + 8)]
