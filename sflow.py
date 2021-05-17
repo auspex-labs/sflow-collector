@@ -957,9 +957,15 @@ class sFlowHostAdapters:
             data_position += 4
             hostadapter.mac_addresses = []
             for mac_address in range(hostadapter.mac_address_count):
-                hostadapter.mac_addresses.append(
-                    datagram[(data_position + mac_address * 8) : (data_position + mac_address * 8 + 6)]
-                )  # TODO These are sometimes none .hex("-")
+                try:
+                    hostadapter.mac_addresses.append(
+                        datagram[(data_position + mac_address * 8) : (data_position + mac_address * 8 + 6)]
+                    ).hex("-")
+                except AttributeError:
+                    hostadapter.mac_addresses.append(
+                        datagram[(data_position + mac_address * 8) : (data_position + mac_address * 8 + 6)]
+                    )
+
             data_position += hostadapter.mac_address_count * 8
             self.adapters.append(hostadapter)
 
