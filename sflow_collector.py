@@ -1,3 +1,6 @@
+"""
+This module is a test rig for the sFlow class. As is it will process sFlow datagrams and allow extraction of their values.
+"""
 import pprint
 import socket
 
