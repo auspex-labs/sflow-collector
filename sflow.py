@@ -35,7 +35,6 @@ from uuid import UUID
 #   MIB2 TCP Group          2-0-2009
 #   MIB2 UDP Group          2-0-2010
 
-
 # IDEA (17-03-07) Sanity check for the fixed length records could be implimented with a simple value check.
 
 
